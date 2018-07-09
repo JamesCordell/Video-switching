@@ -1,0 +1,40 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 9. Buffers and Events</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="part-building.html" title="Part II. Building an Application"><link rel="prev" href="section-pads-ghost.html" title="Ghost pads"><link rel="next" href="section-events.html" title="Events"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 9. Buffers and Events</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-pads-ghost.html">Prev</a> </td><th width="60%" align="center">Part II. Building an Application</th><td width="20%" align="right"> <a accesskey="n" href="section-events.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-data"></a>Chapter 9. Buffers and Events</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-data.html#section-buffers">Buffers</a></span></dt><dt><span class="sect1"><a href="section-events.html">Events</a></span></dt></dl></div><p>
+    The data flowing through a pipeline consists of a combination of
+    buffers and events. Buffers contain the actual media data. Events
+    contain control information, such as seeking information and
+    end-of-stream notifiers. All this will flow through the pipeline
+    automatically when it's running. This chapter is mostly meant to
+    explain the concept to you; you don't need to do anything for this.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-buffers"></a>Buffers</h2></div></div></div><p>
+      Buffers contain the data that will flow through the pipeline you have
+      created. A source element will typically create a new buffer and pass
+      it through a pad to the next element in the chain.  When using the
+      GStreamer infrastructure to create a media pipeline you will not have
+      to deal with buffers yourself; the elements will do that for you.
+    </p><p> 
+      A buffer consists, amongst others, of:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Pointers to memory objects. Memory objects encapsulate a region
+          in the memory.
+        </p></li><li class="listitem"><p>
+          A timestamp for the buffer.
+        </p></li><li class="listitem"><p>
+          A refcount that indicates how many elements are using this
+          buffer. This refcount will be used to destroy the buffer when no
+          element has a reference to it.
+        </p></li><li class="listitem"><p>
+          Buffer flags.
+        </p></li></ul></div><p>
+      The simple case is that a buffer is created, memory allocated, data
+      put in it, and passed to the next element.  That element reads the
+      data, does something (like creating a new buffer and decoding into
+      it), and unreferences the buffer.  This causes the data to be free'ed
+      and the buffer to be destroyed. A typical video or audio decoder
+      works like this.
+    </p><p>
+      There are more complex scenarios, though. Elements can modify buffers
+      in-place, i.e. without allocating a new one. Elements can also write
+      to hardware memory (such as from video-capture sources) or memory
+      allocated from the X-server (using XShm). Buffers can be read-only,
+      and so on.
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-pads-ghost.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-building.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-events.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Ghost pads </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Events</td></tr></table></div></body></html>

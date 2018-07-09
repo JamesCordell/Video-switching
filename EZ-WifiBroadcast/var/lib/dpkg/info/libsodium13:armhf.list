@@ -1,0 +1,15 @@
+/.
+/usr
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/libsodium.so.13.0.2
+/usr/share
+/usr/share/doc
+/usr/share/doc/libsodium13
+/usr/share/doc/libsodium13/AUTHORS
+/usr/share/doc/libsodium13/README.markdown
+/usr/share/doc/libsodium13/THANKS
+/usr/share/doc/libsodium13/copyright
+/usr/share/doc/libsodium13/changelog.Debian.gz
+/usr/share/doc/libsodium13/changelog.gz
+/usr/lib/arm-linux-gnueabihf/libsodium.so.13

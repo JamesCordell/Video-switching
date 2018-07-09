@@ -1,0 +1,134 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Decodebin</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-playback-components.html" title="Chapter 20. Playback Components"><link rel="prev" href="chapter-playback-components.html" title="Chapter 20. Playback Components"><link rel="next" href="section-components-uridecodebin.html" title="URIDecodebin"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Decodebin</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-playback-components.html">Prev</a> </td><th width="60%" align="center">Chapter 20. Playback Components</th><td width="20%" align="right"> <a accesskey="n" href="section-components-uridecodebin.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-components-decodebin"></a>Decodebin</h2></div></div></div><p>
+      Decodebin is the actual autoplugger backend of playbin, which was
+      discussed in the previous section. Decodebin will, in short, accept
+      input from a source that is linked to its sinkpad and will try to
+      detect the media type contained in the stream, and set up decoder
+      routines for each of those. It will automatically select decoders.
+      For each decoded stream, it will emit the <span class="quote">“<span class="quote">pad-added</span>”</span>
+      signal, to let the client know about the newly found decoded stream.
+      For unknown streams (which might be the whole stream), it will emit
+      the <span class="quote">“<span class="quote">unknown-type</span>”</span> signal. The application is then
+      responsible for reporting the error to the user.
+    </p><pre class="programlisting">
+
+#include &lt;gst/gst.h&gt;
+
+
+[.. my_bus_callback goes here ..]
+
+
+
+GstElement *pipeline, *audio;
+
+static void
+cb_newpad (GstElement *decodebin,
+	   GstPad     *pad,
+	   gpointer    data)
+{
+  GstCaps *caps;
+  GstStructure *str;
+  GstPad *audiopad;
+
+  /* only link once */
+  audiopad = gst_element_get_static_pad (audio, "sink");
+  if (GST_PAD_IS_LINKED (audiopad)) {
+    g_object_unref (audiopad);
+    return;
+  }
+
+  /* check media type */
+  caps = gst_pad_query_caps (pad, NULL);
+  str = gst_caps_get_structure (caps, 0);
+  if (!g_strrstr (gst_structure_get_name (str), "audio")) {
+    gst_caps_unref (caps);
+    gst_object_unref (audiopad);
+    return;
+  }
+  gst_caps_unref (caps);
+
+  /* link'n'play */
+  gst_pad_link (pad, audiopad);
+
+  g_object_unref (audiopad);
+}
+
+gint
+main (gint   argc,
+      gchar *argv[])
+{
+  GMainLoop *loop;
+  GstElement *src, *dec, *conv, *sink;
+  GstPad *audiopad;
+  GstBus *bus;
+
+  /* init GStreamer */
+  gst_init (&amp;argc, &amp;argv);
+  loop = g_main_loop_new (NULL, FALSE);
+
+  /* make sure we have input */
+  if (argc != 2) {
+    g_print ("Usage: %s &lt;filename&gt;\n", argv[0]);
+    return -1;
+  }
+
+  /* setup */
+  pipeline = gst_pipeline_new ("pipeline");
+
+  bus = gst_pipeline_get_bus (GST_PIPELINE (pipeline));
+  gst_bus_add_watch (bus, my_bus_callback, loop);
+  gst_object_unref (bus);
+
+  src = gst_element_factory_make ("filesrc", "source");
+  g_object_set (G_OBJECT (src), "location", argv[1], NULL);
+  dec = gst_element_factory_make ("decodebin", "decoder");
+  g_signal_connect (dec, "pad-added", G_CALLBACK (cb_newpad), NULL);
+  gst_bin_add_many (GST_BIN (pipeline), src, dec, NULL);
+  gst_element_link (src, dec);
+
+  /* create audio output */
+  audio = gst_bin_new ("audiobin");
+  conv = gst_element_factory_make ("audioconvert", "aconv");
+  audiopad = gst_element_get_static_pad (conv, "sink");
+  sink = gst_element_factory_make ("alsasink", "sink");
+  gst_bin_add_many (GST_BIN (audio), conv, sink, NULL);
+  gst_element_link (conv, sink);
+  gst_element_add_pad (audio,
+      gst_ghost_pad_new ("sink", audiopad));
+  gst_object_unref (audiopad);
+  gst_bin_add (GST_BIN (pipeline), audio);
+
+  /* run */
+  gst_element_set_state (pipeline, GST_STATE_PLAYING);
+  g_main_loop_run (loop);
+
+  /* cleanup */
+  gst_element_set_state (pipeline, GST_STATE_NULL);
+  gst_object_unref (GST_OBJECT (pipeline));
+
+  return 0;
+}
+
+    </pre><p>
+      Decodebin, similar to playbin, supports the following features:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Can decode an unlimited number of contained streams to decoded
+          output pads.
+        </p></li><li class="listitem"><p>
+          Is handled as a <code class="classname">GstElement</code> in all ways,
+          including tag or error forwarding and state handling.
+        </p></li></ul></div><p>
+      Although decodebin is a good autoplugger, there's a whole lot of
+      things that it does not do and is not intended to do:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Taking care of input streams with a known media type (e.g. a DVD,
+          an audio-CD or such).
+        </p></li><li class="listitem"><p>
+          Selection of streams (e.g. which audio track to play in case of
+          multi-language media streams).
+        </p></li><li class="listitem"><p>
+          Overlaying subtitles over a decoded video stream.
+        </p></li></ul></div><p>
+      Decodebin can be easily tested on the commandline, e.g. by using the
+      command <span class="command"><strong>gst-launch-1.0 filesrc location=file.ogg ! decodebin
+      ! audioconvert ! audioresample ! autoaudiosink</strong></span>.
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-playback-components.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-playback-components.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-components-uridecodebin.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 20. Playback Components </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> URIDecodebin</td></tr></table></div></body></html>

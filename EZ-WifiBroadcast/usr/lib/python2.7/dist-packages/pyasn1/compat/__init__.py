@@ -1,0 +1,1 @@
+../../../../../share/pyshared/pyasn1/compat/__init__.py

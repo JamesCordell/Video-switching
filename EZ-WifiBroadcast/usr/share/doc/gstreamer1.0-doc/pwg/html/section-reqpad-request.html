@@ -1,0 +1,80 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Request pads</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-advanced-request.html" title="Chapter 12. Request and Sometimes pads"><link rel="prev" href="chapter-advanced-request.html" title="Chapter 12. Request and Sometimes pads"><link rel="next" href="chapter-scheduling.html" title="Chapter 13. Different scheduling modes"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Request pads</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-advanced-request.html">Prev</a> </td><th width="60%" align="center">Chapter 12. Request and Sometimes pads</th><td width="20%" align="right"> <a accesskey="n" href="chapter-scheduling.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-reqpad-request"></a>Request pads</h2></div></div></div><p>
+      <span class="quote">“<span class="quote">Request</span>”</span> pads are similar to sometimes pads, except that
+      request are created on demand of something outside of the element rather
+      than something inside the element. This concept is often used in muxers,
+      where - for each elementary stream that is to be placed in the output
+      system stream - one sink pad will be requested. It can also be used in
+      elements with a variable number of input or outputs pads, such as the
+      <code class="classname">tee</code> (multi-output) or
+      <code class="classname">input-selector</code> (multi-input) elements.
+    </p><p>
+      To implement request pads, you need to provide a padtemplate with a
+      GST_PAD_REQUEST presence and implement the
+      <code class="function">request_new_pad</code> virtual method in
+      <code class="classname">GstElement</code>.
+      To clean up, you will need to implement the
+      <code class="function">release_pad</code> virtual method.
+    </p><pre class="programlisting">
+
+static GstPad *	gst_my_filter_request_new_pad	(GstElement     *element,
+						 GstPadTemplate *templ,
+                                                 const gchar    *name,
+                                                 const GstCaps  *caps);
+
+static void gst_my_filter_release_pad (GstElement *element,
+                                       GstPad *pad);
+
+static GstStaticPadTemplate sink_factory =
+GST_STATIC_PAD_TEMPLATE (
+  "sink_%u",
+  GST_PAD_SINK,
+  GST_PAD_REQUEST,
+  GST_STATIC_CAPS ("ANY")
+);
+
+static void
+gst_my_filter_class_init (GstMyFilterClass *klass)
+{
+  GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
+[..]
+  gst_element_class_add_pad_template (klass,
+	gst_static_pad_template_get (&amp;sink_factory));
+[..]
+  element_class-&gt;request_new_pad = gst_my_filter_request_new_pad;
+  element_class-&gt;release_pad = gst_my_filter_release_pad;
+}
+
+static GstPad *
+gst_my_filter_request_new_pad (GstElement     *element,
+			       GstPadTemplate *templ,
+			       const gchar    *name,
+                               const GstCaps  *caps)
+{
+  GstPad *pad;
+  GstMyFilterInputContext *context;
+
+  context = g_new0 (GstMyFilterInputContext, 1);
+  pad = gst_pad_new_from_template (templ, name);
+  gst_pad_set_element_private (pad, context);
+
+  /* normally, you would set _chain () and _event () functions here */
+
+  gst_element_add_pad (element, pad);
+
+  return pad;
+}
+
+static void
+gst_my_filter_release_pad (GstElement *element,
+                           GstPad *pad)
+{
+  GstMyFilterInputContext *context;
+
+  context = gst_pad_get_element_private (pad);
+  g_free (context);
+
+  gst_element_remove_pad (element, pad);
+}
+
+
+    </pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-advanced-request.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-advanced-request.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-scheduling.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 12. Request and Sometimes pads </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 13. Different scheduling modes</td></tr></table></div></body></html>

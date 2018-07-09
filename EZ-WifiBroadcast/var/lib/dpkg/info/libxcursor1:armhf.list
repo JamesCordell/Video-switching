@@ -1,0 +1,12 @@
+/.
+/usr
+/usr/share
+/usr/share/doc
+/usr/share/doc/libxcursor1
+/usr/share/doc/libxcursor1/copyright
+/usr/share/doc/libxcursor1/changelog.Debian.gz
+/usr/share/doc/libxcursor1/changelog.gz
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/libXcursor.so.1.0.2
+/usr/lib/arm-linux-gnueabihf/libXcursor.so.1

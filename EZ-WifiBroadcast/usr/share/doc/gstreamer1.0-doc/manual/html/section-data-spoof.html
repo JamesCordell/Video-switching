@@ -1,0 +1,420 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Manually adding or removing data from/to a pipeline</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-dataaccess.html" title="Chapter 19. Pipeline manipulation"><link rel="prev" href="chapter-dataaccess.html" title="Chapter 19. Pipeline manipulation"><link rel="next" href="section-spoof-format.html" title="Forcing a format"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Manually adding or removing data from/to a pipeline</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-dataaccess.html">Prev</a> </td><th width="60%" align="center">Chapter 19. Pipeline manipulation</th><td width="20%" align="right"> <a accesskey="n" href="section-spoof-format.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-data-spoof"></a>Manually adding or removing data from/to a pipeline</h2></div></div></div><p>
+      Many people have expressed the wish to use their own sources to inject
+      data into a pipeline. Some people have also expressed the wish to grab
+      the output in a pipeline and take care of the actual output inside
+      their application. While either of these methods are strongly
+      discouraged, <span class="application">GStreamer</span> offers support for this.
+      <span class="emphasis"><em>Beware! You need to know what you are doing.</em></span> Since
+      you don't have any support from a base class you need to thoroughly
+      understand state changes and synchronization. If it doesn't work,
+      there are a million ways to shoot yourself in the foot.  It's always
+      better to simply write a plugin and have the base class manage it.
+      See the Plugin Writer's Guide for more information on this topic. Also
+      see the next section, which will explain how to embed plugins statically
+      in your application.
+    </p><p>
+      There's two possible elements that you can use for the above-mentioned
+      purposes. Those are called <span class="quote">“<span class="quote">appsrc</span>”</span> (an imaginary source)
+      and <span class="quote">“<span class="quote">appsink</span>”</span> (an imaginary sink). The same method applies
+      to each of those elements. Here, we will discuss how to use those
+      elements to insert (using appsrc) or grab (using appsink) data from a
+      pipeline, and how to set negotiation.
+    </p><p>
+      Both appsrc and appsink provide 2 sets of API. One API uses standard
+      GObject (action) signals and properties. The same API is also
+      available as a regular C api. The C api is more performant but
+      requires you to link to the app library in order to use the elements.
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-spoof-appsrc"></a>Inserting data with appsrc</h3></div></div></div><p>
+        First we look at some examples for appsrc, which lets you insert data
+        into the pipeline from the application. Appsrc has some configuration
+        options that define how it will operate. You should decide about the
+        following configurations:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+            Will the appsrc operate in push or pull mode. The stream-type
+            property can be used to control this. stream-type of
+            <span class="quote">“<span class="quote">random-access</span>”</span> will activate pull mode scheduling
+            while the other stream-types activate push mode.
+          </p></li><li class="listitem"><p>
+            The caps of the buffers that appsrc will push out. This needs to
+            be configured with the caps property. The caps must be set to a
+            fixed caps and will be used to negotiate a format downstream.
+          </p></li><li class="listitem"><p>
+            If the appsrc operates in live mode or not. This can be configured
+            with the is-live property. When operating in live-mode it is
+            important to configure the min-latency and max-latency in appsrc.
+            The min-latency should be set to the amount of time it takes between
+            capturing a buffer and when it is pushed inside appsrc.
+            In live mode, you should timestamp the buffers with the pipeline
+            running-time when the first byte of the buffer was captured before
+            feeding them to appsrc. You can let appsrc do the timestaping with
+            the do-timestamp property (but then the min-latency must be set
+            to 0 because it timestamps based on the running-time when the buffer
+            entered appsrc).
+          </p></li><li class="listitem"><p>
+            The format of the SEGMENT event that appsrc will push. The format
+            has implications for how the running-time of the buffers will
+            be calculated so you must be sure you understand this. For
+            live sources you probably want to set the format property to
+            GST_FORMAT_TIME. For non-live source it depends on the media type
+            that you are handling. If you plan to timestamp the buffers, you
+            should probably put a GST_FORMAT_TIME format, otherwise
+            GST_FORMAT_BYTES might be appropriate.
+          </p></li><li class="listitem"><p>
+            If appsrc operates in random-access mode, it is important to configure
+            the size property of appsrc with the number of bytes in the stream.
+            This will allow downstream elements to know the size of the media and
+            alows them to seek to the end of the stream when needed.
+          </p></li></ul></div><p>
+        The main way of handling data to appsrc is by using the function
+        <code class="function">gst_app_src_push_buffer ()</code> or by emiting the
+        push-buffer action signal.  This will put the buffer onto a queue from
+        which appsrc will read from in its streaming thread. It is important
+        to note that data transport will not happen from the thread that
+        performed the push-buffer call.
+      </p><p>
+        The <span class="quote">“<span class="quote">max-bytes</span>”</span> property controls how much data can be
+        queued in appsrc before appsrc considers the queue full. A filled
+        internal queue will always signal the <span class="quote">“<span class="quote">enough-data</span>”</span>
+        signal, which signals the application that it should stop pushing
+        data into appsrc. The <span class="quote">“<span class="quote">block</span>”</span> property will cause appsrc to
+        block the push-buffer method until free data becomes available again.
+      </p><p>
+        When the internal queue is running out of data, the
+        <span class="quote">“<span class="quote">need-data</span>”</span> signal is emitted, which signals the application
+        that it should start pushing more data into appsrc.
+      </p><p>
+        In addition to the <span class="quote">“<span class="quote">need-data</span>”</span> and <span class="quote">“<span class="quote">enough-data</span>”</span>
+        signals, appsrc can emit the <span class="quote">“<span class="quote">seek-data</span>”</span> signal when the
+        <span class="quote">“<span class="quote">stream-mode</span>”</span> property is set to <span class="quote">“<span class="quote">seekable</span>”</span>
+        or <span class="quote">“<span class="quote">random-access</span>”</span>. The signal argument will contain the
+        new desired position in the stream expressed in the unit set with the
+        <span class="quote">“<span class="quote">format</span>”</span> property. After receiving the seek-data signal,
+        the application should push-buffers from the new position.
+      </p><p>
+        When the last byte is pushed into appsrc, you must call
+        <code class="function">gst_app_src_end_of_stream ()</code> to make it send
+        an EOS downstream.
+      </p><p>
+        These signals allow the application to operate appsrc in push and
+        pull mode as will be explained next.
+      </p><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a name="section-spoof-appsrc-push"></a>Using appsrc in push mode</h4></div></div></div><p>
+          When appsrc is configured in push mode (stream-type is stream or
+          seekable), the application repeatedly calls the push-buffer method
+          with a new buffer. Optionally, the queue size in the appsrc can be
+          controlled with the enough-data and need-data signals by respectively
+          stopping/starting the push-buffer calls. The value of the
+          min-percent property defines how empty the internal appsrc queue
+          needs to be before the need-data signal will be fired. You can set
+          this to some value &gt;0 to avoid completely draining the queue.
+        </p><p>
+          When the stream-type is set to seekable, don't forget to implement
+          a seek-data callback.
+        </p><p>
+          Use this model when implementing various network protocols or
+          hardware devices.
+        </p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a name="section-spoof-appsrc-pull"></a>Using appsrc in pull mode</h4></div></div></div><p>
+          In the pull model, data is fed to appsrc from the need-data signal
+          handler. You should push exactly the amount of bytes requested in the
+          need-data signal. You are only allowed to push less bytes when you are
+          at the end of the stream.
+        </p><p>
+          Use this model for file access or other randomly accessable sources.
+        </p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a name="section-spoof-appsrc-ex"></a>Appsrc example</h4></div></div></div><p>
+          This example application will generate black/white (it switches
+          every second) video to an Xv-window output by using appsrc as a
+          source with caps to force a format. We use a colorspace
+          conversion element to make sure that we feed the right format to
+          your X server. We configure a video stream with a variable framerate
+          (0/1) and we set the timestamps on the outgoing buffers in such
+          a way that we play 2 frames per second.
+        </p><p>
+          Note how we use the pull mode method of pushing new buffers into
+          appsrc although appsrc is running in push mode. 
+        </p><pre class="programlisting">
+
+
+#include &lt;gst/gst.h&gt;
+
+static GMainLoop *loop;
+
+static void
+cb_need_data (GstElement *appsrc,
+	      guint       unused_size,
+	      gpointer    user_data)
+{
+  static gboolean white = FALSE;
+  static GstClockTime timestamp = 0;
+  GstBuffer *buffer;
+  guint size;
+  GstFlowReturn ret;
+
+  size = 385 * 288 * 2;
+
+  buffer = gst_buffer_new_allocate (NULL, size, NULL);
+
+  /* this makes the image black/white */
+  gst_buffer_memset (buffer, 0, white ? 0xff : 0x0, size);
+  
+  white = !white;
+
+  GST_BUFFER_PTS (buffer) = timestamp;
+  GST_BUFFER_DURATION (buffer) = gst_util_uint64_scale_int (1, GST_SECOND, 2);
+
+  timestamp += GST_BUFFER_DURATION (buffer);
+
+  g_signal_emit_by_name (appsrc, "push-buffer", buffer, &amp;ret);
+
+  if (ret != GST_FLOW_OK) {
+    /* something wrong, stop pushing */
+    g_main_loop_quit (loop);
+  }
+}
+
+gint
+main (gint   argc,
+      gchar *argv[])
+{
+  GstElement *pipeline, *appsrc, *conv, *videosink;
+
+  /* init GStreamer */
+  gst_init (&amp;argc, &amp;argv);
+  loop = g_main_loop_new (NULL, FALSE);
+
+  /* setup pipeline */
+  pipeline = gst_pipeline_new ("pipeline");
+  appsrc = gst_element_factory_make ("appsrc", "source");
+  conv = gst_element_factory_make ("videoconvert", "conv");
+  videosink = gst_element_factory_make ("xvimagesink", "videosink");
+
+  /* setup */
+  g_object_set (G_OBJECT (appsrc), "caps",
+  		gst_caps_new_simple ("video/x-raw",
+				     "format", G_TYPE_STRING, "RGB16",
+				     "width", G_TYPE_INT, 384,
+				     "height", G_TYPE_INT, 288,
+				     "framerate", GST_TYPE_FRACTION, 0, 1,
+				     NULL), NULL);
+  gst_bin_add_many (GST_BIN (pipeline), appsrc, conv, videosink, NULL);
+  gst_element_link_many (appsrc, conv, videosink, NULL);
+
+  /* setup appsrc */
+  g_object_set (G_OBJECT (appsrc),
+		"stream-type", 0,
+		"format", GST_FORMAT_TIME, NULL);
+  g_signal_connect (appsrc, "need-data", G_CALLBACK (cb_need_data), NULL);
+
+  /* play */
+  gst_element_set_state (pipeline, GST_STATE_PLAYING);
+  g_main_loop_run (loop);
+
+  /* clean up */
+  gst_element_set_state (pipeline, GST_STATE_NULL);
+  gst_object_unref (GST_OBJECT (pipeline));
+  g_main_loop_unref (loop);
+
+  return 0;
+  }
+
+
+        </pre></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-spoof-appsink"></a>Grabbing data with appsink</h3></div></div></div><p>
+        Unlike appsrc, appsink is a little easier to use. It also supports
+        a pull and push based model of getting data from the pipeline.
+      </p><p>
+        The normal way of retrieving samples from appsink is by using the
+        <code class="function">gst_app_sink_pull_sample()</code> and
+        <code class="function">gst_app_sink_pull_preroll()</code> methods or by using
+        the <span class="quote">“<span class="quote">pull-sample</span>”</span> and <span class="quote">“<span class="quote">pull-preroll</span>”</span>
+        signals.  These methods block until a sample becomes available in the
+        sink or when the sink is shut down or reaches EOS.
+      </p><p>
+        Appsink will internally use a queue to collect buffers from the
+        streaming thread. If the application is not pulling samples fast
+        enough, this queue will consume a lot of memory over time. The
+        <span class="quote">“<span class="quote">max-buffers</span>”</span> property can be used to limit the queue
+        size. The <span class="quote">“<span class="quote">drop</span>”</span> property controls whether the
+        streaming thread blocks or if older buffers are dropped when the
+        maximum queue size is reached. Note that blocking the streaming thread
+        can negatively affect real-time performance and should be avoided.
+      </p><p>
+        If a blocking behaviour is not desirable, setting the 
+        <span class="quote">“<span class="quote">emit-signals</span>”</span> property to TRUE will make appsink emit
+        the <span class="quote">“<span class="quote">new-sample</span>”</span> and <span class="quote">“<span class="quote">new-preroll</span>”</span> signals
+        when a sample can be pulled without blocking.
+      </p><p>
+        The <span class="quote">“<span class="quote">caps</span>”</span> property on appsink can be used to control
+        the formats that appsink can receive. This property can contain
+        non-fixed caps, the format of the pulled samples can be obtained by
+        getting the sample caps.
+      </p><p>
+        If one of the pull-preroll or pull-sample methods return NULL, the
+        appsink is stopped or in the EOS state. You can check for the EOS state
+        with the <span class="quote">“<span class="quote">eos</span>”</span> property or with the
+        <code class="function">gst_app_sink_is_eos()</code> method.
+      </p><p>
+        The eos signal can also be used to be informed when the EOS state is
+        reached to avoid polling.
+      </p><p>
+        Consider configuring the following properties in the appsink:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+            The <span class="quote">“<span class="quote">sync</span>”</span> property if you want to have the sink
+            base class synchronize the buffer against the pipeline clock
+            before handing you the sample.
+          </p></li><li class="listitem"><p>
+            Enable Quality-of-Service with the <span class="quote">“<span class="quote">qos</span>”</span> property.
+            If you are dealing with raw video frames and let the base class
+            sycnhronize on the clock, it might be a good idea to also let
+            the base class send QOS events upstream.
+          </p></li><li class="listitem"><p>
+            The caps property that contains the accepted caps. Upstream elements
+            will try to convert the format so that it matches the configured
+            caps on appsink. You must still check the
+            <code class="classname">GstSample</code> to get the actual caps of the
+            buffer.
+          </p></li></ul></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a name="section-spoof-appsink-ex"></a>Appsink example</h4></div></div></div><p>
+          What follows is an example on how to capture a snapshot of a video
+          stream using appsink.
+        </p><pre class="programlisting">
+
+
+#include &lt;gst/gst.h&gt;
+#ifdef HAVE_GTK
+#include &lt;gtk/gtk.h&gt;
+#endif
+
+#include &lt;stdlib.h&gt;
+
+#define CAPS "video/x-raw,format=RGB,width=160,pixel-aspect-ratio=1/1"
+
+int
+main (int argc, char *argv[])
+{
+  GstElement *pipeline, *sink;
+  gint width, height;
+  GstSample *sample;
+  gchar *descr;
+  GError *error = NULL;
+  gint64 duration, position;
+  GstStateChangeReturn ret;
+  gboolean res;
+  GstMapInfo map;
+
+  gst_init (&amp;argc, &amp;argv);
+
+  if (argc != 2) {
+    g_print ("usage: %s &lt;uri&gt;\n Writes snapshot.png in the current directory\n",
+        argv[0]);
+    exit (-1);
+  }
+
+  /* create a new pipeline */
+  descr =
+      g_strdup_printf ("uridecodebin uri=%s ! videoconvert ! videoscale ! "
+      " appsink name=sink caps=\"" CAPS "\"", argv[1]);
+  pipeline = gst_parse_launch (descr, &amp;error);
+
+  if (error != NULL) {
+    g_print ("could not construct pipeline: %s\n", error-&gt;message);
+    g_error_free (error);
+    exit (-1);
+  }
+
+  /* get sink */
+  sink = gst_bin_get_by_name (GST_BIN (pipeline), "sink");
+
+  /* set to PAUSED to make the first frame arrive in the sink */
+  ret = gst_element_set_state (pipeline, GST_STATE_PAUSED);
+  switch (ret) {
+    case GST_STATE_CHANGE_FAILURE:
+      g_print ("failed to play the file\n");
+      exit (-1);
+    case GST_STATE_CHANGE_NO_PREROLL:
+      /* for live sources, we need to set the pipeline to PLAYING before we can
+       * receive a buffer. We don't do that yet */
+      g_print ("live sources not supported yet\n");
+      exit (-1);
+    default:
+      break;
+  }
+  /* This can block for up to 5 seconds. If your machine is really overloaded,
+   * it might time out before the pipeline prerolled and we generate an error. A
+   * better way is to run a mainloop and catch errors there. */
+  ret = gst_element_get_state (pipeline, NULL, NULL, 5 * GST_SECOND);
+  if (ret == GST_STATE_CHANGE_FAILURE) {
+    g_print ("failed to play the file\n");
+    exit (-1);
+  }
+
+  /* get the duration */
+  gst_element_query_duration (pipeline, GST_FORMAT_TIME, &amp;duration);
+
+  if (duration != -1)
+    /* we have a duration, seek to 5% */
+    position = duration * 5 / 100;
+  else
+    /* no duration, seek to 1 second, this could EOS */
+    position = 1 * GST_SECOND;
+
+  /* seek to the a position in the file. Most files have a black first frame so
+   * by seeking to somewhere else we have a bigger chance of getting something
+   * more interesting. An optimisation would be to detect black images and then
+   * seek a little more */
+  gst_element_seek_simple (pipeline, GST_FORMAT_TIME,
+      GST_SEEK_FLAG_KEY_UNIT | GST_SEEK_FLAG_FLUSH, position);
+
+  /* get the preroll buffer from appsink, this block untils appsink really
+   * prerolls */
+  g_signal_emit_by_name (sink, "pull-preroll", &amp;sample, NULL);
+
+  /* if we have a buffer now, convert it to a pixbuf. It's possible that we
+   * don't have a buffer because we went EOS right away or had an error. */
+  if (sample) {
+    GstBuffer *buffer;
+    GstCaps *caps;
+    GstStructure *s;
+
+    /* get the snapshot buffer format now. We set the caps on the appsink so
+     * that it can only be an rgb buffer. The only thing we have not specified
+     * on the caps is the height, which is dependant on the pixel-aspect-ratio
+     * of the source material */
+    caps = gst_sample_get_caps (sample);
+    if (!caps) {
+      g_print ("could not get snapshot format\n");
+      exit (-1);
+    }
+    s = gst_caps_get_structure (caps, 0);
+
+    /* we need to get the final caps on the buffer to get the size */
+    res = gst_structure_get_int (s, "width", &amp;width);
+    res |= gst_structure_get_int (s, "height", &amp;height);
+    if (!res) {
+      g_print ("could not get snapshot dimension\n");
+      exit (-1);
+    }
+
+    /* create pixmap from buffer and save, gstreamer video buffers have a stride
+     * that is rounded up to the nearest multiple of 4 */
+    buffer = gst_sample_get_buffer (sample);
+    gst_buffer_map (buffer, &amp;map, GST_MAP_READ);
+#ifdef HAVE_GTK
+    pixbuf = gdk_pixbuf_new_from_data (map.data,
+        GDK_COLORSPACE_RGB, FALSE, 8, width, height,
+        GST_ROUND_UP_4 (width * 3), NULL, NULL);
+
+    /* save the pixbuf */
+    gdk_pixbuf_save (pixbuf, "snapshot.png", "png", &amp;error, NULL);
+#endif
+    gst_buffer_unmap (buffer, &amp;map);
+    gst_sample_unref (sample);
+  } else {
+    g_print ("could not make snapshot\n");
+  }
+
+  /* cleanup and exit */
+  gst_element_set_state (pipeline, GST_STATE_NULL);
+  gst_object_unref (pipeline);
+
+  exit (0);
+}
+
+
+</pre></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-dataaccess.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-dataaccess.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-spoof-format.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 19. Pipeline manipulation </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Forcing a format</td></tr></table></div></body></html>

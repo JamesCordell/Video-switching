@@ -1,0 +1,45 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>The GOption interface</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-init.html" title="Chapter 4. Initializing GStreamer"><link rel="prev" href="chapter-init.html" title="Chapter 4. Initializing GStreamer"><link rel="next" href="chapter-elements.html" title="Chapter 5. Elements"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">The GOption interface</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-init.html">Prev</a> </td><th width="60%" align="center">Chapter 4. Initializing <span class="application">GStreamer</span></th><td width="20%" align="right"> <a accesskey="n" href="chapter-elements.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="idp69782240"></a>The GOption interface</h2></div></div></div><p>
+      You can also use a GOption table to initialize your own parameters as
+      shown in the next example:
+    </p><div class="example"><a name="ex-goption-c"></a><p class="title"><b>Example 4.2. Initialisation using the GOption interface</b></p><div class="example-contents"><pre class="programlisting">
+
+#include &lt;gst/gst.h&gt;
+
+int
+main (int   argc,
+      char *argv[])
+{
+  gboolean silent = FALSE;
+  gchar *savefile = NULL;
+  GOptionContext *ctx;
+  GError *err = NULL;
+  GOptionEntry entries[] = {
+    { "silent", 's', 0, G_OPTION_ARG_NONE, &amp;silent,
+      "do not output status information", NULL },
+    { "output", 'o', 0, G_OPTION_ARG_STRING, &amp;savefile,
+      "save xml representation of pipeline to FILE and exit", "FILE" },
+    { NULL }
+  };
+
+  ctx = g_option_context_new ("- Your application");
+  g_option_context_add_main_entries (ctx, entries, NULL);
+  g_option_context_add_group (ctx, gst_init_get_option_group ());
+  if (!g_option_context_parse (ctx, &amp;argc, &amp;argv, &amp;err)) {
+    g_print ("Failed to initialize: %s\n", err-&gt;message);
+    g_error_free (err);
+    return 1;
+  }
+
+  printf ("Run me with --help to see the Application options appended.\n");
+
+  return 0;
+}
+
+      </pre></div></div><br class="example-break"><p>
+      As shown in this fragment, you can use a <a class="ulink" href="http://developer.gnome.org/glib/stable/glib-Commandline-option-parser.html" target="_top">GOption</a> table to define your application-specific
+      command line options, and pass this table to the GLib initialization
+      function along with the option group returned from the
+      function <code class="function">gst_init_get_option_group</code>. Your
+      application options will be parsed in addition to the standard
+      <span class="application">GStreamer</span> options.
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-init.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-init.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-elements.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 4. Initializing <span class="application">GStreamer</span> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 5. Elements</td></tr></table></div></body></html>

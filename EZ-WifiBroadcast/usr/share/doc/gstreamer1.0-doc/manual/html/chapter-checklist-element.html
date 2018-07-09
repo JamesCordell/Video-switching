@@ -1,0 +1,33 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 23. Things to check when writing an application</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="part-appendices.html" title="Part V. Appendices"><link rel="prev" href="chapter-compiling.html" title="Chapter 22. Compiling"><link rel="next" href="section-checklist-debug.html" title="Debugging"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 23. Things to check when writing an application</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-compiling.html">Prev</a> </td><th width="60%" align="center">Part V. Appendices</th><td width="20%" align="right"> <a accesskey="n" href="section-checklist-debug.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-checklist-element"></a>Chapter 23. Things to check when writing an application</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-checklist-element.html#section-checklist-programming">Good programming habits</a></span></dt><dt><span class="sect1"><a href="section-checklist-debug.html">Debugging</a></span></dt><dt><span class="sect1"><a href="section-checklist-conversion.html">Conversion plugins</a></span></dt><dt><span class="sect1"><a href="section-checklist-applications.html">Utility applications provided with <span class="application">GStreamer</span></a></span></dt><dd><dl><dt><span class="sect2"><a href="section-checklist-applications.html#section-applications-launch"><span class="command"><strong>gst-launch</strong></span></a></span></dt><dt><span class="sect2"><a href="section-checklist-applications.html#section-applications-inspect"><span class="command"><strong>gst-inspect</strong></span></a></span></dt></dl></dd></dl></div><p>
+    This chapter contains a fairly random selection of things that can be
+    useful to keep in mind when writing <span class="application">GStreamer</span>-based applications. It's
+    up to you how much you're going to use the information provided here.
+    We will shortly discuss how to debug pipeline problems using <span class="application">GStreamer</span>
+    applications. Also, we will touch upon how to acquire knowledge about
+    plugins and elements and how to test simple pipelines before building
+    applications around them.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-checklist-programming"></a>Good programming habits</h2></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Always add a <code class="classname">GstBus</code> handler to your
+          pipeline. Always report errors in your application, and try
+          to do something with warnings and information messages, too.
+        </p></li><li class="listitem"><p>
+          Always check return values of <span class="application">GStreamer</span> functions. Especially,
+          check return values of <code class="function">gst_element_link ()</code>
+          and <code class="function">gst_element_set_state ()</code>.
+        </p></li><li class="listitem"><p>
+          Dereference return values of all functions returning a non-base
+          type, such as <code class="function">gst_element_get_pad ()</code>. Also,
+          always free non-const string returns, such as
+          <code class="function">gst_object_get_name ()</code>.
+        </p></li><li class="listitem"><p>
+          Always use your pipeline object to keep track of the current state
+          of your pipeline. Don't keep private variables in your application.
+          Also, don't update your user interface if a user presses the
+          <span class="quote">“<span class="quote">play</span>”</span> button. Instead, listen for the
+          <span class="quote">“<span class="quote">state-changed</span>”</span> message on the
+          <code class="classname">GstBus</code> and only update the user interface
+          whenever this message is received.
+        </p></li><li class="listitem"><p>
+          Report all bugs that you find in <span class="application">GStreamer</span> bugzilla at
+          <a class="ulink" href="http://bugzilla.gnome.org" target="_top">http://bugzilla.gnome.org/</a>.
+        </p></li></ul></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-compiling.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-appendices.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-checklist-debug.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 22. Compiling </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Debugging</td></tr></table></div></body></html>

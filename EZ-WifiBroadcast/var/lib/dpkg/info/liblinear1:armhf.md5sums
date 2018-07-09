@@ -1,0 +1,6 @@
+4616e4d5048589846449cfc3a73ef406  usr/lib/arm-linux-gnueabihf/liblinear.so.1.8
+5403cbdc9a4c14608e620bc99950ff4c  usr/share/doc/liblinear1/README.Debian
+83bd5dcecc54805bcd77400afeb1af67  usr/share/doc/liblinear1/README.gz
+5ce6b20953533ffdfbb5563a3e492d52  usr/share/doc/liblinear1/changelog.Debian.gz
+a1a72e2049a0ac3deb22d3f71b12a43c  usr/share/doc/liblinear1/copyright
+38350eb64ef1f23190a119e25ac935d9  usr/share/lintian/overrides/liblinear1

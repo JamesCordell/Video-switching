@@ -1,0 +1,99 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>GNOME desktop</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-intgration.html" title="Chapter 26. Integration"><link rel="prev" href="chapter-intgration.html" title="Chapter 26. Integration"><link rel="next" href="section-integration-kde.html" title="KDE desktop"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">GNOME desktop</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-intgration.html">Prev</a> </td><th width="60%" align="center">Chapter 26. Integration</th><td width="20%" align="right"> <a accesskey="n" href="section-integration-kde.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-integration-gnome"></a>GNOME desktop</h2></div></div></div><p>
+      <span class="application">GStreamer</span> has been the media backend of the <a class="ulink" href="http://www.gnome.org/" target="_top">GNOME</a> desktop since GNOME-2.2
+      onwards. Nowadays, a whole bunch of GNOME applications make use of
+      <span class="application">GStreamer</span> for media-processing, including (but not limited to)
+      <a class="ulink" href="http://www.rhythmbox.org/" target="_top">Rhythmbox</a>,
+      <a class="ulink" href="https://wiki.gnome.org/Apps/Videos" target="_top">Videos</a>
+      and <a class="ulink" href="https://wiki.gnome.org/Apps/SoundJuicer" target="_top">Sound
+      Juicer</a>.
+    </p><p>
+      Most of these GNOME applications make use of some specific techniques
+      to integrate as closely as possible with the GNOME desktop:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          GNOME applications usually call <code class="function">gtk_init ()</code>
+          to parse command-line options and initialize GTK. <span class="application">GStreamer</span>
+          applications would normally call <code class="function">gst_init ()</code>
+          to do the same for GStreamer.
+          This would mean that only one of the two can parse command-line
+          options. To work around this issue, <span class="application">GStreamer</span> can provide a
+          GLib <code class="classname">GOptionGroup</code> which can be passed to
+          <code class="function">gnome_program_init ()</code>. The following
+          example requires GTK 2.6 or newer (previous GTK versions
+          do not support command line parsing via GOption yet)
+        </p><pre class="programlisting">
+#include &lt;gtk/gtk.h&gt;
+#include &lt;gst/gst.h&gt;
+
+static gchar **cmd_filenames = NULL;
+
+static GOptionEntries cmd_options[] = {
+  /* here you can add command line options for your application. Check
+   * the GOption section in the GLib API reference for a more elaborate
+   * example of how to add your own command line options here */
+
+  /* at the end we have a special option that collects all remaining 
+   * command line arguments (like filenames) for us. If you don't
+   * need this, you can safely remove it */
+  { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &amp;cmd_filenames,
+    "Special option that collects any remaining arguments for us" },
+
+  /* mark the end of the options array with a NULL option */
+  { NULL, }
+};
+
+/* this should usually be defined in your config.h */
+#define VERSION "0.0.1"
+
+gint
+main (gint argc, gchar **argv)
+{
+  GOptionContext *context;
+  GOptionGroup *gstreamer_group, *gtk_group;
+  GError *err = NULL;
+
+  context = g_option_context_new ("gtk-demo-app");
+
+  /* get command line options from GStreamer and add them to the group */
+  gstreamer_group = gst_init_get_option_group ();
+  g_option_context_add_group (context, gstreamer_group);
+  gtk_group = gtk_get_option_group (TRUE);
+  g_option_context_add_group (context, gtk_group);
+
+  /* add our own options. If you are using gettext for translation of your
+   * strings, use GETTEXT_PACKAGE here instead of NULL */
+  g_option_context_add_main_entries (context, cmd_options, NULL);
+
+  /* now parse the commandline options, note that this already
+   * calls gtk_init() and gst_init() */
+  if (!g_option_context_parse (ctx, &amp;argc, &amp;argv, &amp;err)) {
+    g_print ("Error initializing: %s\n", err-&gt;message);
+    exit (1);
+  }
+
+  /* any filenames we got passed on the command line? parse them! */
+  if (cmd_filenames != NULL) {
+    guint i, num;
+
+    num = g_strv_length (cmd_filenames);
+    for (i = 0; i &lt; num; ++i) {
+      /* do something with the filename ... */
+      g_print ("Adding to play queue: %s\n", cmd_filenames[i]);
+    }
+
+    g_strfreev (cmd_filenames);
+    cmd_filenames = NULL;
+  }
+
+[..]
+
+}
+        </pre></li><li class="listitem"><p>
+          GNOME uses Pulseaudio for audio, use the pulsesrc and
+          pulsesink elements to have access to all the features.
+        </p></li><li class="listitem"><p>
+          <span class="application">GStreamer</span> provides data input/output elements for use with the
+          GIO VFS system. These elements are called <span class="quote">“<span class="quote">giosrc</span>”</span>
+          and <span class="quote">“<span class="quote">giosink</span>”</span>.
+          The deprecated GNOME-VFS system is supported too but shouldn't be
+          used for any new applications.
+        </p></li></ul></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-intgration.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-intgration.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-integration-kde.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 26. Integration </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> KDE desktop</td></tr></table></div></body></html>

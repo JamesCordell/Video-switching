@@ -1,0 +1,16 @@
+/.
+/usr
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/directfb-1.2-9
+/usr/lib/arm-linux-gnueabihf/directfb-1.2-9/interfaces
+/usr/lib/arm-linux-gnueabihf/directfb-1.2-9/interfaces/IDirectFBFont
+/usr/lib/arm-linux-gnueabihf/directfb-1.2-9/interfaces/IDirectFBFont/libidirectfbfont_ft2.so
+/usr/lib/arm-linux-gnueabihf/directfb-1.2-9/interfaces/IDirectFBImageProvider
+/usr/lib/arm-linux-gnueabihf/directfb-1.2-9/interfaces/IDirectFBImageProvider/libidirectfbimageprovider_jpeg.so
+/usr/lib/arm-linux-gnueabihf/directfb-1.2-9/interfaces/IDirectFBImageProvider/libidirectfbimageprovider_png.so
+/usr/lib/arm-linux-gnueabihf/directfb-1.2-9/systems
+/usr/lib/arm-linux-gnueabihf/directfb-1.2-9/systems/libdirectfb_x11.so
+/usr/share
+/usr/share/doc
+/usr/share/doc/libdirectfb-extra

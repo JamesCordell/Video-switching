@@ -1,0 +1,1 @@
+../../../../share/pyshared/picamera/exc.py

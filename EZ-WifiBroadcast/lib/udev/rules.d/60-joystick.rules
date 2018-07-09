@@ -1,0 +1,6 @@
+# Restore any stored calibration for the device
+ACTION=="add", KERNEL=="js*", RUN+="/lib/udev/jscal-restore %E{DEVNAME}"
+
+# Avoid this specific gamepad disappearing (see
+# https://bugs.launchpad.net/ubuntu/+source/joystick/+bug/448446)
+ACTION=="add", KERNEL=="js*", ATTRS{name}=="ACRUX USB GAMEPAD 8116", RUN+="/lib/udev/js-acrux %E{DEVNAME}"

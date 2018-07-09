@@ -1,0 +1,5 @@
+b812b84334099af5af15a60b757b6f1d  usr/include/xcb/dri2.h
+64d4da64917f27c5c6881e987755482f  usr/lib/arm-linux-gnueabihf/libxcb-dri2.a
+32272144e515b216af378c1df03c1308  usr/lib/arm-linux-gnueabihf/pkgconfig/xcb-dri2.pc
+6b9a2dbb0f848de8eb0b138ef4066d09  usr/share/doc/libxcb-dri2-0-dev/changelog.Debian.gz
+360fadb0d222af6607a189d435e3a9f3  usr/share/doc/libxcb-dri2-0-dev/copyright

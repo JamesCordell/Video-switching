@@ -1,0 +1,11 @@
+618726bfd02f481d74ebeab5d4e20128  usr/share/doc/liblog-message-perl/changelog.Debian.gz
+7d734424ce586c39c55e682ee91a37f6  usr/share/doc/liblog-message-perl/changelog.gz
+da3a7057fe161f03ebfe3f6e77ff0bfa  usr/share/doc/liblog-message-perl/copyright
+3ff98487a5bd149fee7df3451c7f030c  usr/share/man/man3/Log::Message.3pm.gz
+32933db8a43d6882e56f9cc6570b61cb  usr/share/man/man3/Log::Message::Config.3pm.gz
+aa433d5d44deb28dfd942fbdff1c26b2  usr/share/man/man3/Log::Message::Handlers.3pm.gz
+c84d396b9cf91e6dd2c90d321353ac63  usr/share/man/man3/Log::Message::Item.3pm.gz
+1338083b9bbaa7ad271f6b196309e51d  usr/share/perl5/Log/Message.pm
+a6477fd8ff3a068a7332655eaae4a112  usr/share/perl5/Log/Message/Config.pm
+b0645cf938377c71baef454abd8563e8  usr/share/perl5/Log/Message/Handlers.pm
+c242e2baebb722bba0c0bb1f0e59f724  usr/share/perl5/Log/Message/Item.pm

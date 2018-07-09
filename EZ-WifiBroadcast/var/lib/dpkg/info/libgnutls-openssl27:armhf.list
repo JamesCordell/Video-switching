@@ -1,0 +1,12 @@
+/.
+/usr
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/libgnutls-openssl.so.27.0.2
+/usr/share
+/usr/share/doc
+/usr/share/doc/libgnutls-openssl27
+/usr/share/doc/libgnutls-openssl27/copyright
+/usr/share/doc/libgnutls-openssl27/changelog.Debian.gz
+/usr/share/doc/libgnutls-openssl27/changelog.gz
+/usr/lib/arm-linux-gnueabihf/libgnutls-openssl.so.27

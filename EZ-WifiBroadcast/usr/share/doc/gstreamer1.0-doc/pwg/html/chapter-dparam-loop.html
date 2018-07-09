@@ -1,0 +1,29 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>The Data Processing Loop</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-dparams.html" title="Chapter 20. Supporting Dynamic Parameters"><link rel="prev" href="chapter-dparams.html" title="Chapter 20. Supporting Dynamic Parameters"><link rel="next" href="chapter-advanced-interfaces.html" title="Chapter 21. Interfaces"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">The Data Processing Loop</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-dparams.html">Prev</a> </td><th width="60%" align="center">Chapter 20. Supporting Dynamic Parameters</th><td width="20%" align="right"> <a accesskey="n" href="chapter-advanced-interfaces.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="chapter-dparam-loop"></a>The Data Processing Loop</h2></div></div></div><p>
+    In the last section we learned how to mark GObject params as controllable.
+    Application developers can then queue parameter changes for these parameters.
+    The approach the controller subsystem takes is to make plugins responsible 
+    for pulling the changes in. This requires just one action:
+  </p><pre class="programlisting">
+    gst_object_sync_values(element,timestamp);
+  </pre><p>
+    This call makes all parameter-changes for the given timestamp active by
+    adjusting the GObject properties of the element. Its up to the element to
+    determine the synchronisation rate.
+  </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="chapter-dparam-loop-video"></a>The Data Processing Loop for Video Elements</h3></div></div></div><p>
+      For video processing elements it is the best to synchronise for every frame.
+      That means one would add the <code class="function">gst_object_sync_values()</code>
+      call described in the previous section to the data processing function of
+      the element.
+    </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="chapter-dparam-loop-audio"></a>The Data Processing Loop for Audio Elements</h3></div></div></div><p>
+      For audio processing elements the case is not as easy as for video
+      processing elements. The problem here is that audio has a much higher rate.
+      For PAL video one will e.g. process 25 full frames per second, but for
+      standard audio it will be 44100 samples.
+      It is rarely useful to synchronise controllable parameters that often. 
+      The easiest solution is also to have just one synchronisation call per
+      buffer processing. This makes the control-rate depend on the buffer
+      size.
+    </p><p>
+      Elements that need a specific control-rate need to break their data
+      processing loop to synchronise every n-samples.
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-dparams.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-dparams.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-advanced-interfaces.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 20. Supporting Dynamic Parameters </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 21. Interfaces</td></tr></table></div></body></html>

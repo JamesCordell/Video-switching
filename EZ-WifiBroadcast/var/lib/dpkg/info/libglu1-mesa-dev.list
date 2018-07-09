@@ -1,0 +1,17 @@
+/.
+/usr
+/usr/include
+/usr/include/GL
+/usr/include/GL/glu.h
+/usr/include/GL/glu_mangle.h
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/pkgconfig
+/usr/lib/arm-linux-gnueabihf/pkgconfig/glu.pc
+/usr/lib/arm-linux-gnueabihf/libGLU.a
+/usr/share
+/usr/share/doc
+/usr/share/doc/libglu1-mesa-dev
+/usr/share/doc/libglu1-mesa-dev/copyright
+/usr/share/doc/libglu1-mesa-dev/changelog.Debian.gz
+/usr/lib/arm-linux-gnueabihf/libGLU.so

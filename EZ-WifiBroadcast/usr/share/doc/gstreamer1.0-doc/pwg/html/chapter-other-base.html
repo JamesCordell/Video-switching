@@ -1,0 +1,133 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 23. Pre-made base classes</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-other.html" title="Part IV. Creating special element types"><link rel="prev" href="part-other.html" title="Part IV. Creating special element types"><link rel="next" href="section-base-src.html" title="Writing a source"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 23. Pre-made base classes</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="part-other.html">Prev</a> </td><th width="60%" align="center">Part IV. Creating special element types</th><td width="20%" align="right"> <a accesskey="n" href="section-base-src.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-other-base"></a>Chapter 23. Pre-made base classes</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-other-base.html#section-base-sink">Writing a sink</a></span></dt><dd><dl><dt><span class="sect2"><a href="chapter-other-base.html#section-base-audiosink">Writing an audio sink</a></span></dt><dt><span class="sect2"><a href="chapter-other-base.html#section-base-videosink">Writing a video sink</a></span></dt></dl></dd><dt><span class="sect1"><a href="section-base-src.html">Writing a source</a></span></dt><dd><dl><dt><span class="sect2"><a href="section-base-src.html#section-base-audiosrc">Writing an audio source</a></span></dt></dl></dd><dt><span class="sect1"><a href="section-base-transform.html">Writing a transformation element</a></span></dt></dl></div><p>
+    So far, we've been looking at low-level concepts of creating any type of
+    <span class="application">GStreamer</span> element. Now, let's assume that all you want is to create an
+    simple audiosink that works exactly the same as, say,
+    <span class="quote">“<span class="quote">esdsink</span>”</span>, or a filter that simply normalizes audio volume.
+    Such elements are very general in concept and since they do nothing
+    special, they should be easier to code than to provide your own scheduler
+    activation functions and doing complex caps negotiation. For this purpose,
+    <span class="application">GStreamer</span> provides base classes that simplify some types of elements.
+    Those base classes will be discussed in this chapter.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-base-sink"></a>Writing a sink</h2></div></div></div><p>
+      Sinks are special elements in <span class="application">GStreamer</span>. This is because sink elements
+      have to take care of <span class="emphasis"><em>preroll</em></span>, which is the process
+      that takes care that elements going into the
+      <code class="classname">GST_STATE_PAUSED</code> state will have buffers ready
+      after the state change. The result of this is that such elements can
+      start processing data immediately after going into the
+      <code class="classname">GST_STATE_PLAYING</code> state, without requiring to
+      take some time to initialize outputs or set up decoders; all that is done
+      already before the state-change to <code class="classname">GST_STATE_PAUSED</code>
+      successfully completes.
+    </p><p>
+      Preroll, however, is a complex process that would require the same
+      code in many elements. Therefore, sink elements can derive from the
+      <code class="classname">GstBaseSink</code> base-class, which does preroll and
+      a few other utility functions automatically. The derived class only
+      needs to implement a bunch of virtual functions and will work
+      automatically.
+    </p><p>
+      The base class implement much of the synchronization logic that a
+      sink has to perform.
+    </p><p>
+      The <code class="classname">GstBaseSink</code> base-class specifies some
+      limitations on elements, though:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          It requires that the sink only has one sinkpad. Sink elements that
+          need more than one sinkpad, must make a manager element with
+          multiple GstBaseSink elements inside.
+        </p></li></ul></div><p>
+      Sink elements can derive from <code class="classname">GstBaseSink</code> using
+      the usual <code class="classname">GObject</code> convenience macro
+      <code class="function">G_DEFINE_TYPE ()</code>:
+    </p><pre class="programlisting">
+G_DEFINE_TYPE (GstMySink, gst_my_sink, GST_TYPE_BASE_SINK);
+
+[..]
+
+static void
+gst_my_sink_class_init (GstMySinkClass * klass)
+{
+  klass-&gt;set_caps = [..];
+  klass-&gt;render = [..];
+[..]
+}
+    </pre><p>
+      The advantages of deriving from <code class="classname">GstBaseSink</code> are
+      numerous:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Derived implementations barely need to be aware of preroll, and do
+          not need to know anything about the technical implementation
+          requirements of preroll. The base-class does all the hard work.
+        </p><p>
+          Less code to write in the derived class, shared code (and thus
+          shared bugfixes).
+        </p></li></ul></div><p>
+      There are also specialized base classes for audio and video, let's look
+      at those a bit.
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-base-audiosink"></a>Writing an audio sink</h3></div></div></div><p>
+        Essentially, audio sink implementations are just a special case of a
+        general sink. An audio sink has the added complexity that it needs to
+        schedule playback of samples. It must match the clock selected in the
+        pipeline against the clock of the audio device and calculate and
+        compensate for drift and jitter.
+      </p><p>
+        There are two audio base classes that you can choose to
+        derive from, depending on your needs:
+        <code class="classname">GstAudioBasesink</code> and
+        <code class="classname">GstAudioSink</code>. The audiobasesink provides full
+        control over how synchronization and scheduling is handled, by using
+        a ringbuffer that the derived class controls and provides. The
+        audiosink base-class is a derived class of the audiobasesink,
+        implementing a standard ringbuffer implementing default
+        synchronization and providing a standard audio-sample clock. Derived
+        classes of this base class merely need to provide a <code class="function">_open
+        ()</code>, <code class="function">_close ()</code> and a <code class="function">_write
+        ()</code> function implementation, and some optional functions.
+        This should suffice for many sound-server output elements and even
+        most interfaces. More demanding audio systems, such as Jack, would
+        want to implement the <code class="classname">GstAudioBaseSink</code>
+        base-class.
+      </p><p>
+        The <code class="classname">GstBaseAusioSink</code> has little to no
+        limitations and should fit virtually every implementation, but is
+        hard to implement. The <code class="classname">GstAudioSink</code>, on the
+        other hand, only fits those systems with a simple <code class="function">open
+        ()</code> / <code class="function">close ()</code> / <code class="function">write
+        ()</code> API (which practically means pretty much all of them),
+        but has the advantage that it is a lot easier to implement. The
+        benefits of this second base class are large:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+            Automatic synchronization, without any code in the derived class.
+          </p></li><li class="listitem"><p>
+            Also automatically provides a clock, so that other sinks (e.g. in
+            case of audio/video playback) are synchronized.
+          </p></li><li class="listitem"><p>
+            Features can be added to all audiosinks by making a change in the
+            base class, which makes maintenance easy.
+          </p></li><li class="listitem"><p>
+            Derived classes require only three small functions, plus some
+            <code class="classname">GObject</code> boilerplate code.
+          </p></li></ul></div><p>
+        In addition to implementing the audio base-class virtual functions,
+        derived classes can (should) also implement the
+        <code class="classname">GstBaseSink</code> <code class="function">set_caps ()</code> and
+        <code class="function">get_caps ()</code> virtual functions for negotiation.
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-base-videosink"></a>Writing a video sink</h3></div></div></div><p>
+        Writing a videosink can be done using the
+        <code class="classname">GstVideoSink</code> base-class, which derives from
+        <code class="classname">GstBaseSink</code> internally. Currently, it does
+        nothing yet but add another compile dependency, so derived classes
+        will need to implement all base-sink virtual functions. When they do
+        this correctly, this will have some positive effects on the end user
+        experience with the videosink:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+            Because of preroll (and the <code class="function">preroll ()</code> virtual
+            function), it is possible to display a video frame already when
+            going into the <code class="classname">GST_STATE_PAUSED</code> state.
+          </p></li><li class="listitem"><p>
+            By adding new features to <code class="classname">GstVideoSink</code>, it
+            will be possible to add extensions to videosinks that affect all of
+            them, but only need to be coded once, which is a huge maintenance
+            benefit.
+          </p></li></ul></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="part-other.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-other.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-base-src.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Part IV. Creating special element types </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Writing a source</td></tr></table></div></body></html>

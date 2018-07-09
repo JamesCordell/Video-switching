@@ -1,0 +1,12 @@
+/.
+/usr
+/usr/bin
+/usr/bin/evtest
+/usr/share
+/usr/share/man
+/usr/share/man/man1
+/usr/share/man/man1/evtest.1.gz
+/usr/share/doc
+/usr/share/doc/evtest
+/usr/share/doc/evtest/copyright
+/usr/share/doc/evtest/changelog.Debian.gz

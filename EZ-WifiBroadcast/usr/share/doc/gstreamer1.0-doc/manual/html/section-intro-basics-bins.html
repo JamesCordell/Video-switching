@@ -1,0 +1,16 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Bins and pipelines</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-intro-basics.html" title="Chapter 3. Foundations"><link rel="prev" href="section-intro-basics-pads.html" title="Pads"><link rel="next" href="section-intro-basics-communication.html" title="Communication"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Bins and pipelines</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-intro-basics-pads.html">Prev</a> </td><th width="60%" align="center">Chapter 3. Foundations</th><td width="20%" align="right"> <a accesskey="n" href="section-intro-basics-communication.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-intro-basics-bins"></a>Bins and pipelines</h2></div></div></div><p>
+      A <span class="emphasis"><em>bin</em></span> is a container for a collection of elements.
+      Since bins are subclasses of elements
+      themselves, you can mostly control a bin as if it were an element,
+      thereby abstracting away a lot of complexity for your application. You
+      can, for example change state on all elements in a bin by changing the
+      state of that bin itself. Bins also forward bus messages from their
+      contained children (such as error messages, tag messages or EOS messages).
+    </p><p>
+      A <span class="emphasis"><em>pipeline</em></span> is a top-level bin. It provides a bus for
+      the application and manages the synchronization for its children. 
+      As you set it to PAUSED or PLAYING state, data flow will start and media
+      processing will take place. Once started, pipelines will run in a
+      separate thread until you stop them or the end
+      of the data stream is reached.
+    </p><div class="figure-float" style="float: left;"><div class="figure"><a name="section-pipeline-img"></a><p class="title"><b>Figure 3.1. <span class="application">GStreamer</span> pipeline for a simple ogg player</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/simple-player.png" width="405" alt="GStreamer pipeline for a simple ogg player"></div></div></div><br class="figure-break"></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-intro-basics-pads.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-intro-basics.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-intro-basics-communication.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Pads </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Communication</td></tr></table></div></body></html>

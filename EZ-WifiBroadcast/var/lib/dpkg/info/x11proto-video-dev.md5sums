@@ -1,0 +1,10 @@
+1f3edd2ace8796dd097251d0e1c86fda  usr/include/X11/extensions/Xv.h
+8c7fc089eee309c0a56bec988b4b3934  usr/include/X11/extensions/XvMC.h
+709d348c9484734e8b4eb3e0636829c4  usr/include/X11/extensions/XvMCproto.h
+0cb24ef2eb9df61ef19d5e7e4b8700ad  usr/include/X11/extensions/Xvproto.h
+2abe7d451e431160184495f230786dc7  usr/include/X11/extensions/vldXvMC.h
+6e31c9b24965c24f8c7236987f468079  usr/share/doc/x11proto-video-dev/changelog.Debian.gz
+4c099e7d2386d1ebe697844997a17c9c  usr/share/doc/x11proto-video-dev/changelog.gz
+9546612a42a812afafbe8fbf013c7267  usr/share/doc/x11proto-video-dev/copyright
+0e6f7a772ae0aca11be9aebf1d0151f0  usr/share/doc/x11proto-video-dev/xv-protocol-v2.txt.gz
+44540a0a5a37b8b4cbb2fdcfbc6ee968  usr/share/pkgconfig/videoproto.pc

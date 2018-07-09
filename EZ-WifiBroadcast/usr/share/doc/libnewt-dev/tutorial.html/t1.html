@@ -1,0 +1,455 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Writing Programs Using newt</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="NEXT"
+TITLE="Basic Newt Functions"
+HREF="x100.html"></HEAD
+><BODY
+CLASS="ARTICLE"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="TITLE"
+><A
+NAME="AEN2"
+>Writing Programs Using <TT
+CLASS="LITERAL"
+>newt</TT
+></A
+></H1
+><H3
+CLASS="AUTHOR"
+><A
+NAME="AEN5"
+>Erik Troan, &#60;ewt@redhat.com&#62;</A
+></H3
+><P
+CLASS="PUBDATE"
+>v0.31, 2003-Jan-06<BR></P
+><DIV
+><DIV
+CLASS="ABSTRACT"
+><P
+></P
+><A
+NAME="AEN8"
+></A
+><P
+>The <TT
+CLASS="LITERAL"
+>newt</TT
+> windowing system is a terminal-based window and widget
+library designed for writing applications with a simple, but user-friendly,
+interface. While <TT
+CLASS="LITERAL"
+>newt</TT
+> is not intended to provide the rich feature
+set advanced applications may require, it has proven to be flexible enough
+for a wide range of applications (most notably, Red Hat's installation
+process). This tutorial explains the design philosophy behind <TT
+CLASS="LITERAL"
+>newt</TT
+> and
+how to use <TT
+CLASS="LITERAL"
+>newt</TT
+> from your programs.</P
+><P
+></P
+></DIV
+></DIV
+><HR></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="AEN14"
+>Introduction</A
+></H1
+><P
+><TT
+CLASS="LITERAL"
+>Newt</TT
+> has a definite design philosophy behind it, and knowing that design
+makes it significantly easier to craft robust <TT
+CLASS="LITERAL"
+>newt</TT
+> applications. This
+tutorial documents <TT
+CLASS="LITERAL"
+>newt</TT
+> 0.30 --- older versions of <TT
+CLASS="LITERAL"
+>newt</TT
+> had
+annoying inconsistencies in it (which writing this tutorial pointed out),
+which were removed while this tutorial was written. The latest version of
+<TT
+CLASS="LITERAL"
+>newt</TT
+> is always available from Red Hat.</P
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN22"
+>Background</A
+></H2
+><P
+><TT
+CLASS="LITERAL"
+>Newt</TT
+> was originally designed for use in the install code for
+Red Hat Linux. As this install code runs in an environment with limited
+resources (most importantly limited filesystem space), <TT
+CLASS="LITERAL"
+>newt</TT
+>'s size
+was immediately an issue. To help minimize its size, the following design
+decisions were made early in its implementation:</P
+><P
+></P
+><UL
+><LI
+><P
+> <TT
+CLASS="LITERAL"
+>newt</TT
+> does not use an event-driven architecture.</P
+></LI
+><LI
+><P
+> <TT
+CLASS="LITERAL"
+>newt</TT
+> is written in C, not C++. While there has been interest
+in constructing C++ wrapper classes around the <TT
+CLASS="LITERAL"
+>newt</TT
+> API, nothing has
+yet come of those ideas.</P
+></LI
+><LI
+><P
+> Windows must be created and destroyed as a stack (in other words, all
+<TT
+CLASS="LITERAL"
+>newt</TT
+> windows behave as modal dialogs). This is probably
+the greatest functionality restriction of <TT
+CLASS="LITERAL"
+>newt</TT
+>.</P
+></LI
+><LI
+><P
+> The tty keyboard is the only supported input device.</P
+></LI
+><LI
+><P
+> Many behaviours, such as widget traversal order, are difficult
+or impossible to change.</P
+></LI
+></UL
+><P
+>While <TT
+CLASS="LITERAL"
+>newt</TT
+> provides a complete API, it does not handle the low-level
+screen drawing itself. Instead, <TT
+CLASS="LITERAL"
+>newt</TT
+> is layered on top of the screen
+management capabilities of John E. Davis's 
+<A
+HREF="ftp://space.mit.edu/pub/davis/slang/"
+TARGET="_top"
+>S-Lang</A
+> library.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN47"
+>Designing <TT
+CLASS="LITERAL"
+>newt</TT
+> applications</A
+></H2
+><P
+>As <TT
+CLASS="LITERAL"
+>newt</TT
+> is not event driven and forces modal windows (forcing window
+order to behave like a stack), newt applications tend to look quite like
+other text-mode programs. It is quite straightforward to convert a command
+line program which uses simple user prompts into a <TT
+CLASS="LITERAL"
+>newt</TT
+> application.
+Some of the programs run as part of the Red Hat installation process
+(such as <TT
+CLASS="LITERAL"
+>Xconfigurator</TT
+> and <TT
+CLASS="LITERAL"
+>mouseconfig</TT
+>) were originally written
+as simple terminal mode programs which used line-oriented menus to get
+input from the user and were later converted into <TT
+CLASS="LITERAL"
+>newt</TT
+> applications
+(through a process affectionately known as newtering). Such a conversion
+does not require changes to the control flow of most applications.
+
+Programming <TT
+CLASS="LITERAL"
+>newt</TT
+> is dramatically different from writing programs for
+most other windowing systems as <TT
+CLASS="LITERAL"
+>newt</TT
+>'s API is not event driven. This
+means that <TT
+CLASS="LITERAL"
+>newt</TT
+> applications look dramatically different from programs
+written for event-driven architectures such as Motif, <TT
+CLASS="LITERAL"
+>gtk</TT
+>, or even
+Borland's old TurboVision libraries.
+
+When you're designing your <TT
+CLASS="LITERAL"
+>newt</TT
+> program, keep this differentiation
+in mind. As long as you plan your application to call a function to
+get input and then continue (rather then having your program called
+when input is ready), programming with the newt libraries should be
+simple.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN61"
+>Components</A
+></H2
+><P
+>Displayable items in <TT
+CLASS="LITERAL"
+>newt</TT
+> are known as <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>components</I
+></SPAN
+>, which are
+analogous to the widgets provided by most Unix widget sets. There are
+two main types of components in <TT
+CLASS="LITERAL"
+>newt</TT
+>, forms and everything else.
+Forms logically group components into functional sets. When an application
+is ready to get input from a user, it ``runs a form'', which makes the
+form active and lets the user enter information into the components the
+form contains. A form may contain any other component, including other
+forms. Using subforms in this manner lets the application change the details
+of how the user tabs between components on the form, scroll regions of the
+screen, and control background colors for portions of windows.
+
+Every component is of type <TT
+CLASS="LITERAL"
+>newtComponent</TT
+>, which is an opaque type. It's
+guaranteed to be a pointer though, which lets applications move it through
+void pointers if the need arises. Variables of type <TT
+CLASS="LITERAL"
+>newtComponent</TT
+> should
+never be directly manipulated -- they should only be passed to <TT
+CLASS="LITERAL"
+>newt</TT
+>
+functions. As <TT
+CLASS="LITERAL"
+>newtComponent</TT
+> variables are pointers, remember that
+they are always passed by value -- if you pass a <TT
+CLASS="LITERAL"
+>newtComponent</TT
+> to
+a function which manipulates it, that component is manipulated everywhere,
+not just inside of that function (which is nearly always the behaviour
+you want).</P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN72"
+>Conventions</A
+></H2
+><P
+><TT
+CLASS="LITERAL"
+>Newt</TT
+> uses a number of conventions to make it easier for programmers
+to use. 
+
+
+<P
+></P
+><UL
+><LI
+><P
+> All functions which manipulate data structures take the data
+structure being modified as their first parameter. For example, all
+of the functions which manipulate forms expect the <TT
+CLASS="LITERAL"
+>newtComponent</TT
+>
+for that form to be the first parameter.</P
+></LI
+><LI
+><P
+> As <TT
+CLASS="LITERAL"
+>newt</TT
+> is loosely typed (forcing all of the components into
+a single variable makes coding easier, but nullifies the value of type
+checking), <TT
+CLASS="LITERAL"
+>newt</TT
+> functions include the name of the type they are
+manipulating. An example of this is <TT
+CLASS="LITERAL"
+>newtFormAddComponent()</TT
+>, which
+adds a component to a form. Note that the first parameter to this function
+is a form, as the name would suggest.</P
+></LI
+><LI
+><P
+> When screen coordinates are passed into a function, the 
+x location precedes the y location. To help keep this clear,
+we'll use the words ``left'' and ``top'' to describe those indicators (with
+left corresponding to the x position).</P
+></LI
+><LI
+><P
+> When box sizes are passed, the horizontal width precedes the vertical
+width.</P
+></LI
+><LI
+><P
+> When both a screen location and a box size are being passed, the
+screen location precedes the box size.</P
+></LI
+><LI
+><P
+> When any component other then a form is created, the first two
+parameters are always the (left, right) location.</P
+></LI
+><LI
+><P
+> Many functions take a set of flags as the final parameter. These
+flags may be logically ORed together to pass more then one flag at a time.</P
+></LI
+><LI
+><P
+> <TT
+CLASS="LITERAL"
+>Newt</TT
+> uses <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>callback</I
+></SPAN
+> functions to convey certain events to
+the application. While callbacks differ slightly in their parameters, most
+of them allow the application to specify an arbitrary argument to be passed
+to the callback when the callback is invoked. This argument is always a 
+<TT
+CLASS="LITERAL"
+>void *</TT
+>, which allows the application great flexibility.</P
+></LI
+></UL
+></P
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="x100.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Basic <TT
+CLASS="LITERAL"
+>Newt</TT
+> Functions</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

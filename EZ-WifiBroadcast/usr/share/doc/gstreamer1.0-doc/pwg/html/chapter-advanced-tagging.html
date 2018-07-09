@@ -1,0 +1,41 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 22. Tagging (Metadata and Streaminfo)</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-advanced.html" title="Part III. Advanced Filter Concepts"><link rel="prev" href="section-iface-navigation.html" title="Navigation Interface"><link rel="next" href="section-tagging-read.html" title="Reading Tags from Streams"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 22. Tagging (Metadata and Streaminfo)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-iface-navigation.html">Prev</a> </td><th width="60%" align="center">Part III. Advanced Filter Concepts</th><td width="20%" align="right"> <a accesskey="n" href="section-tagging-read.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-advanced-tagging"></a>Chapter 22. Tagging (Metadata and Streaminfo)</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-advanced-tagging.html#section-tagging-overview">Overview</a></span></dt><dt><span class="sect1"><a href="section-tagging-read.html">Reading Tags from Streams</a></span></dt><dt><span class="sect1"><a href="section-tagging-write.html">Writing Tags to Streams</a></span></dt></dl></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-tagging-overview"></a>Overview</h2></div></div></div><p>
+    Tags are pieces of information stored in a stream that are not the content
+    itself, but they rather <span class="emphasis"><em>describe</em></span> the content. Most
+    media container formats support tagging in one way or another. Ogg uses
+    VorbisComment for this, MP3 uses ID3, AVI and WAV use RIFF's INFO list
+    chunk, etc. GStreamer provides a general way for elements to read tags from
+    the stream and expose this to the user. The tags (at least the metadata)
+    will be part of the stream inside the pipeline. The consequence of this is
+    that transcoding of files from one format to another will automatically
+    preserve tags, as long as the input and output format elements both support
+    tagging.
+  </p><p>
+    Tags are separated in two categories in GStreamer, even though applications
+    won't notice anything of this. The first are called <span class="emphasis"><em>metadata</em></span>,
+    the second are called <span class="emphasis"><em>streaminfo</em></span>. Metadata are tags
+    that describe the non-technical parts of stream content. They can be
+    changed without needing to re-encode the stream completely. Examples are
+    <span class="quote">“<span class="quote">author</span>”</span>, <span class="quote">“<span class="quote">title</span>”</span> or <span class="quote">“<span class="quote">album</span>”</span>. The
+    container format might still need to be re-written for the tags to fit in,
+    though. Streaminfo, on the other hand, are tags that describe the stream
+    contents technically. To change them, the stream needs to be re-encoded.
+    Examples are <span class="quote">“<span class="quote">codec</span>”</span> or <span class="quote">“<span class="quote">bitrate</span>”</span>. Note that some
+    container formats (like ID3) store various streaminfo tags as metadata in
+    the file container, which means that they can be changed so that they don't
+    match the content in the file any more. Still, they are called metadata
+    because <span class="emphasis"><em>technically</em></span>, they can be changed without
+    re-encoding the whole stream, even though that makes them invalid. Files
+    with such metadata tags will have the same tag twice: once as metadata,
+    once as streaminfo.
+  </p><p>
+    There is no special name for tag reading elements in <span class="application">GStreamer</span>. There are
+    specialised elements (e.g. id3demux) that do nothing besides tag reading,
+    but any  <span class="application">GStreamer</span> element may extract tags while processing data, and
+    most decoders, demuxers and parsers do.
+  </p><p>
+    A tag writer is called <a class="ulink" href="../../gstreamer/html/GstTagSetter.html" target="_top"><code class="classname">TagSetter</code></a>.
+    An element supporting both can be used in a tag editor for quick tag
+    changing (note: in-place tag editing is still poorly supported at the time
+    of writing and usually requires tag extraction/stripping and remuxing of
+    the stream with new tags).
+  </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-iface-navigation.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-advanced.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-tagging-read.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Navigation Interface </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Reading Tags from Streams</td></tr></table></div></body></html>

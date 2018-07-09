@@ -1,0 +1,9 @@
+c4afed15701dff2978f160f47bff4b1b  usr/bin/cx18-ctl
+5f005974c79e4daa812cd28744b09636  usr/bin/decode_tm6000
+06a7272f6b5698dff8717ef2ec0023fd  usr/bin/ivtv-ctl
+7ca4123e67ce9b10daaff69734fc317e  usr/bin/media-ctl
+2db98bd91d30267a80aa01ea683d9282  usr/bin/rds-ctl
+df6911b5fe2d0d33027d7c5787cca6a4  usr/bin/v4l2-compliance
+4b60c87ae54f0c8ab05f2330e7e534ca  usr/bin/v4l2-ctl
+ea0664ae66438ea97dafa879d9ee93b0  usr/bin/v4l2-sysfs-path
+800b1e9d88f37697b94e340e1a851f51  usr/sbin/v4l2-dbg

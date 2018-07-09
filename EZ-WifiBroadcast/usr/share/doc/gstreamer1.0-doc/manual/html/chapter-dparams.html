@@ -1,0 +1,31 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 16. Dynamic Controllable Parameters</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="part-advanced.html" title="Part III. Advanced GStreamer concepts"><link rel="prev" href="section-buffering-strategies.html" title="Buffering strategies"><link rel="next" href="section-dparams-parameters.html" title="Setting up parameter control"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 16. Dynamic Controllable Parameters</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-buffering-strategies.html">Prev</a> </td><th width="60%" align="center">Part III. Advanced <span class="application">GStreamer</span> concepts</th><td width="20%" align="right"> <a accesskey="n" href="section-dparams-parameters.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-dparams"></a>Chapter 16. Dynamic Controllable Parameters</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-dparams.html#section-dparams-getting-started">Getting Started</a></span></dt><dt><span class="sect1"><a href="section-dparams-parameters.html">Setting up parameter control</a></span></dt></dl></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-dparams-getting-started"></a>Getting Started</h2></div></div></div><p>
+      The controller subsystem offers a lightweight way to adjust gobject
+      properties over stream-time. Normally these properties are changed using
+      <code class="function">g_object_set()</code>. Timing those calls reliably so that
+      the changes affect certain stream times is close to impossible. The
+      controller takes time into account. It works by attaching control-sources
+      to properties using control-bindings. Control-sources provide values for a
+      given time-stamp that are usually in the range of 0.0 to 1.0. 
+      Control-bindings map the control-value to a gobject property they are bound to
+      - converting the type and scaling to the target property value range.
+      At run-time the elements continuously pull values changes for the current
+      stream-time to update the gobject properties. GStreamer includes a few
+      different control-sources and control-bindings already, but applications can
+      define their own by sub-classing from the respective base classes.
+    </p><p>
+      Most parts of the controller mechanism is implemented in GstObject. Also the
+      base classes for control-sources and control-bindings are included in the core
+      library. The existing implementations are contained within the
+      <code class="filename">gstcontroller</code> library.
+      You need to include the header in your application's source file:
+    </p><pre class="programlisting">
+...
+#include &lt;gst/gst.h&gt;
+#include &lt;gst/controller/gstinterpolationcontrolsource.h&gt;
+#include &lt;gst/controller/gstdirectcontrolbinding.h&gt;
+...
+    </pre><p>
+      Your application should link to the shared library 
+      <code class="filename">gstreamer-controller</code>. One can get the required flag for
+      compiler and linker by using pkg-config for gstreamer-controller-1.0.
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-buffering-strategies.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-advanced.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-dparams-parameters.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Buffering strategies  </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Setting up parameter control</td></tr></table></div></body></html>

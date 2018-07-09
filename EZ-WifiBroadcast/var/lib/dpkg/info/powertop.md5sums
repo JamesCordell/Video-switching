@@ -1,0 +1,14 @@
+7e39af462b86d7a59a51430d19d69fc7  usr/sbin/powertop
+5e0a6e3f93a16745897eefd78bfb2d8e  usr/share/doc/powertop/changelog.Debian.gz
+be13f958e8aba50242f76d64d904c6af  usr/share/doc/powertop/copyright
+7f205f53c13f856e7d7bf9b97af1f33e  usr/share/locale/ca/LC_MESSAGES/powertop.mo
+1aadec6108140e4f72face9e0710f58a  usr/share/locale/cs_CZ/LC_MESSAGES/powertop.mo
+6a1e5953e01c18f94bc8ca6580459f48  usr/share/locale/de_DE/LC_MESSAGES/powertop.mo
+ea9e81cda87e7eff7756693a5bded5e5  usr/share/locale/en_GB/LC_MESSAGES/powertop.mo
+46e8aa109a89911bf5f227a752f555c2  usr/share/locale/en_US/LC_MESSAGES/powertop.mo
+0f13d9cde258b81141788637b64527eb  usr/share/locale/es_ES/LC_MESSAGES/powertop.mo
+9d34bec00d2382599eb50058994f0d92  usr/share/locale/hu_HU/LC_MESSAGES/powertop.mo
+7c701dbd9b1ad49c299e49f5596bf8b5  usr/share/locale/id_ID/LC_MESSAGES/powertop.mo
+4f0eecbe26cfd1bc8d91208056325e33  usr/share/locale/nl_NL/LC_MESSAGES/powertop.mo
+73542861ecf7c03c2ddc4d7569d4171a  usr/share/locale/zh_TW/LC_MESSAGES/powertop.mo
+21000d435e6f7f9cc7634286678c2080  usr/share/man/man8/powertop.8.gz

@@ -1,0 +1,70 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>More about element factories</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-elements.html" title="Chapter 5. Elements"><link rel="prev" href="section-elements-properties.html" title="Using an element as a GObject"><link rel="next" href="section-elements-link.html" title="Linking elements"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">More about element factories</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-elements-properties.html">Prev</a> </td><th width="60%" align="center">Chapter 5. Elements</th><td width="20%" align="right"> <a accesskey="n" href="section-elements-link.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-elements-factories"></a>More about element factories</h2></div></div></div><p>
+      In the previous section, we briefly introduced the <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/stable/gstreamer/html/GstElementFactory.html" target="_top"><code class="classname">GstElementFactory</code></a>
+      object already as a way to create instances of an element. Element
+      factories, however, are much more than just that. Element factories
+      are the basic types retrieved from the <span class="application">GStreamer</span> registry, they
+      describe all plugins and elements that <span class="application">GStreamer</span> can create. This
+      means that element factories are useful for automated element
+      instancing, such as what autopluggers do, and for creating lists
+      of available elements.
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-elements-factories-details"></a>Getting information about an element using a factory</h3></div></div></div><p>
+        Tools like <span class="command"><strong>gst-inspect</strong></span> will provide some generic
+        information about an element, such as the person that wrote the
+        plugin, a descriptive name (and a shortname), a rank and a category.
+        The category can be used to get the type of the element that can
+        be created using this element factory. Examples of categories include
+        <code class="classname">Codec/Decoder/Video</code> (video decoder),
+        <code class="classname">Codec/Encoder/Video</code> (video encoder),
+        <code class="classname">Source/Video</code> (a video generator),
+        <code class="classname">Sink/Video</code> (a video output), and all these
+        exist for audio as well, of course. Then, there's also
+        <code class="classname">Codec/Demuxer</code> and
+        <code class="classname">Codec/Muxer</code> and a whole lot more.
+        <span class="command"><strong>gst-inspect</strong></span> will give a list of all factories, and
+        <span class="command"><strong>gst-inspect &lt;factory-name&gt;</strong></span> will list all
+        of the above information, and a lot more.
+      </p><pre class="programlisting">
+#include &lt;gst/gst.h&gt;
+
+int
+main (int   argc,
+      char *argv[])
+{
+  GstElementFactory *factory;
+
+  /* init GStreamer */
+  gst_init (&amp;argc, &amp;argv);
+
+  /* get factory */
+  factory = gst_element_factory_find ("fakesrc");
+  if (!factory) {
+    g_print ("You don't have the 'fakesrc' element installed!\n");
+    return -1;
+  }
+
+  /* display information */
+  g_print ("The '%s' element is a member of the category %s.\n"
+           "Description: %s\n",
+           gst_plugin_feature_get_name (GST_PLUGIN_FEATURE (factory)),
+           gst_element_factory_get_metadata (factory, GST_ELEMENT_METADATA_KLASS),
+           gst_element_factory_get_metadata (factory, GST_ELEMENT_METADATA_DESCRIPTION));
+
+  return 0;
+}
+      </pre><p>
+        You can use <code class="function">gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY)</code>
+        to get a list of all the element factories that <span class="application">GStreamer</span> knows
+        about.
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-elements-factories-padtemplates"></a>Finding out what pads an element can contain</h3></div></div></div><p>
+        Perhaps the most powerful feature of element factories is that
+        they contain a full description of the pads that the element
+        can generate, and the capabilities of those pads (in layman words:
+        what types of media can stream over those pads), without actually
+        having to load those plugins into memory. This can be used
+        to provide a codec selection list for encoders, or it can be used
+        for autoplugging purposes for media players. All current
+        <span class="application">GStreamer</span>-based media players and autopluggers work this way.
+        We'll look closer at these features as we learn about
+        <code class="classname">GstPad</code> and <code class="classname">GstCaps</code>
+        in the next chapter: <a class="xref" href="chapter-pads.html" title="Chapter 8. Pads and capabilities">Pads and capabilities</a>
+      </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-elements-properties.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-elements.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-elements-link.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Using an element as a <code class="classname">GObject</code> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Linking elements</td></tr></table></div></body></html>

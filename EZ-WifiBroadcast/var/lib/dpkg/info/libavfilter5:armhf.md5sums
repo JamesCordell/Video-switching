@@ -1,0 +1,7 @@
+535db2caa43d2c9594136f04bcd2b2a0  usr/lib/arm-linux-gnueabihf/libavfilter.so.5.0.0
+68ca550632f92272806f3b5ee270dc20  usr/lib/arm-linux-gnueabihf/neon/vfp/libavfilter.so.5.0.0
+7906be10ad1a6590b1828dca02678003  usr/share/doc/libavfilter5/NEWS.Debian.gz
+de89fce7afd5d7cdf749816834ef1ec8  usr/share/doc/libavfilter5/changelog.Debian.gz
+2acc3c5082f447ab3fb0202f68ce8a7d  usr/share/doc/libavfilter5/changelog.gz
+323125fc98bc748defccc624b74fd752  usr/share/doc/libavfilter5/copyright
+65941b8ff5d612c4180097db91529231  usr/share/lintian/overrides/libavfilter5

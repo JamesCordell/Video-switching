@@ -1,0 +1,16 @@
+/.
+/usr
+/usr/include
+/usr/include/xcb
+/usr/include/xcb/sync.h
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/pkgconfig
+/usr/lib/arm-linux-gnueabihf/pkgconfig/xcb-sync.pc
+/usr/lib/arm-linux-gnueabihf/libxcb-sync.a
+/usr/share
+/usr/share/doc
+/usr/share/doc/libxcb-sync-dev
+/usr/share/doc/libxcb-sync-dev/copyright
+/usr/share/doc/libxcb-sync-dev/changelog.Debian.gz
+/usr/lib/arm-linux-gnueabihf/libxcb-sync.so

@@ -1,0 +1,9 @@
+3f614f201f71824f643e9c122a18655f  usr/include/SDL/SDL_ttf.h
+5eb3067ff13c125e5ef864bc02935772  usr/lib/arm-linux-gnueabihf/libSDL_ttf.a
+809b9a913e9e390c4f0464963a68486f  usr/lib/arm-linux-gnueabihf/pkgconfig/SDL_ttf.pc
+b12966c507f50d73c9f4444c1bd28da9  usr/share/doc/libsdl-ttf2.0-dev/changelog.Debian.gz
+fcbaba13902804e592ffa486d0cb62f5  usr/share/doc/libsdl-ttf2.0-dev/changelog.gz
+10976578142a4cb8d93acc5926c9ef86  usr/share/doc/libsdl-ttf2.0-dev/copyright
+420db6fb1f2d534bd60f3bb382600a90  usr/share/doc/libsdl-ttf2.0-dev/examples/Makefile
+56163004d0690840afd308a36f6df072  usr/share/doc/libsdl-ttf2.0-dev/examples/glfont.c.gz
+9c72a3741eb5234c9be91d4c830e4b6e  usr/share/doc/libsdl-ttf2.0-dev/examples/showfont.c.gz

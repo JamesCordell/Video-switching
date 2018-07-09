@@ -1,0 +1,15 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>QoS Messages</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-advanced-qos.html" title="Chapter 19. Quality Of Service (QoS)"><link rel="prev" href="section-throttle.html" title="Throttling"><link rel="next" href="chapter-dparams.html" title="Chapter 20. Supporting Dynamic Parameters"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">QoS Messages</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-throttle.html">Prev</a> </td><th width="60%" align="center">Chapter 19. Quality Of Service (QoS)</th><td width="20%" align="right"> <a accesskey="n" href="chapter-dparams.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-messages"></a>QoS Messages</h2></div></div></div><p>
+      In addition to the QOS events that are sent between elements in the
+      pipeline, there are also QOS messages posted on the pipeline bus to
+      inform the application of QoS decisions. The QOS message contains
+      the timestamps of when something was dropped along with the amount
+      of dropped vs processed items.  Elements must post a QOS
+      message under these conditions:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          The element dropped a buffer because of QoS reasons.
+        </p></li><li class="listitem"><p>
+          An element changes its processing strategy because of QoS reasons
+          (quality). This could include a decoder that decides to drop every
+          B frame to increase its processing speed or an effect element
+          switching to a lower quality algorithm.
+        </p></li></ul></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-throttle.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-advanced-qos.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-dparams.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Throttling </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 20. Supporting Dynamic Parameters</td></tr></table></div></body></html>

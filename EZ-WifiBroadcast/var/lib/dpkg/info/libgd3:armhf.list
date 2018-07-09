@@ -1,0 +1,15 @@
+/.
+/usr
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/libgd.so.3.0.0
+/usr/share
+/usr/share/doc
+/usr/share/doc/libgd3
+/usr/share/doc/libgd3/copyright
+/usr/share/doc/libgd3/changelog.Debian.gz
+/usr/share/doc/libgd3/changelog.gz
+/usr/share/lintian
+/usr/share/lintian/overrides
+/usr/share/lintian/overrides/libgd3
+/usr/lib/arm-linux-gnueabihf/libgd.so.3

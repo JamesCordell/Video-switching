@@ -1,0 +1,8 @@
+0827649fc415be87efde43ea0f0704d1  bin/setserial
+aad23fe93d8e85d40d1781643e5a435b  usr/share/doc/setserial/README
+4a2d555e9bd7477b25910cf7d0b9c413  usr/share/doc/setserial/README.Debian.gz
+46dd25c82b50bd4405c642afd7eb1167  usr/share/doc/setserial/changelog.Debian.gz
+0e1d2a53aafbf54f152442d61b3d87a0  usr/share/doc/setserial/copyright
+ab79e1512740866fa59de81ff560f5e6  usr/share/doc/setserial/pcmcia.repair
+a030f3d94310ceb81200d7aee9691581  usr/share/doc/setserial/serial.conf
+b18466825ef06071d72dad566507298f  usr/share/man/man8/setserial.8.gz

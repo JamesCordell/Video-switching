@@ -1,0 +1,119 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Structure of This Guide</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-intro-preface.html" title="Chapter 1. Preface"><link rel="prev" href="section-preface-reading.html" title="Preliminary Reading"><link rel="next" href="chapter-intro-basics.html" title="Chapter 2. Foundations"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Structure of This Guide</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-preface-reading.html">Prev</a> </td><th width="60%" align="center">Chapter 1. Preface</th><td width="20%" align="right"> <a accesskey="n" href="chapter-intro-basics.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-preface-structure"></a>Structure of This Guide</h2></div></div></div><p>
+      To help you navigate through this guide, it is divided into several large
+      parts. Each part addresses a particular broad topic concerning <span class="application">GStreamer</span>
+      plugin development. The parts of this guide are laid out in the following
+      order:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          <a class="xref" href="part-building.html" title="Part II. Building a Plugin">Building a Plugin</a> -
+          Introduction to the structure of a plugin, using an example audio
+          filter for illustration.
+        </p><p>
+          This part covers all the basic steps you generally need to perform
+          to build a plugin, such as registering the element with <span class="application">GStreamer</span>
+          and setting up the basics so it can receive data from and send data
+          to neighbour elements. The discussion begins by giving examples of
+          generating the basic structures and registering an element in
+          <a class="xref" href="chapter-building-boiler.html" title="Chapter 3. Constructing the Boilerplate">Constructing the Boilerplate</a>. Then, you will learn how
+          to write the code to get a basic filter plugin working in <a class="xref" href="chapter-building-pads.html" title="Chapter 4. Specifying the pads">Chapter 4, <i>Specifying the pads</i></a>, <a class="xref" href="chapter-building-chainfn.html" title="Chapter 5. The chain function">Chapter 5, <i>The chain function</i></a> and <a class="xref" href="chapter-statemanage-states.html" title="Chapter 8. What are states?">Chapter 8, <i>What are states?</i></a>.
+        </p><p>
+          After that, we will show some of the GObject concepts on how to
+          make an element configurable for applications and how to do
+          application-element interaction in
+          <a class="xref" href="chapter-building-args.html" title="Chapter 9. Adding Properties">Adding Properties</a> and <a class="xref" href="chapter-building-signals.html" title="Chapter 10. Signals">Chapter 10, <i>Signals</i></a>. Next, you will learn to build
+          a quick test application to test all that you've just learned in
+          <a class="xref" href="chapter-building-testapp.html" title="Chapter 11. Building a Test Application">Chapter 11, <i>Building a Test Application</i></a>. We will just touch upon
+          basics here. For full-blown application development, you should
+          look at <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/manual/html/index.html" target="_top">the
+          Application Development Manual</a>.
+        </p></li><li class="listitem"><p>
+          <a class="xref" href="part-advanced.html" title="Part III. Advanced Filter Concepts">Advanced Filter Concepts</a> -
+          Information on advanced features of <span class="application">GStreamer</span> plugin development.
+        </p><p>
+          After learning about the basic steps, you should be able to create a
+          functional audio or video filter plugin with some nice features.
+          However, <span class="application">GStreamer</span> offers more for plugin writers. This part of the
+          guide includes chapters on more advanced topics, such as scheduling,
+          media type definitions in <span class="application">GStreamer</span>, clocks, interfaces and
+          tagging. Since these features are purpose-specific, you can read them
+          in any order, most of them don't require knowledge from other
+          sections.
+        </p><p>
+          The first chapter, named <a class="xref" href="chapter-scheduling.html" title="Chapter 13. Different scheduling modes">Different scheduling modes</a>,
+          will explain some of the basics of element scheduling. It is not
+          very in-depth, but is mostly some sort of an introduction on why
+          other things work as they do. Read this chapter if you're interested
+          in <span class="application">GStreamer</span> internals. Next, we will apply this knowledge and
+          discuss another type of data transmission than what you learned in
+          <a class="xref" href="chapter-building-chainfn.html" title="Chapter 5. The chain function">Chapter 5, <i>The chain function</i></a>: <a class="xref" href="chapter-scheduling.html" title="Chapter 13. Different scheduling modes">Different scheduling modes</a>. Loop-based elements will give
+          you more control over input rate. This is useful when writing, for
+          example, muxers or demuxers.
+        </p><p>
+          Next, we will discuss media identification in <span class="application">GStreamer</span> in <a class="xref" href="chapter-building-types.html" title="Chapter 16. Types and Properties">Chapter 16, <i>Types and Properties</i></a>. You will learn how to define
+          new media types and get to know a list of standard media types
+          defined in <span class="application">GStreamer</span>.
+        </p><p>
+          In the next chapter, you will learn the concept of request- and
+          sometimes-pads, which are pads that are created dynamically, either
+          because the application asked for it (request) or because the media
+          stream requires it (sometimes). This will be in <a class="xref" href="chapter-advanced-request.html" title="Chapter 12. Request and Sometimes pads">Chapter 12, <i>Request and Sometimes pads</i></a>.
+        </p><p>
+          The next chapter, <a class="xref" href="chapter-advanced-clock.html" title="Chapter 18. Clocking">Chapter 18, <i>Clocking</i></a>, will
+          explain the concept of clocks in <span class="application">GStreamer</span>. You need this
+          information when you want to know how elements should achieve
+          audio/video synchronization.
+        </p><p>
+          The next few chapters will discuss advanced ways of doing
+          application-element interaction. Previously, we learned on the
+          GObject-ways of doing this in <a class="xref" href="chapter-building-args.html" title="Chapter 9. Adding Properties">Adding Properties</a>
+          and <a class="xref" href="chapter-building-signals.html" title="Chapter 10. Signals">Chapter 10, <i>Signals</i></a>. We will discuss
+          dynamic parameters, which are a way of defining element behaviour
+          over time in advance, in <a class="xref" href="chapter-dparams.html" title="Chapter 20. Supporting Dynamic Parameters">Chapter 20, <i>Supporting Dynamic Parameters</i></a>. Next,
+          you will learn about interfaces in <a class="xref" href="chapter-advanced-interfaces.html" title="Chapter 21. Interfaces">Chapter 21, <i>Interfaces</i></a>. Interfaces are very target-
+          specific ways of application-element interaction, based on GObject's
+          GInterface. Lastly, you will learn about how metadata is handled in
+          <span class="application">GStreamer</span> in <a class="xref" href="chapter-advanced-tagging.html" title="Chapter 22. Tagging (Metadata and Streaminfo)">Chapter 22, <i>Tagging (Metadata and Streaminfo)</i></a>.
+        </p><p>
+          The last chapter, <a class="xref" href="chapter-advanced-events.html" title="Chapter 17. Events: Seeking, Navigation and More">Chapter 17, <i>Events: Seeking, Navigation and More</i></a>, will
+          discuss the concept of events in <span class="application">GStreamer</span>. Events are, on the
+          one hand, another way of doing application-element interaction. It
+          takes care of seeking, for example. On the other hand, it is also
+          a way in which elements interact with each other, such as letting
+          each other know about media stream discontinuities, forwarding tags
+          inside a pipeline and so on.
+        </p></li><li class="listitem"><p>
+          <a class="xref" href="part-other.html" title="Part IV. Creating special element types">Creating special element types</a> - Explanation
+          of writing other plugin types.
+        </p><p>
+          Because the first two parts of the guide use an audio filter as an
+          example, the concepts introduced apply to filter plugins. But many of
+          the concepts apply equally to other plugin types, including sources,
+          sinks, and autopluggers. This part of the guide presents the issues
+          that arise when working on these more specialized plugin types. The
+          chapter starts with a special focus on elements that can be written
+          using a base-class (<a class="xref" href="chapter-other-base.html" title="Chapter 23. Pre-made base classes">Pre-made base classes</a>), and
+          later also goes into writing special types of elements in
+          <a class="xref" href="chapter-other-oneton.html" title="Chapter 24. Writing a Demuxer or Parser">Writing a Demuxer or Parser</a>, <a class="xref" href="chapter-other-ntoone.html" title="Chapter 25. Writing a N-to-1 Element or Muxer">Writing a N-to-1 Element or Muxer</a> and <a class="xref" href="chapter-other-manager.html" title="Chapter 26. Writing a Manager">Writing a Manager</a>.
+        </p></li><li class="listitem"><p>
+          <a class="xref" href="part-appendix.html" title="Part V. Appendices">Appendices</a> - Further
+          information for plugin developers.
+        </p><p>
+          The appendices contain some information that stubbornly refuses
+          to fit cleanly in other sections of the guide. Most of this section
+          is not yet finished.
+        </p></li></ul></div><p>
+      The remainder of this introductory part of the guide presents a short
+      overview of the basic concepts involved in <span class="application">GStreamer</span> plugin development.
+      Topics covered include <a class="xref" href="chapter-intro-basics.html#section-basics-elements" title="Elements and Plugins">Elements and Plugins</a>, <a class="xref" href="section-basics-pads.html" title="Pads">Pads</a>, <a class="xref" href="section-basics-data.html" title="GstMiniObject, Buffers and Events">Data, Buffers and Events</a> and
+      <a class="xref" href="section-basics-types.html" title="Media types and Properties">Types and Properties</a>. If you are already familiar with
+      this information, you can use this short overview to refresh your memory,
+      or you can skip to <a class="xref" href="part-building.html" title="Part II. Building a Plugin">Building a Plugin</a>.
+    </p><p>
+      As you can see, there a lot to learn, so let's get started!
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Creating compound and complex elements by extending from a GstBin.
+          This will allow you to create plugins that have other plugins embedded
+          in them.
+        </p></li><li class="listitem"><p>
+          Adding new media types to the registry along with typedetect functions.
+          This will allow your plugin to operate on a completely new media type.
+        </p></li></ul></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-preface-reading.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-intro-preface.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-intro-basics.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Preliminary Reading </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 2. Foundations</td></tr></table></div></body></html>

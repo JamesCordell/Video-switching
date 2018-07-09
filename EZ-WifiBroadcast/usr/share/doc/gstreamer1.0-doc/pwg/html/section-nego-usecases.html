@@ -1,0 +1,300 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Caps negotiation use cases</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-negotiation.html" title="Chapter 14. Caps negotiation"><link rel="prev" href="chapter-negotiation.html" title="Chapter 14. Caps negotiation"><link rel="next" href="section-nego-upstream.html" title="Upstream caps (re)negotiation"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Caps negotiation use cases</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-negotiation.html">Prev</a> </td><th width="60%" align="center">Chapter 14. Caps negotiation</th><td width="20%" align="right"> <a accesskey="n" href="section-nego-upstream.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-nego-usecases"></a>Caps negotiation use cases</h2></div></div></div><p>
+      In what follows we will look at some use cases for push-mode scheduling.
+      The pull-mode scheduling negotiation phase is discussed in
+      <a class="xref" href="section-nego-pullmode.html" title="Pull-mode Caps negotiation">the section called “Pull-mode Caps negotiation”</a> and is actually similar as we
+      will see. 
+    </p><p>
+      Since the sink pads only suggest formats and the source pads need to
+      decide, the most complicated work is done in the source pads.
+      We can identify 3 caps negotiation use cases for the source pads:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Fixed negotiation. An element can output one format only.
+          See <a class="xref" href="section-nego-usecases.html#section-nego-fixed" title="Fixed negotiation">the section called “Fixed negotiation”</a>.
+        </p></li><li class="listitem"><p>
+          Transform negotiation. There is a (fixed) transform between the
+          input and output format of the element, usually based on some
+          element property. The caps that the element will produce depend
+          on the upstream caps and the caps that the element can accept
+          depend on the downstream caps.
+          See <a class="xref" href="section-nego-usecases.html#section-nego-transform" title="Transform negotiation">the section called “Transform negotiation”</a>.
+        </p></li><li class="listitem"><p>
+          Dynamic negotiation. An element can output many formats.
+          See <a class="xref" href="section-nego-usecases.html#section-nego-dynamic" title="Dynamic negotiation">the section called “Dynamic negotiation”</a>.
+        </p></li></ul></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-nego-fixed"></a>Fixed negotiation</h3></div></div></div><p>
+        In this case, the source pad can only produce a fixed format. Usually
+        this format is encoded inside the media. No downstream element can
+        ask for a different format, the only way that the source pad will
+        renegotiate is when the element decides to change the caps itself.
+      </p><p>
+        Elements that could implement fixed caps (on their source pads) are,
+        in general, all elements that are not renegotiable. Examples include:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+            A typefinder, since the type found is part of the actual data stream
+            and can thus not be re-negotiated. The typefinder will look at the
+            stream of bytes, figure out the type, send a CAPS event with the
+            caps and then push buffers of the type.
+          </p></li><li class="listitem"><p>
+            Pretty much all demuxers, since the contained elementary data
+            streams are defined in the file headers, and thus not
+            renegotiable.
+          </p></li><li class="listitem"><p>
+            Some decoders, where the format is embedded in the data stream
+            and not part of the peercaps <span class="emphasis"><em>and</em></span> where the
+            decoder itself is not reconfigurable, too.
+          </p></li><li class="listitem"><p>
+            Some sources that produce a fixed format.
+          </p></li></ul></div><p>
+        <code class="function">gst_pad_use_fixed_caps()</code> is used on the source
+        pad with fixed caps. As long as the pad is not negotiated, the default
+        CAPS query will return the caps presented in the padtemplate. As soon
+        as the pad is negotiated, the CAPS query will return the negotiated
+        caps (and nothing else). These are the relevant code snippets for fixed
+        caps source pads.
+      </p><pre class="programlisting">
+
+[..]
+  pad = gst_pad_new_from_static_template (..);
+  gst_pad_use_fixed_caps (pad);
+[..]
+
+      </pre><p>
+        The fixed caps can then be set on the pad by calling
+        <code class="function">gst_pad_set_caps ()</code>.
+      </p><pre class="programlisting">
+
+[..]
+    caps = gst_caps_new_simple ("audio/x-raw",
+        "format", G_TYPE_STRING, GST_AUDIO_NE(F32),
+        "rate", G_TYPE_INT, &lt;samplerate&gt;,
+        "channels", G_TYPE_INT, &lt;num-channels&gt;, NULL);
+    if (!gst_pad_set_caps (pad, caps)) {
+      GST_ELEMENT_ERROR (element, CORE, NEGOTIATION, (NULL),
+          ("Some debug information here"));
+      return GST_FLOW_ERROR;
+    }
+[..]
+
+      </pre><p>
+        These types of elements also don't have a relation between the input
+        format and the output format, the input caps simply don't contain the
+        information needed to produce the output caps.
+      </p><p>
+        All other elements that need to be configured for the format should
+        implement full caps negotiation, which will be explained in the next
+        few sections.
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-nego-transform"></a>Transform negotiation</h3></div></div></div><p>
+        In this negotiation technique, there is a fixed transform between
+        the element input caps and the output caps. This transformation
+        could be parameterized by element properties but not by the
+        content of the stream (see <a class="xref" href="section-nego-usecases.html#section-nego-fixed" title="Fixed negotiation">the section called “Fixed negotiation”</a>
+        for that use-case).
+      </p><p>
+        The caps that the element can accept depend on the (fixed
+        transformation) downstream caps. The caps that the element can
+        produce depend on the (fixed transformation of) the upstream
+        caps.
+      </p><p>
+        This type of element can usually set caps on its source pad from
+        the <code class="function">_event()</code> function on the sink pad when
+        it received the CAPS event. This means that the caps transform
+        function transforms a fixed caps into another fixed caps.
+        Examples of elements include:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+            Videobox. It adds configurable border around a video frame
+            depending on object properties.
+          </p></li><li class="listitem"><p>
+            Identity elements. All elements that don't change the format
+            of the data, only the content. Video and audio effects are an
+            example. Other examples include elements that inspect the
+            stream.
+          </p></li><li class="listitem"><p>
+            Some decoders and encoders, where the output format is defined
+            by input format, like mulawdec and mulawenc. These decoders
+            usually have no headers that define the content of the stream.
+            They are usually more like conversion elements.
+          </p></li></ul></div><p>
+        Below is an example of a negotiation steps of a typical transform 
+        element. In the sink pad CAPS event handler, we compute the caps
+        for the source pad and set those.
+      </p><pre class="programlisting">
+
+  [...]
+
+static gboolean
+gst_my_filter_setcaps (GstMyFilter *filter,
+		       GstCaps *caps)
+{
+  GstStructure *structure;
+  int rate, channels;
+  gboolean ret;
+  GstCaps *outcaps;
+
+  structure = gst_caps_get_structure (caps, 0);
+  ret = gst_structure_get_int (structure, "rate", &amp;rate);
+  ret = ret &amp;&amp; gst_structure_get_int (structure, "channels", &amp;channels);
+  if (!ret)
+    return FALSE;
+
+  outcaps = gst_caps_new_simple ("audio/x-raw",
+      "format", G_TYPE_STRING, GST_AUDIO_NE(S16),
+      "rate", G_TYPE_INT, rate,
+      "channels", G_TYPE_INT, channels, NULL);
+  ret = gst_pad_set_caps (filter-&gt;srcpad, outcaps);
+  gst_caps_unref (outcaps);
+
+  return ret;
+}
+
+static gboolean
+gst_my_filter_sink_event (GstPad    *pad,
+		          GstObject *parent,
+		          GstEvent  *event)
+{
+  gboolean ret;
+  GstMyFilter *filter = GST_MY_FILTER (parent);
+
+  switch (GST_EVENT_TYPE (event)) {
+    case GST_EVENT_CAPS:
+    {
+      GstCaps *caps;
+
+      gst_event_parse_caps (event, &amp;caps);
+      ret = gst_my_filter_setcaps (filter, caps);
+      break;
+    }
+    default:
+      ret = gst_pad_event_default (pad, parent, event);
+      break;
+  }
+  return ret;
+}
+
+  [...]
+
+      </pre></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-nego-dynamic"></a>Dynamic negotiation</h3></div></div></div><p>
+        A last negotiation method is the most complex and powerful dynamic
+        negotiation.
+      </p><p>
+        Like with the transform negotiation in 
+        <a class="xref" href="section-nego-usecases.html#section-nego-transform" title="Transform negotiation">the section called “Transform negotiation”</a>, dynamic negotiation will
+        perform a transformation on the downstream/upstream caps. Unlike the
+        transform negotiation, this transform will convert fixed caps to
+        unfixed caps. This means that the sink pad input caps can be converted
+        into unfixed (multiple) formats. The source pad will have to choose a
+        format from all the possibilities. It would usually like to choose a
+        format that requires the least amount of effort to produce but it does
+        not have to be. The selection of the format should also depend on the
+        caps that can be accepted downstream (see a QUERY_CAPS function in
+        <a class="xref" href="section-nego-getcaps.html" title="Implementing a CAPS query function">Implementing a CAPS query function</a>).
+      </p><p>
+        A typical flow goes like this:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+            Caps are received on the sink pad of the element.
+          </p></li><li class="listitem"><p>
+            If the element prefers to operate in passthrough mode, check
+            if downstream accepts the caps with the ACCEPT_CAPS query. If it
+            does, we can complete negotiation and we can operate in
+            passthrough mode.
+          </p></li><li class="listitem"><p>
+            Calculate the possible caps for the source pad.
+          </p></li><li class="listitem"><p>
+            Query the downstream peer pad for the list of possible
+            caps.
+          </p></li><li class="listitem"><p>
+            Select from the downstream list the first caps that you can
+            transform to and set this as the output caps. You might have to
+            fixate the caps to some reasonable defaults to construct
+            fixed caps.
+          </p></li></ul></div><p>
+        Examples of this type of elements include:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+            Converter elements such as videoconvert, audioconvert, audioresample,
+            videoscale, ...
+          </p></li><li class="listitem"><p>
+            Source elements such as audiotestsrc, videotestsrc, v4l2src,
+            pulsesrc, ...
+          </p></li></ul></div><p>
+        Let's look at the example of an element that can convert between
+        samplerates, so where input and output samplerate don't have to be
+        the same:
+      </p><pre class="programlisting">
+
+static gboolean
+gst_my_filter_setcaps (GstMyFilter *filter,
+		       GstCaps *caps)
+{
+  if (gst_pad_set_caps (filter-&gt;srcpad, caps)) {
+    filter-&gt;passthrough = TRUE;
+  } else {
+    GstCaps *othercaps, *newcaps;
+    GstStructure *s = gst_caps_get_structure (caps, 0), *others;
+
+    /* no passthrough, setup internal conversion */
+    gst_structure_get_int (s, "channels", &amp;filter-&gt;channels);
+    othercaps = gst_pad_get_allowed_caps (filter-&gt;srcpad);
+    others = gst_caps_get_structure (othercaps, 0);
+    gst_structure_set (others,
+      "channels", G_TYPE_INT, filter-&gt;channels, NULL);
+
+    /* now, the samplerate value can optionally have multiple values, so
+     * we "fixate" it, which means that one fixed value is chosen */
+    newcaps = gst_caps_copy_nth (othercaps, 0);
+    gst_caps_unref (othercaps);
+    gst_pad_fixate_caps (filter-&gt;srcpad, newcaps);
+    if (!gst_pad_set_caps (filter-&gt;srcpad, newcaps))
+      return FALSE;
+
+    /* we are now set up, configure internally */
+    filter-&gt;passthrough = FALSE;
+    gst_structure_get_int (s, "rate", &amp;filter-&gt;from_samplerate);
+    others = gst_caps_get_structure (newcaps, 0);
+    gst_structure_get_int (others, "rate", &amp;filter-&gt;to_samplerate);
+  }
+
+  return TRUE;
+}
+
+static gboolean
+gst_my_filter_sink_event (GstPad    *pad,
+		          GstObject *parent,
+		          GstEvent  *event)
+{
+  gboolean ret;
+  GstMyFilter *filter = GST_MY_FILTER (parent);
+
+  switch (GST_EVENT_TYPE (event)) {
+    case GST_EVENT_CAPS:
+    {
+      GstCaps *caps;
+
+      gst_event_parse_caps (event, &amp;caps);
+      ret = gst_my_filter_setcaps (filter, caps);
+      break;
+    }
+    default:
+      ret = gst_pad_event_default (pad, parent, event);
+      break;
+  }
+  return ret;
+}
+
+static GstFlowReturn
+gst_my_filter_chain (GstPad    *pad,
+		     GstObject *parent,
+		     GstBuffer *buf)
+{
+  GstMyFilter *filter = GST_MY_FILTER (parent);
+  GstBuffer *out;
+
+  /* push on if in passthrough mode */
+  if (filter-&gt;passthrough)
+    return gst_pad_push (filter-&gt;srcpad, buf);
+
+  /* convert, push */
+  out = gst_my_filter_convert (filter, buf);
+  gst_buffer_unref (buf);
+
+  return gst_pad_push (filter-&gt;srcpad, out);
+}
+
+      </pre></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-negotiation.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-negotiation.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-nego-upstream.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 14. Caps negotiation </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Upstream caps (re)negotiation</td></tr></table></div></body></html>

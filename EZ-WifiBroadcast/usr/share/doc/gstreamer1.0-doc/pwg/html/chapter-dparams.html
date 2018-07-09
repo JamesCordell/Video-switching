@@ -1,0 +1,41 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 20. Supporting Dynamic Parameters</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-advanced.html" title="Part III. Advanced Filter Concepts"><link rel="prev" href="section-messages.html" title="QoS Messages"><link rel="next" href="chapter-dparam-loop.html" title="The Data Processing Loop"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 20. Supporting Dynamic Parameters</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-messages.html">Prev</a> </td><th width="60%" align="center">Part III. Advanced Filter Concepts</th><td width="20%" align="right"> <a accesskey="n" href="chapter-dparam-loop.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-dparams"></a>Chapter 20. Supporting Dynamic Parameters</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-dparams.html#section-dparam-start">Getting Started</a></span></dt><dt><span class="sect1"><a href="chapter-dparam-loop.html">The Data Processing Loop</a></span></dt><dd><dl><dt><span class="sect2"><a href="chapter-dparam-loop.html#chapter-dparam-loop-video">The Data Processing Loop for Video Elements</a></span></dt><dt><span class="sect2"><a href="chapter-dparam-loop.html#chapter-dparam-loop-audio">The Data Processing Loop for Audio Elements</a></span></dt></dl></dd></dl></div><p>
+    Warning, this part describes 0.10 and is outdated.
+  </p><p>
+    Sometimes object properties are not powerful enough to control the
+    parameters that affect the behaviour of your element.
+    When this is the case you can mark these parameters as being Controllable.
+    Aware applications can use the controller subsystem to dynamically adjust
+    the property values over time.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-dparam-start"></a>Getting Started</h2></div></div></div><p>
+    The controller subsystem is contained within the
+    <code class="filename">gstcontroller</code> library. You need to include the header in
+    your element's source file:
+  </p><pre class="programlisting">
+...
+#include &lt;gst/gst.h&gt;
+#include &lt;gst/controller/gstcontroller.h&gt;
+...
+  </pre><p>
+    Even though the <code class="filename">gstcontroller</code> library may be linked into
+    the host application, you should make sure it is initialized in your
+    <code class="filename">plugin_init</code> function:
+  </p><pre class="programlisting">
+  static gboolean
+  plugin_init (GstPlugin *plugin)
+  {
+    ...
+    /* initialize library */
+    gst_controller_init (NULL, NULL);
+    ...
+  }
+  </pre><p>
+    It makes no sense for all GObject parameter to be real-time controlled.
+    Therefore the next step is to mark controllable parameters.
+    This is done by using the special flag <code class="constant">GST_PARAM_CONTROLLABLE</code>.
+    when setting up GObject params in the <code class="function">_class_init</code> method.    
+  </p><pre class="programlisting">
+  g_object_class_install_property (gobject_class, PROP_FREQ,
+      g_param_spec_double ("freq", "Frequency", "Frequency of test signal",
+          0.0, 20000.0, 440.0,
+          G_PARAM_READWRITE | GST_PARAM_CONTROLLABLE | G_PARAM_STATIC_STRINGS));
+  </pre></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-messages.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-advanced.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-dparam-loop.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">QoS Messages </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> The Data Processing Loop</td></tr></table></div></body></html>

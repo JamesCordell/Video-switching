@@ -1,0 +1,9 @@
+291eee12c1e8aa8785b288b76226527f  usr/bin/cmake
+9d40f3af4ad249bb08b646630ef7bb51  usr/bin/cpack
+33d9243c994134b638004d7e8694096a  usr/bin/ctest
+b1599fcbcb5cf1e0c8826d7617e69373  usr/share/doc/cmake/NEWS.Debian.gz
+acd186bfa2f3361be0bf010fecc6a07b  usr/share/doc/cmake/changelog.Debian.gz
+37c4db2f75eade5f8e0a91342967e4d0  usr/share/doc/cmake/copyright
+fda7e43b553bc82cac5f35133cb27991  usr/share/man/man1/cmake.1.gz
+0684ea30a5cff07376e9b4bf5aef18ce  usr/share/man/man1/cpack.1.gz
+3d06231d9020c383c4ad3bcb62a9431d  usr/share/man/man1/ctest.1.gz

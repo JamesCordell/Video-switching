@@ -1,0 +1,4 @@
+fa2a42d1f01d8fb22f1de00bafbe40ee  usr/lib/arm-linux-gnueabihf/directfb-1.2-9/interfaces/IDirectFBFont/libidirectfbfont_ft2.so
+8e0232cbeabf36e0d521b1215f84003c  usr/lib/arm-linux-gnueabihf/directfb-1.2-9/interfaces/IDirectFBImageProvider/libidirectfbimageprovider_jpeg.so
+261056752394c1a9795e97236c69f652  usr/lib/arm-linux-gnueabihf/directfb-1.2-9/interfaces/IDirectFBImageProvider/libidirectfbimageprovider_png.so
+1457a67ed812b504089d053b50b9ff8f  usr/lib/arm-linux-gnueabihf/directfb-1.2-9/systems/libdirectfb_x11.so

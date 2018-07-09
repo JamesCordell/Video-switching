@@ -1,0 +1,169 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 8. Pads and capabilities</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="part-building.html" title="Part II. Building an Application"><link rel="prev" href="section-bus-message-types.html" title="Message types"><link rel="next" href="section-caps.html" title="Capabilities of a pad"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 8. Pads and capabilities</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-bus-message-types.html">Prev</a> </td><th width="60%" align="center">Part II. Building an Application</th><td width="20%" align="right"> <a accesskey="n" href="section-caps.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-pads"></a>Chapter 8. Pads and capabilities</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-pads.html#section-pads">Pads</a></span></dt><dd><dl><dt><span class="sect2"><a href="chapter-pads.html#section-pads-dynamic">Dynamic (or sometimes) pads</a></span></dt><dt><span class="sect2"><a href="chapter-pads.html#section-pads-request">Request pads</a></span></dt></dl></dd><dt><span class="sect1"><a href="section-caps.html">Capabilities of a pad</a></span></dt><dd><dl><dt><span class="sect2"><a href="section-caps.html#section-caps-structure">Dissecting capabilities</a></span></dt><dt><span class="sect2"><a href="section-caps.html#section-caps-props">Properties and values</a></span></dt></dl></dd><dt><span class="sect1"><a href="section-caps-api.html">What capabilities are used for</a></span></dt><dd><dl><dt><span class="sect2"><a href="section-caps-api.html#section-caps-metadata">Using capabilities for metadata</a></span></dt><dt><span class="sect2"><a href="section-caps-api.html#section-caps-filter">Creating capabilities for filtering</a></span></dt></dl></dd><dt><span class="sect1"><a href="section-pads-ghost.html">Ghost pads</a></span></dt></dl></div><p>
+    As we have seen in <a class="xref" href="chapter-elements.html" title="Chapter 5. Elements">Elements</a>, the pads are
+    the element's interface to the outside world. Data streams from one
+    element's source pad to another element's sink pad. The specific
+    type of media that the element can handle will be exposed by the
+    pad's capabilities. We will talk more on capabilities later in this
+    chapter (see <a class="xref" href="section-caps.html" title="Capabilities of a pad">the section called “Capabilities of a pad”</a>).
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-pads"></a>Pads</h2></div></div></div><p>
+      A pad type is defined by two properties: its direction and its
+      availability. As we've mentioned before, <span class="application">GStreamer</span> defines two
+      pad directions: source pads and sink pads. This terminology is
+      defined from the view of within the element: elements receive data
+      on their sink pads and generate data on their source pads.
+      Schematically, sink pads are drawn on the left side of an element,
+      whereas source pads are drawn on the right side of an element. In
+      such graphs, data flows from left to right.
+      <a href="#ftn.idp70229808" class="footnote" name="idp70229808"><sup class="footnote">[3]</sup></a>
+    </p><p>
+      Pad directions are very simple compared to pad availability. A pad
+      can have any of three availabilities: always, sometimes and on
+      request. The meaning of those three types is exactly as it says:
+      always pads always exist, sometimes pad exist only in certain
+      cases (and can disappear randomly), and on-request pads appear
+      only if explicitly requested by applications.
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-pads-dynamic"></a>Dynamic (or sometimes) pads</h3></div></div></div><p>
+        Some elements might not have all of their pads when the element is
+        created. This can happen, for example, with an Ogg demuxer element.
+        The element will read the Ogg stream and create dynamic pads for
+        each contained elementary stream (vorbis, theora) when it detects
+        such a stream in the Ogg stream. Likewise, it will delete the pad
+        when the stream ends. This principle is very useful for demuxer
+        elements, for example.
+      </p><p> 
+        Running <span class="application">gst-inspect oggdemux</span> will show
+        that the element has only one pad: a sink pad called 'sink'. The
+        other pads are <span class="quote">“<span class="quote">dormant</span>”</span>. You can see this in the pad
+        template because there is an <span class="quote">“<span class="quote">Exists: Sometimes</span>”</span>
+	property. Depending on the type of Ogg file you play, the pads will
+        be created. We will see that this is very important when you are
+        going to create dynamic pipelines. You can attach a signal handler
+        to an element to inform you when the element has created a new pad
+        from one of its <span class="quote">“<span class="quote">sometimes</span>”</span> pad templates. The
+        following piece of code is an example of how to do this:
+      </p><pre class="programlisting">
+#include &lt;gst/gst.h&gt;
+
+static void
+cb_new_pad (GstElement *element,
+	    GstPad     *pad,
+	    gpointer    data)
+{
+  gchar *name;
+
+  name = gst_pad_get_name (pad);
+  g_print ("A new pad %s was created\n", name);
+  g_free (name);
+
+  /* here, you would setup a new pad link for the newly created pad */
+[..]
+
+}
+
+int 
+main (int   argc,
+      char *argv[]) 
+{
+  GstElement *pipeline, *source, *demux;
+  GMainLoop *loop;
+
+  /* init */
+  gst_init (&amp;argc, &amp;argv);
+
+  /* create elements */
+  pipeline = gst_pipeline_new ("my_pipeline");
+  source = gst_element_factory_make ("filesrc", "source");
+  g_object_set (source, "location", argv[1], NULL);
+  demux = gst_element_factory_make ("oggdemux", "demuxer");
+
+  /* you would normally check that the elements were created properly */
+
+  /* put together a pipeline */
+  gst_bin_add_many (GST_BIN (pipeline), source, demux, NULL);
+  gst_element_link_pads (source, "src", demux, "sink");
+
+  /* listen for newly created pads */
+  g_signal_connect (demux, "pad-added", G_CALLBACK (cb_new_pad), NULL);
+
+  /* start the pipeline */
+  gst_element_set_state (GST_ELEMENT (pipeline), GST_STATE_PLAYING);
+  loop = g_main_loop_new (NULL, FALSE);
+  g_main_loop_run (loop);
+
+[..]
+
+}
+      </pre><p>
+        It is not uncommon to add elements to the pipeline only from within
+        the "pad-added" callback. If you do this, don't
+        forget to set the state of the newly-added elements to the target
+        state of the pipeline using
+        <code class="function">gst_element_set_state ()</code> or
+        <code class="function">gst_element_sync_state_with_parent ()</code>.
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-pads-request"></a>Request pads</h3></div></div></div><p> 
+        An element can also have request pads. These pads are not created
+        automatically but are only created on demand. This is very useful
+        for multiplexers, aggregators and tee elements. Aggregators are
+        elements that merge the content of several input streams together
+        into one output stream. Tee elements are the reverse: they are
+        elements that have one input stream and copy this stream to each
+        of their output pads, which are created on request. Whenever an
+        application needs another copy of the stream, it can simply request
+        a new output pad from the tee element.
+      </p><p> 
+        The following piece of code shows how you can request a new output
+        pad from a <span class="quote">“<span class="quote">tee</span>”</span> element:
+      </p><pre class="programlisting">
+static void
+some_function (GstElement *tee)
+{
+  GstPad * pad;
+  gchar *name;
+
+  pad = gst_element_get_request_pad (tee, "src%d");
+  name = gst_pad_get_name (pad);
+  g_print ("A new pad %s was created\n", name);
+  g_free (name);
+
+  /* here, you would link the pad */
+[..]
+
+  /* and, after doing that, free our reference */
+  gst_object_unref (GST_OBJECT (pad));
+}
+      </pre><p> 
+        The <code class="function">gst_element_get_request_pad ()</code> method
+        can be used to get a pad from the element based on the name of
+        the pad template. It is also possible to request a pad that is
+        compatible with another pad template. This is very useful if
+        you want to link an element to a multiplexer element and you
+        need to request a pad that is compatible. The method
+        <code class="function">gst_element_get_compatible_pad ()</code> can be
+        used to request a compatible pad, as shown in the next example.
+        It will request a compatible pad from an Ogg multiplexer from
+        any input.
+      </p><pre class="programlisting">
+static void
+link_to_multiplexer (GstPad     *tolink_pad,
+		     GstElement *mux)
+{
+  GstPad *pad;
+  gchar *srcname, *sinkname;
+
+  srcname = gst_pad_get_name (tolink_pad);
+  pad = gst_element_get_compatible_pad (mux, tolink_pad);
+  gst_pad_link (tolinkpad, pad);
+  sinkname = gst_pad_get_name (pad);
+  gst_object_unref (GST_OBJECT (pad));
+
+  g_print ("A new pad %s was created and linked to %s\n", srcname, sinkname);
+  g_free (sinkname);
+  g_free (srcname);
+}
+      </pre></div></div><div class="footnotes"><br><hr style="width:100; text-align:left;margin-left: 0"><div id="ftn.idp70229808" class="footnote"><p><a href="#idp70229808" class="para"><sup class="para">[3] </sup></a>
+          In reality, there is no objection to data flowing from a
+          source pad to the sink pad of an element upstream (to the
+          left of this element in drawings). Data will, however, always
+          flow from a source pad of one element to the sink pad of
+          another.
+        </p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-bus-message-types.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-building.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-caps.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Message types </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Capabilities of a pad</td></tr></table></div></body></html>

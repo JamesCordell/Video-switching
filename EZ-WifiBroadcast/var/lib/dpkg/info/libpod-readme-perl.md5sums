@@ -1,0 +1,7 @@
+aac99607cd4cbad21cc625cea6227535  usr/bin/pod2readme
+c53cec7b99bb381d203d3d41ba505981  usr/share/doc/libpod-readme-perl/changelog.Debian.gz
+108f7a4a7ccd7445bd8787956841dbf0  usr/share/doc/libpod-readme-perl/changelog.gz
+cadd54d72fe5336b6ad4d0852d047b41  usr/share/doc/libpod-readme-perl/copyright
+95760d8f29e742cd8259b4a9267698c6  usr/share/man/man1/pod2readme.1p.gz
+139326da3fc956b318b994a725781f60  usr/share/man/man3/Pod::Readme.3pm.gz
+1cbb7decb7f2cbd5e2224d56509cd632  usr/share/perl5/Pod/Readme.pm

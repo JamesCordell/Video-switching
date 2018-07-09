@@ -1,0 +1,66 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Getting GStreamer</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer FAQ (1.4.4)"><link rel="up" href="index.html" title="GStreamer FAQ (1.4.4)"><link rel="prev" href="chapter-dependencies.html" title="Dependencies"><link rel="next" href="chapter-using.html" title="Using GStreamer"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Getting GStreamer</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-dependencies.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="chapter-using.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="chapter-getting"></a>Getting GStreamer</h2></div></div></div><div class="qandaset"><a name="idp51564208"></a><dl><dt>Q: <a href="chapter-getting.html#idp51564736">How do I get GStreamer ?</a></dt><dt>Q: <a href="chapter-getting.html#idp51625648">There seem to be different GStreamer versions, like 0.10 and 1.0?
+              What's up with that?</a></dt><dt>Q: <a href="chapter-getting.html#idp51631632">So which GStreamer version should I get?</a></dt><dt>Q: <a href="chapter-getting.html#idp51633904">How can I install GStreamer from source ?</a></dt><dt>Q: <a href="chapter-getting.html#idp51638448">Are there premade binaries available ?</a></dt><dt>Q: <a href="chapter-getting.html#idp51641840">Why don't you provide premade binaries for distribution XY ?</a></dt><dt>Q: <a href="chapter-getting.html#idp51644464">I am having trouble compiling GStreamer on my LFS installation, why ?</a></dt><dt>Q: <a href="chapter-getting.html#idp51647168">How do I get GStreamer through git ?</a></dt></dl><table border="0" style="width: 100%;"><colgroup><col align="left" width="1%"><col></colgroup><tbody><tr class="question"><td align="left" valign="top"><a name="idp51564736"></a><a name="getting-gstreamer"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>How do I get GStreamer ?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>
+Generally speaking, you have three options, ranging from easy to hard :
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><a class="link" href="chapter-getting.html#getting-gstreamer-packages" title="Q:">
+distribution-specific packages</a></p></li><li class="listitem"><p><a class="link" href="chapter-getting.html#getting-gstreamer-source" title="Q:">
+source tarballs</a></p></li><li class="listitem"><p><a class="link" href="chapter-getting.html#getting-gstreamer-packages" title="Q:">
+git</a></p></li></ul></div><p>
+        </p></td></tr><tr class="question"><td align="left" valign="top"><a name="idp51625648"></a><a name="gstreamer-versions-explained"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>There seem to be different GStreamer versions, like 0.10 and 1.0?
+              What's up with that?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>
+           GStreamer-0.10 and GStreamer-1.0 are the main version
+           'series' currently in use.  For all practical purposes
+           you should think of them as two completely different libraries
+           which just happen to have a similar name.  They can be installed
+           in parallel and are completely independent.
+         </p><p>
+           For the 0.10 version you will need the 0.10 plugins and bindings
+           (gst-plugins 0.10.x, gst-ffmpeg 0.10.x, gst-python 0.10.x etc.), while
+           for the 1.0 version you will need the 1.0 plugins and bindings
+           (ie. gst-plugins-base 1.0.x, gst-plugins-good 1.0.x,
+           gst-plugins-ugly 1.0.x, gst-plugins-bad 1.0.x, gst-ffmpeg 1.0.x,
+           gst-python 1.0.x).  The micro version for each main version does
+           not have to match exactly, only the major versions needs to be the
+           same (ie. it may be that the current gst-plugins-good version is
+           1.0.6 and the current GStreamer core version is 1.0.13).
+           GStreamer-1.0 will not see or use any of the GStreamer-0.10 plugins
+           and vice versa.
+         </p><p>
+           All GStreamer command line tools are suffixed with their main
+           version, e.g. gst-launch-0.10 and gst-launch-1.0, or gst-inspect-0.10
+           and gst-inspect-1.0.
+         </p><p>
+           Applications will use either GStreamer-0.10 or GStreamer-1.0, since
+           the 0.10 and 1.0 API/ABI are not compatible.
+         </p><p>
+           Odd-numbered versions such as 0.9.x, 0.11.x, etc. are unstable
+           developer releases that should generally not be used.
+         </p></td></tr><tr class="question"><td align="left" valign="top"><a name="idp51631632"></a><a name="gstreamer-versions-which-one-to-get"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>So which GStreamer version should I get?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>
+           You should download GStreamer-1.0.  GStreamer-0.10 is end-of-life.
+         </p></td></tr><tr class="question"><td align="left" valign="top"><a name="idp51633904"></a><a name="getting-gstreamer-source"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>How can I install GStreamer from source ?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>
+We provide tarballs of our releases on our 
+own site, at
+<a class="ulink" href="http://gstreamer.freedesktop.org/src/" target="_top">
+http://gstreamer.freedesktop.org/src/
+</a>
+        </p><p>
+When compiling from source, make sure you specify PKG_CONFIG_PATH correctly
+when building against GStreamer.  For example, if you configured GStreamer
+with the default prefix (which is /usr/local), then you need to
+</p><pre class="programlisting">
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+</pre><p>
+before building gst-plugins.
+        </p></td></tr><tr class="question"><td align="left" valign="top"><a name="idp51638448"></a><a name="getting-gstreamer-packages"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>Are there premade binaries available ?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>
+	Yes we currently provide <a class="ulink" href="http://gstreamer.freedesktop.org/pkg/" target="_top">precompiled packages for Windows, OS/X, Android and iOS</a>.
+        </p><p>
+	We currently do not provide packages for Linux distributions, but
+        rather rely on the distributions for that. GStreamer packages should
+        be available for all major (and minor) distributions.
+        </p></td></tr><tr class="question"><td align="left" valign="top"><a name="idp51641840"></a><a name="getting-gstreamer3"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>Why don't you provide premade binaries for distribution XY ?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>
+	GStreamer is run on a volunteer basis. The package that are provided are made by non-paid people who do this on their own time. The distributions we support with binaries are the distributions that we have people who have volunteered to make binaries for. If you are interested in maintaining GStreamer binaries for other distributions or Unices we would be happy to hear from you. Contact us through the GStreamer-devel mailing list.
+        </p></td></tr><tr class="question"><td align="left" valign="top"><a name="idp51644464"></a><a name="getting-gstreamer4"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>I am having trouble compiling GStreamer on my LFS installation, why ?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>
+	If you are running LFS our basic opinion is that you should be knowledgeable enough to solve any build issues you get on your own. Being volunteered based we can't promise support to anyone of course, but are you using LFS consider yourself extra unsupported. We
+neither can or want to know enough, about how your unique system is configured, to be able to help you. That said, if you come to the #gstreamer channel on irc.openprojects.net we might of course be able to give you some general hints and pointers.
+        </p></td></tr><tr class="question"><td align="left" valign="top"><a name="idp51647168"></a><a name="getting-gstreamer-git"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>How do I get GStreamer through git ?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>
+        see this page : <a class="ulink" href="http://gstreamer.freedesktop.org/dev/" target="_top">http://gstreamer.freedesktop.org/dev/</a> for git access. (anonymous and developer)
+        </p></td></tr></tbody></table></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-dependencies.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="chapter-using.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Dependencies </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Using GStreamer</td></tr></table></div></body></html>

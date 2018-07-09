@@ -1,0 +1,49 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0
+Upstream-Name: evemu
+Upstream-Contact: input-tools@lists.freedesktop.org
+Source: http://cgit.freedesktop.org/evemu/
+
+Files: *
+Copyright: 2010-2012 Canonical Ltd.
+           2010 Henrik Rydberg <rydberg@euromail.se>
+           2013 Benjamin Tissoires <benjamin.tissoires@gmail.com>
+           2013 Peter Hutterer <peter.hutterer@who-t.net>
+License: LGPL-3
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of version 3 of the GNU Lesser General Public License
+ as published by the Free Software Foundation.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ On Debian systems, the full text of the GNU LesserGeneral Public
+ License version 3 can be found in the file
+ `/usr/share/common-licenses/LGPL-3'.
+
+Files: tools/*
+Copyright: 2010-2012 Canonical Ltd.
+           2010 Henrik Rydberg <rydberg@euromail.se>
+           2013 Benjamin Tissoires <benjamin.tissoires@gmail.com>
+           2013 Keith Packard <keithp@keithp.com>
+           2013 Peter Hutterer <peter.hutterer@who-t.net>
+License: GPL-3
+
+Files: debian/*
+Copyright: 2013 Canonical Ltd.
+License: GPL-3
+
+License: GPL-3
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of version 3 of the GNU General Public License as
+ published by the Free Software Foundation.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ On Debian systems, the full text of the GNU General Public
+ License version 3 can be found in the file
+ `/usr/share/common-licenses/GPL-3'.

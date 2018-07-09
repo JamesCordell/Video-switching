@@ -1,0 +1,21 @@
+.less-history-file:
+.search
+"-x
+"tmpfs
+"proceed
+"-p
+"-o
+"stdin
+"recursive
+"syml
+"-n
+"display filter
+"promisc
+"mtu
+"-w
+"dns
+"dat
+"format
+"-n
+"branch
+.shell

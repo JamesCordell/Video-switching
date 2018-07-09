@@ -1,0 +1,17 @@
+/.
+/etc
+/etc/init.d
+/etc/init.d/raspi-config
+/etc/systemd
+/etc/systemd/system
+/etc/systemd/system/autologin@.service
+/usr
+/usr/lib
+/usr/lib/raspi-config
+/usr/lib/raspi-config/init_resize.sh
+/usr/share
+/usr/share/doc
+/usr/share/doc/raspi-config
+/usr/share/doc/raspi-config/changelog.gz
+/usr/bin
+/usr/bin/raspi-config

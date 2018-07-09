@@ -1,0 +1,17 @@
+This package was first debianized by Marc Haber
+<mh+debian-packages@zugschlus.de> on Tue, 18 Sep 2001 08:09:57 +0000.
+
+It was downloaded from http://sourceforge.net/projects/ser2net
+
+Upstream Author: Corey Minyard <minyard@acm.org>
+
+Copyright: GNU General Public License, Version 2
+
+Modifications for Debian are copyright (C) 2001 Marc Haber, and also
+released under the terms of the GPL -- version 2, or any later version.
+
+A copy of the GNU General Public License is available as
+/usr/share/common-licenses/GPL' in the Debian GNU/Linux distribution or
+on the World Wide Web at http://www.gnu.org/copyleft/gpl.html.  You can
+also obtain it by writing to the Free Software Foundation, Inc.,
+51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.

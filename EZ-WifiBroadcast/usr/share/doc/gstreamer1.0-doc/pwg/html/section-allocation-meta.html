@@ -1,0 +1,248 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>GstMeta</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-allocation.html" title="Chapter 15. Memory allocation"><link rel="prev" href="section-allocation-buffer.html" title="GstBuffer"><link rel="next" href="section-allocation-bufferpool.html" title="GstBufferPool"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">GstMeta</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-allocation-buffer.html">Prev</a> </td><th width="60%" align="center">Chapter 15. Memory allocation</th><td width="20%" align="right"> <a accesskey="n" href="section-allocation-bufferpool.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-allocation-meta"></a>GstMeta</h2></div></div></div><p>
+      With the <code class="classname">GstMeta</code> system you can add arbitrary
+      structures on buffers. These structures describe extra properties
+      of the buffer such as cropping, stride, region of interest etc.
+    </p><p>
+      The metadata system separates API specification (what the metadata
+      and its API look like) and the implementation (how it works). This makes
+      it possible to make different implementations of the same API,
+      for example, depending on the hardware you are running on.
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-allocation-meta-ex"></a>GstMeta API example</h3></div></div></div><p>
+        After allocating a new buffer, you can add metadata to the buffer
+        with the metadata specific API. This means that you will need to
+        link to the header file where the metadata is defined to use
+        its API.
+      </p><p>
+        By convention, a metadata API with name <code class="classname">FooBar</code>
+        should provide two methods, a
+        <code class="function">gst_buffer_add_foo_bar_meta ()</code> and a
+        <code class="function">gst_buffer_get_foo_bar_meta ()</code>. Both functions
+        should return a pointer to a <code class="classname">FooBarMeta</code>
+        structure that contains the metadata fields. Some of the
+        <code class="function">_add_*_meta ()</code> can have extra parameters that
+        will usually be used to configure the metadata structure for you.
+      </p><p>
+        Let's have a look at the metadata that is used to specify a cropping
+        region for video frames.
+      </p><pre class="programlisting">
+
+#include &lt;gst/video/gstvideometa.h&gt;
+
+[...]
+  GstVideoCropMeta *meta;
+
+  /* buffer points to a video frame, add some cropping metadata */
+  meta = gst_buffer_add_video_crop_meta (buffer);
+
+  /* configure the cropping metadata */
+  meta-&gt;x = 8;
+  meta-&gt;y = 8;
+  meta-&gt;width = 120;
+  meta-&gt;height = 80;
+[...]
+
+      </pre><p>
+        An element can then use the metadata on the buffer when rendering
+        the frame like this:
+      </p><pre class="programlisting">
+
+#include &lt;gst/video/gstvideometa.h&gt;
+
+[...]
+  GstVideoCropMeta *meta;
+
+  /* buffer points to a video frame, get the cropping metadata */
+  meta = gst_buffer_get_video_crop_meta (buffer);
+
+  if (meta) {
+    /* render frame with cropping */
+    _render_frame_cropped (buffer, meta-&gt;x, meta-&gt;y, meta-&gt;width, meta-&gt;height);
+  } else {
+    /* render frame */
+    _render_frame (buffer);
+  }
+[...]
+
+
+      </pre></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-allocation-meta-new"></a>Implementing new GstMeta</h3></div></div></div><p>
+        In the next sections we show how you can add new metadata to the
+        system and use it on buffers.
+      </p><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a name="section-allocation-meta-api"></a>Define the metadata API</h4></div></div></div><p>
+          First we need to define what our API will look like and we
+          will have to register this API to the system. This is important
+          because this API definition will be used when elements negotiate
+          what kind of metadata they will exchange. The API definition
+          also contains arbitrary tags that give hints about what the
+          metadata contains. This is important when we see how metadata
+          is preserved when buffers pass through the pipeline.
+        </p><p>
+          If you are making a new implementation of an existing API,
+          you can skip this step and move on to the implementation step.
+        </p><p>
+          First we start with making the
+          <code class="filename">my-example-meta.h</code> header file that will contain
+          the definition of the API and structure for our metadata.
+        </p><pre class="programlisting">
+
+#include &lt;gst/gst.h&gt;
+
+typedef struct _MyExampleMeta MyExampleMeta;
+
+struct _MyExampleMeta {
+  GstMeta       meta;
+
+  gint          age;
+  gchar        *name;
+};
+
+GType my_example_meta_api_get_type (void);
+#define MY_EXAMPLE_META_API_TYPE (my_example_meta_api_get_type())
+
+#define gst_buffer_get_my_example_meta(b) \
+  ((MyExampleMeta*)gst_buffer_get_meta((b),MY_EXAMPLE_META_API_TYPE))
+
+        </pre><p>
+          The metadata API definition consists of the definition of the
+          structure that holds a gint and a string. The first field in
+          the structure must be <code class="classname">GstMeta</code>.
+        </p><p>
+          We also define a <code class="function">my_example_meta_api_get_type ()</code>
+          function that will register out metadata API definition. We
+          also define a convenience macro 
+          <code class="function">gst_buffer_get_my_example_meta ()</code> that simply
+          finds and returns the metadata with our new API.
+        </p><p>
+          Next let's have a look at how the
+          <code class="function">my_example_meta_api_get_type ()</code> function is
+          implemented in the <code class="filename">my-example-meta.c</code> file.
+        </p><pre class="programlisting">
+
+#include "my-example-meta.h"
+
+GType
+my_example_meta_api_get_type (void)
+{
+  static volatile GType type;
+  static const gchar *tags[] = { "foo", "bar", NULL };
+
+  if (g_once_init_enter (&amp;type)) {
+    GType _type = gst_meta_api_type_register ("MyExampleMetaAPI", tags);
+    g_once_init_leave (&amp;type, _type);
+  }
+  return type;
+}
+
+        </pre><p>
+          As you can see, it simply uses the
+          <code class="function">gst_meta_api_type_register ()</code> function to
+          register a name for the api and some tags. The result is a
+          new pointer GType that defines the newly registered API.
+        </p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a name="section-allocation-meta-impl"></a>Implementing a metadata API</h4></div></div></div><p>
+          Next we can make an implementation for a registered metadata
+          API GType. The implementation detail of a metadata API
+          are kept in a <code class="classname">GstMetaInfo</code> structure
+          that you will make available to the users of your metadata
+          API implementation with a <code class="function">my_example_meta_get_info ()</code>
+          function and a convenience <code class="function">MY_EXAMPLE_META_INFO</code>
+          macro. You will also make a method to add your metadata
+          implementation to a <code class="classname">GstBuffer</code>.
+          Your <code class="filename">my-example-meta.h</code> header file will
+          need thse additions:
+        </p><pre class="programlisting">
+
+[...]
+
+/* implementation */
+const GstMetaInfo *my_example_meta_get_info (void);
+#define MY_EXAMPLE_META_INFO (my_example_meta_get_info())
+
+MyExampleMeta * gst_buffer_add_my_example_meta (GstBuffer      *buffer,
+                                                gint            age,
+                                                const gchar    *name);
+
+        </pre><p>
+          Let's have a look at how these functions are
+          implemented in the <code class="filename">my-example-meta.c</code> file.
+        </p><pre class="programlisting">
+
+[...]
+
+static gboolean
+my_example_meta_init (GstMeta * meta, gpointer params, GstBuffer * buffer)
+{
+  MyExampleMeta *emeta = (MyExampleMeta *) meta;
+
+  emeta-&gt;age = 0;
+  emeta-&gt;name = NULL;
+
+  return TRUE;
+}
+
+static gboolean
+my_example_meta_transform (GstBuffer * transbuf, GstMeta * meta,
+    GstBuffer * buffer, GQuark type, gpointer data)
+{
+  MyExampleMeta *emeta = (MyExampleMeta *) meta;
+
+  /* we always copy no matter what transform */
+  gst_buffer_add_my_example_meta (transbuf, emeta-&gt;age, emeta-&gt;name);
+
+  return TRUE;
+}
+
+static void
+my_example_meta_free (GstMeta * meta, GstBuffer * buffer)
+{
+  MyExampleMeta *emeta = (MyExampleMeta *) meta;
+
+  g_free (emeta-&gt;name)
+  emeta-&gt;name = NULL;
+}
+
+const GstMetaInfo *
+my_example_meta_get_info (void)
+{
+  static const GstMetaInfo *meta_info = NULL;
+
+  if (g_once_init_enter (&amp;meta_info)) {
+    const GstMetaInfo *mi = gst_meta_register (MY_EXAMPLE_META_API_TYPE,
+        "MyExampleMeta",
+        sizeof (MyExampleMeta),
+        my_example_meta_init,
+        my_example_meta_free,
+        my_example_meta_transform);
+    g_once_init_leave (&amp;meta_info, mi);
+  }
+  return meta_info;
+}
+
+MyExampleMeta *
+gst_buffer_add_my_example_meta (GstBuffer   *buffer,
+                                gint         age,
+                                const gchar *name)
+{
+  MyExampleMeta *meta;
+
+  g_return_val_if_fail (GST_IS_BUFFER (buffer), NULL);
+
+  meta = (MyExampleMeta *) gst_buffer_add_meta (buffer,
+      MY_EXAMPLE_META_INFO, NULL);
+
+  meta-&gt;age = age;
+  meta-&gt;name = g_strdup (name);
+
+  return meta;
+}
+
+        </pre><p>
+          <code class="function">gst_meta_register ()</code> registers the implementation
+          details, like the API that you implement and the size of the
+          metadata structure along with methods to initialize and free the
+          memory area. You can also implement a transform function that will
+          be called when a certain transformation (identified by the quark and
+          quark specific data) is performed on a buffer.
+        </p><p>
+          Lastly, you implement a <code class="function">gst_buffer_add_*_meta()</code>
+          that adds the metadata implementation to a buffer and sets the
+          values of the metadata.
+        </p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-allocation-buffer.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-allocation.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-allocation-bufferpool.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">GstBuffer </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> GstBufferPool</td></tr></table></div></body></html>

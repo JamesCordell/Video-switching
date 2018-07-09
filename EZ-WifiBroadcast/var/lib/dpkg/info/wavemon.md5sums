@@ -1,0 +1,11 @@
+0631d412f378f0785a87e6baa77a96d6  usr/bin/wavemon
+47dadc33944a19f7819f2edbe6e9671c  usr/share/doc/wavemon/AUTHORS
+531ed29b4439f112bb3759b5e96cafe4  usr/share/doc/wavemon/NEWS.gz
+7418f4cad5af62ced5b536ba3500065d  usr/share/doc/wavemon/README
+bd5924076d3260c7557b2eab3cba6f03  usr/share/doc/wavemon/THANKS
+16f4937673933359d36f2c49c5717eb6  usr/share/doc/wavemon/changelog.Debian.gz
+50708ac12ee8cb84bf9858a001a98ecf  usr/share/doc/wavemon/changelog.gz
+cb142e621725e0d86788d02637e8ec64  usr/share/doc/wavemon/copyright
+15fe10013bb1c3c6c1297de5d3b14765  usr/share/man/man1/wavemon.1.gz
+b024b800ccebc86a439e356bdb97ae7d  usr/share/man/man5/wavemonrc.5.gz
+333ef80b9468fa25432c9d54501588eb  usr/share/menu/wavemon

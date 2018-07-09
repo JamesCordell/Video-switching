@@ -1,0 +1,7 @@
+213a1bf295416a4738d5e22ccae652f2  usr/lib/arm-linux-gnueabihf/libQt5Core.so.5.3.2
+0145c4d1b6f96a661c2c139dfb268fb6  usr/share/doc/libqt5core5a/LGPL_EXCEPTION.txt
+7bbebedb6d68e0f674b6da38592b3888  usr/share/doc/libqt5core5a/changelog.Debian.gz
+e62bb662247d6fa87fba6201a1370523  usr/share/doc/libqt5core5a/changelog.gz
+fe466f4570522d273f79e7174b83c149  usr/share/doc/libqt5core5a/copyright
+47d67c57113339d1fad89a40b365e4e0  usr/share/lintian/overrides/libqt5core5a
+f863f6f71b975bba84f4257c91ae1c3a  usr/share/qtchooser/qt5-arm-linux-gnueabihf.conf

@@ -1,0 +1,52 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 18. Autoplugging</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="part-advanced.html" title="Part III. Advanced GStreamer concepts"><link rel="prev" href="section-threads-uses.html" title="When would you want to force a thread?"><link rel="next" href="section-typefinding.html" title="Media stream type detection"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 18. Autoplugging</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-threads-uses.html">Prev</a> </td><th width="60%" align="center">Part III. Advanced <span class="application">GStreamer</span> concepts</th><td width="20%" align="right"> <a accesskey="n" href="section-typefinding.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-autoplugging"></a>Chapter 18. Autoplugging</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-autoplugging.html#section-media">Media types as a way to identify streams</a></span></dt><dt><span class="sect1"><a href="section-typefinding.html">Media stream type detection</a></span></dt><dt><span class="sect1"><a href="section-dynamic.html">Dynamically autoplugging a pipeline</a></span></dt></dl></div><p>
+    In <a class="xref" href="chapter-helloworld.html" title="Chapter 10. Your first application">Chapter 10, <i>Your first application</i></a>, you've learned to build a
+    simple media player for Ogg/Vorbis files. By using alternative elements,
+    you are able to build media players for other media types, such as
+    Ogg/Speex, MP3 or even video formats. However, you would rather want
+    to build an application that can automatically detect the media type
+    of a stream and automatically generate the best possible pipeline
+    by looking at all available elements in a system. This process is called
+    autoplugging, and <span class="application">GStreamer</span> contains high-quality autopluggers. If
+    you're looking for an autoplugger, don't read any further and go to
+    <a class="xref" href="chapter-playback-components.html" title="Chapter 20. Playback Components">Chapter 20, <i>Playback Components</i></a>. This chapter will explain the
+    <span class="emphasis"><em>concept</em></span> of autoplugging and typefinding. It will
+    explain what systems <span class="application">GStreamer</span> includes to dynamically detect the
+    type of a media stream, and how to generate a pipeline of decoder
+    elements to playback this media. The same principles can also be used
+    for transcoding. Because of the full dynamicity of this concept,
+    <span class="application">GStreamer</span> can be automatically extended to support new media types
+    without needing any adaptations to its autopluggers.
+  </p><p>
+    We will first introduce the concept of Media types as a dynamic and
+    extendible way of identifying media streams. After that, we will introduce
+    the concept of typefinding to find the type of a media stream. Lastly,
+    we will explain how autoplugging and the <span class="application">GStreamer</span> registry can be
+    used to setup a pipeline that will convert media from one mediatype to
+    another, for example for media decoding.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-media"></a>Media types as a way to identify streams</h2></div></div></div><p>
+      We have previously introduced the concept of capabilities as a way
+      for elements (or, rather, pads) to agree on a media type when
+      streaming data from one element to the next (see <a class="xref" href="section-caps.html" title="Capabilities of a pad">the section called “Capabilities of a pad”</a>). We have explained that a capability is
+      a combination of a media type and a set of properties. For most
+      container formats (those are the files that you will find on your
+      hard disk; Ogg, for example, is a container format), no properties
+      are needed to describe the stream. Only a media type is needed. A
+      full list of media types and accompanying properties can be found
+      in <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/pwg/html/section-types-definitions.html" target="_top">the
+      Plugin Writer's Guide</a>.
+    </p><p>
+      An element must associate a media type to its source and sink pads
+      when it is loaded into the system. <span class="application">GStreamer</span> knows about the
+      different elements and what type of data they expect and emit through
+      the <span class="application">GStreamer</span> registry. This allows for very dynamic and extensible
+      element creation as we will see.
+    </p><p>
+      In <a class="xref" href="chapter-helloworld.html" title="Chapter 10. Your first application">Chapter 10, <i>Your first application</i></a>, we've learned to build a
+      music player for Ogg/Vorbis files. Let's look at the media types
+      associated with each pad in this pipeline. <a class="xref" href="chapter-autoplugging.html#section-mime-img" title="Figure 18.1. The Hello world pipeline with media types">Figure 18.1, “The Hello world pipeline with media types”</a> shows what media type belongs to each
+      pad in this pipeline.
+    </p><div class="figure-float" style="float: left;"><div class="figure"><a name="section-mime-img"></a><p class="title"><b>Figure 18.1. The Hello world pipeline with media types</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/mime-world.png" width="405" alt="The Hello world pipeline with media types"></div></div></div><br class="figure-break"></div><p>
+      Now that we have an idea how <span class="application">GStreamer</span> identifies known media
+      streams, we can look at methods <span class="application">GStreamer</span> uses to setup pipelines
+      for media handling and for media type detection.
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-threads-uses.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-advanced.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-typefinding.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">When would you want to force a thread? </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Media stream type detection</td></tr></table></div></body></html>

@@ -1,0 +1,15 @@
+/.
+/usr
+/usr/lib
+/usr/lib/lognorm
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/lognorm
+/usr/lib/arm-linux-gnueabihf/lognorm/lognormalizer
+/usr/lib/arm-linux-gnueabihf/liblognorm.so.1.0.0
+/usr/share
+/usr/share/doc
+/usr/share/doc/liblognorm1
+/usr/share/doc/liblognorm1/copyright
+/usr/share/doc/liblognorm1/changelog.Debian.gz
+/usr/share/doc/liblognorm1/changelog.gz
+/usr/lib/arm-linux-gnueabihf/liblognorm.so.1

@@ -1,0 +1,65 @@
+Package: gstreamer1.0-omx
+Source: gst-omx1.0
+Version: 1.0.0.1-0+rpi13+jessie
+Architecture: armhf
+Maintainer: Andrew Lee (李健秋) <andrew.lee@collabora.co.uk>
+Installed-Size: 254
+Depends: libc6 (>= 2.4), libglib2.0-0 (>= 2.37.3), libgstreamer-plugins-base1.0-0 (>= 1.0.0), libgstreamer1.0-0 (>= 1.0.0)
+Homepage: http://gstreamer.freedesktop.org/
+Priority: optional
+Section: rpi/libs
+Filename: pool/rpi/g/gst-omx1.0/gstreamer1.0-omx_1.0.0.1-0+rpi13+jessie_armhf.deb
+Size: 85800
+SHA256: 69b5107e0d10b7daf4767c096fe7cc1e873e8a88bb698a1c46a85feba2bd750c
+SHA1: 38cf9cb0ebdcbe51d4b0aa798122c129defc0a25
+MD5sum: 405b4da202e2a80280d2e84682472852
+Description: GStreamer OpenMAX plugins
+ GStreamer is a streaming media framework, based on graphs of filters
+ which operate on media data.  Applications using this library can do
+ anything from real-time sound processing to playing videos, and just
+ about anything else media-related.  Its plugin-based architecture means
+ that new data types or processing capabilities can be added simply by
+ installing new plug-ins.
+ .
+ This module provides a plugin that allows communication of GStreamer
+ with OpenMAX IL components, which are used to access hardware
+ encoders and decoders.
+
+Package: gstreamer1.0-omx-dbg
+Source: gst-omx1.0
+Version: 1.0.0.1-0+rpi13+jessie
+Architecture: armhf
+Maintainer: Andrew Lee (李健秋) <andrew.lee@collabora.co.uk>
+Installed-Size: 352
+Depends: gstreamer1.0-omx (= 1.0.0.1-0+rpi13+jessie)
+Homepage: http://gstreamer.freedesktop.org/
+Priority: extra
+Section: rpi/debug
+Filename: pool/rpi/g/gst-omx1.0/gstreamer1.0-omx-dbg_1.0.0.1-0+rpi13+jessie_armhf.deb
+Size: 273274
+SHA256: 3086da23e680a7b0227d50d33e02df30eae8182cac0e4cbfed6ca5ed1c89a919
+SHA1: d39b7d915a2d1d299d8e72353d48ea4d078e4d51
+MD5sum: 337af64ca6603ef13c539b1f8b8621cc
+Description: Debug symbols for gstreamer1.0-omx
+ This package provides the debug symbols for gstreamer1.0-omx.
+
+Package: ssh-regen-startup
+Version: 0.1
+Architecture: all
+Maintainer: root <root@raspbian.org>
+Installed-Size: 38
+Depends: lsb-base (>= 3.0-6), openssh-server
+Homepage: <insert the upstream URL, if relevant>
+Priority: extra
+Section: rpi/unknown
+Filename: pool/rpi/s/ssh-regen-startup/ssh-regen-startup_0.1_all.deb
+Size: 3580
+SHA256: 1aa7b132dff69f5765af383188ba534fe2ad109cd5b7727f44cccdad1ee61b88
+SHA1: 383731fc6d32550dc9968330ca347134754edb3a
+MD5sum: 230b83a5c55c960b4b6a8445a35a9f4d
+Description: Regenerate ssh host keys on startup if they don't exist
+ This package adds an init script that regenerates ssh host keys on startup if they dont exist.
+ .
+ Note since the init script is a conffile removing this package will not disable it's action,
+ to do that you must purge it.
+

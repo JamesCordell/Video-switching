@@ -1,0 +1,62 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 19. Quality Of Service (QoS)</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-advanced.html" title="Part III. Advanced Filter Concepts"><link rel="prev" href="section-clock-obligations-of-each-element.html" title="Obligations of each element."><link rel="next" href="section-handling.html" title="Handling QoS"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 19. Quality Of Service (QoS)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-clock-obligations-of-each-element.html">Prev</a> </td><th width="60%" align="center">Part III. Advanced Filter Concepts</th><td width="20%" align="right"> <a accesskey="n" href="section-handling.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-advanced-qos"></a>Chapter 19. Quality Of Service (QoS)</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-advanced-qos.html#section-measuring">Measuring QoS</a></span></dt><dt><span class="sect1"><a href="section-handling.html">Handling QoS</a></span></dt><dd><dl><dt><span class="sect2"><a href="section-handling.html#section-handling-short">Short term correction</a></span></dt><dt><span class="sect2"><a href="section-handling.html#section-handling-long">Long term correction</a></span></dt></dl></dd><dt><span class="sect1"><a href="section-throttle.html">Throttling</a></span></dt><dt><span class="sect1"><a href="section-messages.html">QoS Messages</a></span></dt></dl></div><p>
+    Quality of Service in <span class="application">GStreamer</span> is about measuring and ajusting
+    the real-time performance of a pipeline. The real-time performance is
+    always measured relative to the pipeline clock and typically happens in
+    the sinks when they synchronize buffers against the clock.
+  </p><p>
+    When buffers arrive late in the sink, i.e. when their running-time is
+    smaller than that of the clock, we say that the pipeline is having a
+    quality of service problem. These are a few possible reasons:
+  </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+        High CPU load, there is not enough CPU power to handle the stream,
+        causing buffers to arrive late in the sink.
+      </p></li><li class="listitem"><p>
+        Network problems
+      </p></li><li class="listitem"><p>
+        Other resource problems such as disk load, memory bottlenecks etc
+      </p></li></ul></div><p>
+    The measurements result in QOS events that aim to adjust the datarate
+    in one or more upstream elements. Two types of adjustments can be
+    made:
+  </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+        Short time "emergency" corrections based on latest observation in
+        the sinks.
+      </p><p>
+        Long term rate corrections based on trends observed in the sinks.
+      </p></li></ul></div><p>
+    It is also possible for the application to artificially introduce delay
+    between synchronized buffers, this is called throttling. It can be used
+    to limit or reduce the framerate, for example.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-measuring"></a>Measuring QoS</h2></div></div></div><p>
+      Elements that synchronize buffers on the pipeline clock will usually
+      measure the current QoS. They will also need to keep some statistics
+      in order to generate the QOS event.
+    </p><p>
+      For each buffer that arrives in the sink, the element needs to calculate
+      how late or how early it was. This is called the jitter. Negative jitter
+      values mean that the buffer was early, positive values mean that the
+      buffer was late. the jitter value gives an indication of how early/late
+      a buffer was.
+    </p><p>
+      A synchronizing element will also need to calculate how much time
+      elapsed between receiving two consecutive buffers. We call this the
+      processing time because that is the amount of time it takes for the
+      upstream element to produce/process the buffer. We can compare this
+      processing time to the duration of the buffer to have a measurement
+      of how fast upstream can produce data, called the proportion.
+      If, for example, upstream can produce a buffer in 0.5 seconds of 1
+      second long, it is operating at twice the required speed. If, on the
+      other hand, it takes 2 seconds to produce a buffer with 1 seconds worth
+      of data, upstream is producing buffers too slow and we won't be able to
+      keep sycnhronization. Usually, a running average is kept of the
+      proportion.
+    </p><p>
+      A synchronizing element also needs to measure its own performance in
+      order to figure out if the performace problem is upstream of itself.
+    </p><p>
+      These measurements are used to construct a QOS event that is sent
+      upstream. Note that a QoS event is sent for each buffer that arrives
+      in the sink.
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-clock-obligations-of-each-element.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-advanced.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-handling.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">
+      Obligations of each element.
+     </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Handling QoS</td></tr></table></div></body></html>

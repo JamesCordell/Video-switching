@@ -1,0 +1,10 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=/usr/lib/arm-linux-gnueabihf
+includedir=${prefix}/include
+
+Name: popt
+Version: 1.16
+Description: popt library.
+Libs: -L${libdir} -lpopt
+Cflags: -I${includedir}

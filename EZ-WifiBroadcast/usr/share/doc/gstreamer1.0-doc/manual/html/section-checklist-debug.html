@@ -1,0 +1,56 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Debugging</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-checklist-element.html" title="Chapter 23. Things to check when writing an application"><link rel="prev" href="chapter-checklist-element.html" title="Chapter 23. Things to check when writing an application"><link rel="next" href="section-checklist-conversion.html" title="Conversion plugins"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Debugging</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-checklist-element.html">Prev</a> </td><th width="60%" align="center">Chapter 23. Things to check when writing an application</th><td width="20%" align="right"> <a accesskey="n" href="section-checklist-conversion.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-checklist-debug"></a>Debugging</h2></div></div></div><p>
+      Applications can make use of the extensive <span class="application">GStreamer</span> debugging system
+      to debug pipeline problems. Elements will write output to this system
+      to log what they're doing. It's not used for error reporting, but it
+      is very useful for tracking what an element is doing exactly, which
+      can come in handy when debugging application issues (such as failing
+      seeks, out-of-sync media, etc.).
+    </p><p>
+      Most <span class="application">GStreamer</span>-based applications accept the commandline option
+      <code class="option">--gst-debug=LIST</code> and related family members. The
+      list consists of a comma-separated list of category/level pairs,
+      which can set the debugging level for a specific debugging category.
+      For example, <code class="option">--gst-debug=oggdemux:5</code> would turn
+      on debugging for the Ogg demuxer element. You can use wildcards as
+      well. A debugging level of 0 will turn off all debugging, and a level
+      of 9 will turn on all debugging. Intermediate values only turn on
+      some debugging (based on message severity; 2, for example, will only
+      display errors and warnings). Here's a list of all available options:
+    </p><p>
+     </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          <code class="option">--gst-debug-help</code> will print available debug
+          categories and exit.
+         </p></li><li class="listitem"><p>
+          <code class="option">--gst-debug-level=<em class="replaceable"><code>LEVEL</code></em></code> 
+	  will set the default debug level (which can range from 0 (no
+          output) to 9 (everything)).
+         </p></li><li class="listitem"><p>
+          <code class="option">--gst-debug=<em class="replaceable"><code>LIST</code></em></code> 
+	  takes a comma-separated list of category_name:level pairs to
+          set specific levels for the individual categories. Example:
+          <code class="option">GST_AUTOPLUG:5,avidemux:3</code>. Alternatively, you
+          can also set the <code class="classname">GST_DEBUG</code> environment
+          variable, which has the same effect.
+         </p></li><li class="listitem"><p>
+          <code class="option">--gst-debug-no-color</code> will disable color debugging.
+          You can also set the GST_DEBUG_NO_COLOR environment variable to 1
+          if you want to disable colored debug output permanently. Note that
+          if you are disabling color purely to avoid messing up your pager
+          output, try using <span class="command"><strong>less -R</strong></span>.
+         </p></li><li class="listitem"><p>
+          <code class="option">--gst-debug-color-mode=<em class="replaceable"><code>MODE</code></em></code>
+          will change debug log coloring mode. <em class="replaceable"><code>MODE</code></em>
+          can be one of the following: <code class="option">on</code>,
+          <code class="option">off</code>, <code class="option">auto</code>,
+          <code class="option">disable</code>, <code class="option">unix</code>.
+          You can also set the GST_DEBUG_COLOR_MODE environment variable
+          if you want to change colored debug output permanently. Note that
+          if you are disabling color purely to avoid messing up your pager
+          output, try using <span class="command"><strong>less -R</strong></span>.
+         </p></li><li class="listitem"><p>
+          <code class="option">--gst-debug-disable</code> disables debugging altogether.
+         </p></li><li class="listitem"><p>
+          <code class="option">--gst-plugin-spew</code> enables printout of errors while
+          loading <span class="application">GStreamer</span> plugins.
+         </p></li></ul></div><p>
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-checklist-element.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-checklist-element.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-checklist-conversion.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 23. Things to check when writing an application </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Conversion plugins</td></tr></table></div></body></html>

@@ -1,0 +1,17 @@
+/.
+/etc
+/etc/xdg
+/etc/xdg/gstomx.conf
+/usr
+/usr/share
+/usr/share/doc
+/usr/share/doc/gstreamer1.0-omx
+/usr/share/doc/gstreamer1.0-omx/copyright
+/usr/share/doc/gstreamer1.0-omx/changelog.gz
+/usr/share/doc/gstreamer1.0-omx/changelog.Debian.gz
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/gstreamer-1.0
+/usr/lib/arm-linux-gnueabihf/gstreamer-1.0/libgstomx.so
+/usr/bin
+/usr/bin/listcomponents

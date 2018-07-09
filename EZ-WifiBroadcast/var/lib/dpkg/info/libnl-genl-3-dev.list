@@ -1,0 +1,16 @@
+/.
+/usr
+/usr/share
+/usr/share/doc
+/usr/share/doc/libnl-genl-3-dev
+/usr/share/doc/libnl-genl-3-dev/copyright
+/usr/share/doc/libnl-genl-3-dev/changelog.Debian.gz
+/usr/share/doc/libnl-genl-3-dev/changelog.gz
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/pkgconfig
+/usr/lib/arm-linux-gnueabihf/pkgconfig/libnl-genl-3.0.pc
+/lib
+/lib/arm-linux-gnueabihf
+/lib/arm-linux-gnueabihf/libnl-genl-3.a
+/lib/arm-linux-gnueabihf/libnl-genl-3.so

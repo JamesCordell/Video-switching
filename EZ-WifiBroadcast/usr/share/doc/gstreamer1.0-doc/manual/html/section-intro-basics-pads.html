@@ -1,0 +1,35 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Pads</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-intro-basics.html" title="Chapter 3. Foundations"><link rel="prev" href="chapter-intro-basics.html" title="Chapter 3. Foundations"><link rel="next" href="section-intro-basics-bins.html" title="Bins and pipelines"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Pads</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-intro-basics.html">Prev</a> </td><th width="60%" align="center">Chapter 3. Foundations</th><td width="20%" align="right"> <a accesskey="n" href="section-intro-basics-bins.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-intro-basics-pads"></a>Pads</h2></div></div></div><p>
+      <span class="emphasis"><em>Pads</em></span> are element's input and output, where
+      you can connect other elements. They are used to negotiate links and
+      data flow
+      between elements in <span class="application">GStreamer</span>. A pad can be viewed as a
+      <span class="quote">“<span class="quote">plug</span>”</span> or <span class="quote">“<span class="quote">port</span>”</span> on an element where
+      links may be made with other elements, and through which data can
+      flow to or from those elements. Pads have specific data handling
+      capabilities: a pad can restrict the type of data that flows
+      through it. Links are only allowed between two pads when the
+      allowed data types of the two pads are compatible. Data types are
+      negotiated between pads using a process called <span class="emphasis"><em>caps
+      negotiation</em></span>. Data types are described as a
+      <code class="classname">GstCaps</code>.
+    </p><p>
+      An analogy may be helpful here. A pad is similar to a plug or jack on a
+      physical device. Consider, for example, a home theater system consisting
+      of an amplifier, a DVD player, and a (silent) video projector. Linking
+      the DVD player to the amplifier is allowed because both devices have audio
+      jacks, and linking the projector to the DVD player is allowed because
+      both devices have compatible video jacks. Links between the
+      projector and the amplifier may not be made because the projector and
+      amplifier have different types of jacks. Pads in <span class="application">GStreamer</span> serve the
+      same purpose as the jacks in the home theater system.
+    </p><p>
+      For the most part, all data in <span class="application">GStreamer</span> flows one way through a link
+      between elements. Data flows out of one element through one or more
+      <span class="emphasis"><em>source pads</em></span>, and elements accept incoming data
+      through one or more <span class="emphasis"><em>sink pads</em></span>. Source and sink
+      elements have only source and sink pads, respectively. Data usually
+      means buffers (described by the <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/stable/gstreamer/html/gstreamer-GstBuffer.html" target="_top">
+      <code class="classname">GstBuffer</code></a> object) and events (described
+      by the <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/stable/gstreamer/html/gstreamer-GstEvent.html" target="_top">
+      <code class="classname">GstEvent</code></a> object).
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-intro-basics.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-intro-basics.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-intro-basics-bins.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 3. Foundations </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Bins and pipelines</td></tr></table></div></body></html>

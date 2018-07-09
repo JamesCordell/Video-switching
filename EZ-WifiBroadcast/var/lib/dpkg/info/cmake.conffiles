@@ -1,0 +1,3 @@
+/etc/bash_completion.d/cmake
+/etc/bash_completion.d/cpack
+/etc/bash_completion.d/ctest

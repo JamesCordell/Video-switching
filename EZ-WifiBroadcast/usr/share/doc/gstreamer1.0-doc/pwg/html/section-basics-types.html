@@ -1,0 +1,47 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Media types and Properties</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-intro-basics.html" title="Chapter 2. Foundations"><link rel="prev" href="section-basics-data.html" title="GstMiniObject, Buffers and Events"><link rel="next" href="part-building.html" title="Part II. Building a Plugin"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Media types and Properties</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-basics-data.html">Prev</a> </td><th width="60%" align="center">Chapter 2. Foundations</th><td width="20%" align="right"> <a accesskey="n" href="part-building.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-basics-types"></a>Media types and Properties</h2></div></div></div><p>
+      <span class="application">GStreamer</span> uses a type system to ensure that the data passed between
+      elements is in a recognized format. The type system is also important
+      for ensuring that the parameters required to fully specify a format match
+      up correctly when linking pads between elements. Each link that is
+      made between elements has a specified type and optionally a set of
+      properties. See more about caps negotiation in
+      <a class="xref" href="chapter-negotiation.html" title="Chapter 14. Caps negotiation">Caps negotiation</a>.
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="sect2-types-basictypes"></a>The Basic Types</h3></div></div></div><p>
+        <span class="application">GStreamer</span> already supports many basic media types. Following is a
+        table of a few of the basic types used for buffers in
+        <span class="application">GStreamer</span>. The table contains the name ("media type") and a
+        description of the type, the properties associated with the type, and
+        the meaning of each property. A full list of supported types is
+        included in <a class="xref" href="section-types-definitions.html" title="List of Defined Types">List of Defined Types</a>.
+      </p><div class="table"><a name="table-basictypes"></a><p class="title"><b>Table 2.1. Table of Example Types</b></p><div class="table-contents"><table summary="Table of Example Types" border="1"><colgroup><col><col><col><col><col><col></colgroup><thead><tr><th align="left">Media Type</th><th align="left">Description</th><th align="left">Property</th><th align="left">Property Type</th><th align="left">Property Values</th><th align="left">Property Description</th></tr></thead><tbody valign="top"><tr><td rowspan="2" align="left" valign="top">audio/*</td><td rowspan="2" align="left" valign="top">
+              <span class="emphasis"><em>All audio types</em></span>
+            </td><td align="left" valign="top">rate</td><td align="left" valign="top">integer</td><td align="left" valign="top">greater than 0</td><td align="left" valign="top">
+              The sample rate of the data, in samples (per channel) per second.
+            </td></tr><tr><td align="left" valign="top">channels</td><td align="left" valign="top">integer</td><td align="left" valign="top">greater than 0</td><td align="left" valign="top">
+              The number of channels of audio data.
+            </td></tr><tr><td align="left" valign="top">audio/x-raw</td><td align="left" valign="top">
+              Unstructured and uncompressed raw integer audio data.
+            </td><td align="left" valign="top">format</td><td align="left" valign="top">string</td><td align="left" valign="top">
+              S8 U8 S16LE S16BE U16LE U16BE S24_32LE S24_32BE U24_32LE U24_32BE S32LE S32BE U32LE U32BE
+              S24LE S24BE U24LE U24BE S20LE S20BE U20LE U20BE S18LE S18BE U18LE U18BE F32LE F32BE F64LE F64BE
+            </td><td align="left" valign="top">
+              The format of the sample data.
+            </td></tr><tr><td rowspan="4" align="left" valign="top">audio/mpeg</td><td rowspan="4" align="left" valign="top">
+              Audio data compressed using the MPEG audio encoding scheme.
+            </td><td align="left" valign="top">mpegversion</td><td align="left" valign="top">integer</td><td align="left" valign="top">1, 2 or 4</td><td align="left" valign="top">
+              The MPEG-version used for encoding the data. The value 1 refers
+              to MPEG-1, -2 and -2.5 layer 1, 2 or 3. The values 2 and 4 refer
+              to the MPEG-AAC audio encoding schemes.
+            </td></tr><tr><td align="left" valign="top">framed</td><td align="left" valign="top">boolean</td><td align="left" valign="top">0 or 1</td><td align="left" valign="top">
+              A true value indicates that each buffer contains exactly one
+              frame. A false value indicates that frames and buffers do not
+              necessarily match up.
+            </td></tr><tr><td align="left" valign="top">layer</td><td align="left" valign="top">integer</td><td align="left" valign="top">1, 2, or 3</td><td align="left" valign="top">
+              The compression scheme layer used to compress the data
+              <span class="emphasis"><em>(only if mpegversion=1)</em></span>.
+            </td></tr><tr><td align="left" valign="top">bitrate</td><td align="left" valign="top">integer</td><td align="left" valign="top">greater than 0</td><td align="left" valign="top">
+              The bitrate, in bits per second. For VBR (variable bitrate)
+              MPEG data, this is the average bitrate.
+            </td></tr><tr><td align="left" valign="top">audio/x-vorbis</td><td align="left" valign="top">Vorbis audio data</td><td align="left" valign="top"> </td><td align="left" valign="top"> </td><td align="left" valign="top"> </td><td align="left" valign="top">
+              There are currently no specific properties defined for this type.
+            </td></tr></tbody></table></div></div><br class="table-break"></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-basics-data.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-intro-basics.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="part-building.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">GstMiniObject, Buffers and Events </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Part II. Building a Plugin</td></tr></table></div></body></html>

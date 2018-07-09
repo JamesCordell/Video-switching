@@ -1,0 +1,16 @@
+65a45720ea276944e07a4d15cea50135  usr/bin/fix-qdf
+733ff18003ec143824fc343c2196e9b1  usr/bin/qpdf
+0251d87df0d1a04e1d531d7737cee980  usr/bin/zlib-flate
+c884a6500379ceadcbe5fbd653b3c345  usr/share/doc-base/qpdf-manual
+0e95a31a43cd43893b696c10b3d08b3e  usr/share/doc/qpdf/README.gz
+76cf09132f9f19139e1c549d3db1e314  usr/share/doc/qpdf/TODO.gz
+b50b8b12033a2d7c39d755d5b0ab9916  usr/share/doc/qpdf/changelog.Debian.gz
+f4a89292bfd67c24e1b30dc8e705d307  usr/share/doc/qpdf/changelog.gz
+9d8c33ceacc3d45f1364a7efcbb7bc78  usr/share/doc/qpdf/copyright
+b2d9de4a6b1e8e639d2c79f348f300eb  usr/share/doc/qpdf/qpdf-manual.html
+77b5e929d610efcd1b2c677a1247fcf6  usr/share/doc/qpdf/qpdf-manual.pdf
+96964ea207fbf9ca7978287569daec43  usr/share/doc/qpdf/stylesheet.css
+e11b55ed71675c382198e4f5aa690c3b  usr/share/lintian/overrides/qpdf
+c2608c31514f5218e4efc36882ab0088  usr/share/man/man1/fix-qdf.1.gz
+cb6f19113710c9e2792d85f99ad3ee5d  usr/share/man/man1/qpdf.1.gz
+1879f6c3801d2ac3e32d21cd5a046061  usr/share/man/man1/zlib-flate.1.gz

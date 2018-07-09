@@ -1,0 +1,108 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Building GStreamer from git</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer FAQ (1.4.4)"><link rel="up" href="index.html" title="GStreamer FAQ (1.4.4)"><link rel="prev" href="chapter-troubleshooting.html" title="Troubleshooting GStreamer"><link rel="next" href="chapter-developing.html" title="Developing applications with GStreamer"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Building GStreamer from git</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-troubleshooting.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="chapter-developing.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="chapter-git"></a>Building GStreamer from git</h2></div></div></div><div class="qandaset"><a name="idp51758864"></a><dl><dt>Q: <a href="chapter-git.html#idp51759360">
+Is there a way to test or develop against GStreamer from git without
+interfering with my system GStreamer installed from packages?
+        </a></dt><dt>Q: <a href="chapter-git.html#idp51765344">
+How do I check out GStreamer from git ?
+        </a></dt><dt>Q: <a href="chapter-git.html#idp51835296">
+How do I get developer access to GStreamer git ?
+        </a></dt><dt>I ran autogen.sh, but it fails with aclocal errors. What's wrong ? <a href="chapter-git.html#idp51842800">
+
++ running aclocal -I m4 -I common/m4 ...
+aclocal: configure.ac: 8: macro `AM_DISABLE_STATIC' not found in library
+aclocal: configure.ac: 17: macro `AM_PROG_LIBTOOL' not found in library
+aclocal failed
+
+What's wrong ?
+        </a></dt><dt>Q: <a href="chapter-git.html#idp51850848">
+Why is "-Wall -Werror" being used ?
+        </a></dt></dl><table border="0" style="width: 100%;"><colgroup><col align="left" width="1%"><col></colgroup><tbody><tr class="question"><td align="left" valign="top"><a name="idp51759360"></a><a name="git-uninstalled"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>
+Is there a way to test or develop against GStreamer from git without
+interfering with my system GStreamer installed from packages?
+        </p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>
+Yes! You have two options: you can either run GStreamer in an uninstalled setup
+(see <a class="link" href="chapter-developing.html#developing-uninstalled-gstreamer" title="Q:">How do I develop against
+an uninstalled GStreamer copy ?</a>), or you can use GNOME's jhbuild.
+        </p></td></tr><tr class="question"><td align="left" valign="top"><a name="idp51765344"></a><a name="git-anon"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>
+How do I check out GStreamer from git ?
+        </p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>
+GStreamer is hosted on Freedesktop.org.  GStreamer consists of various parts.
+In the beginning, you will be interested in the "gstreamer" module, containing
+the core, and "gst-plugins-base" and "gst-plugins-good", containing the basic
+set of plugins. Finally, you may also be interested in "gst-plugins-ugly",
+"gst-plugins-bad" and "gst-ffmpeg" for more comprehensive media format support.
+        </p><p>
+To check out the latest git version of the core and the basic modules, use
+</p><pre class="programlisting">
+ for module in gstreamer gst-plugins-base gst-plugins-good; do
+   git clone git://anongit.freedesktop.org/git/gstreamer/$module ;
+ done
+</pre><p>
+This will create three directories in your current directory: "gstreamer",
+"gst-plugins-base", and "gst-plugins-good". If you want to get another module,
+use the above git clone command line and replace $module with the name of the
+module. Once you have checked out these modules, you will need to change into
+each directory and run ./autogen.sh, which will among other things checkout
+the common module underneath each module checkout.
+        </p><p>
+The <a class="ulink" href="http://gstreamer.freedesktop.org/modules/" target="_top">modules page</a>
+has a list of active ones together with a short description.
+        </p></td></tr><tr class="question"><td align="left" valign="top"><a name="idp51835296"></a><a name="git-developer"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>
+How do I get developer access to GStreamer git ?
+        </p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>
+If you want to gain developer access to GStreamer git, you should ask for
+it on the development lists, or ask one of the maintainers directly. We will
+usually only consider requests by developers who have been active and
+competent GStreamer contributors for some time already. If you are not
+already a registered developer with a user account on Freedesktop.org,
+you will then have to provide them with:
+</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>your desired unix username</p></li><li class="listitem"><p>your full name</p></li><li class="listitem"><p>your e-mail address</p></li><li class="listitem"><p>a copy of your public sshv2 identity.
+If you do not have this yet, you can generate it by running
+"ssh-keygen -t rsa -f ~/.ssh/id_rsa.pub-fdo".  The resulting public key
+will be in <code class="filename">~/.ssh/id_rsa.pub-fdo</code></p></li><li class="listitem"><p>your GPG fingerprint.  This would allow you to
+add and remove ssh keys to your account.
+</p></li></ol></div><p>
+
+Once you have all these items, see <a class="ulink" href="http://freedesktop.org/wiki/AccountRequests" target="_top">http://freedesktop.org/wiki/AccountRequests</a> for what to do with them.
+        </p></td></tr><tr class="question"><td align="left" valign="top"><a name="idp51842800"></a><a name="autogen-libtool"></a><p><b>I ran autogen.sh, but it fails with aclocal errors. What's wrong ?</b></p></td><td align="left" valign="top"><p>
+</p><pre class="programlisting">
++ running aclocal -I m4 -I common/m4 ...
+aclocal: configure.ac: 8: macro `AM_DISABLE_STATIC' not found in library
+aclocal: configure.ac: 17: macro `AM_PROG_LIBTOOL' not found in library
+aclocal failed
+</pre><p>
+What's wrong ?
+        </p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>
+aclocal is unable to find two macros installed by libtool in a file called
+libtool.m4.  Normally this would indicate that you don't have libtool, but
+that would mean autogen.sh would have failed on not finding libtool.
+        </p><p>
+It is more likely that you installed automake (which provides aclocal) in
+a different prefix than libtool.  You can check this by examining in what
+prefix both aclocal and libtool are installed.
+        </p><p>
+You can do three things to fix this :
+</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>install automake in the same prefix as libtool</p></li><li class="listitem"><p>force use of the automake installed in the same prefix as libtool
+by using the --with-automake option</p></li><li class="listitem"><p>figure out what prefix libtool has been installed to and point
+aclocal to the right location by running
+</p><pre class="programlisting">
+export ACLOCAL_FLAGS="-I $(prefix)/share/aclocal"
+</pre><p>
+where you replace prefix with the prefix where libtool was installed.
+</p></li></ol></div><p>
+       </p></td></tr><tr class="question"><td align="left" valign="top"><a name="idp51850848"></a><a name="werror"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>
+Why is "-Wall -Werror" being used ?
+        </p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>
+"-Wall" is being used because it finds a lot of possible problems with code.
+Not all of them are necessarily a problem, but it's better to have the compiler
+report some false positives and find a work-around than to spend time
+chasing a bug for days that the compiler was giving you hints about.
+        </p><p>
+"-Werror" is turned off for actual releases.  It's turned on by default for
+git and prereleases so that people actually notice and fix problems found by
+"-Wall".  We want people to actively hit and report or fix them.
+        </p><p>
+If for any reason you want to bypass these flags and you are certain it's the
+right thing to do, you can run
+</p><pre class="programlisting">make ERROR_CFLAGS=""</pre><p>
+to clear the CFLAGS for error checking.
+        </p></td></tr></tbody></table></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-troubleshooting.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="chapter-developing.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Troubleshooting GStreamer </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Developing applications with GStreamer</td></tr></table></div></body></html>

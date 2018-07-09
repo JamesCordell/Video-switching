@@ -1,0 +1,18 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 3. Foundations</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="part-introduction.html" title="Part I. About GStreamer"><link rel="prev" href="section-goals-testbed.html" title="Provide a framework for codec experimentation"><link rel="next" href="section-intro-basics-pads.html" title="Pads"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 3. Foundations</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-goals-testbed.html">Prev</a> </td><th width="60%" align="center">Part I. About GStreamer</th><td width="20%" align="right"> <a accesskey="n" href="section-intro-basics-pads.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-intro-basics"></a>Chapter 3. Foundations</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-intro-basics.html#section-intro-basics-elements">Elements</a></span></dt><dt><span class="sect1"><a href="section-intro-basics-pads.html">Pads</a></span></dt><dt><span class="sect1"><a href="section-intro-basics-bins.html">Bins and pipelines</a></span></dt><dt><span class="sect1"><a href="section-intro-basics-communication.html">Communication</a></span></dt></dl></div><p>
+    This chapter of the guide introduces the basic concepts of <span class="application">GStreamer</span>.
+    Understanding these concepts will be important in reading any of the
+    rest of this guide, all of them assume understanding of these basic
+    concepts.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-intro-basics-elements"></a>Elements</h2></div></div></div><p>
+      An <span class="emphasis"><em>element</em></span> is the most important class of objects
+      in <span class="application">GStreamer</span>. You will usually create a chain of elements linked
+      together and let data flow through this chain of elements. An element
+      has one specific function, which can be the reading of data from a
+      file, decoding of this data or outputting this data to your sound
+      card (or anything else). By chaining together several such elements,
+      you create a <span class="emphasis"><em>pipeline</em></span> that can do a specific task,
+      for example media playback or capture. <span class="application">GStreamer</span> ships with a large
+      collection of elements by default, making the development of a large
+      variety of media applications possible. If needed, you can also write
+      new elements. That topic is explained in great deal in the <span class="emphasis"><em>GStreamer Plugin Writer's Guide</em></span>.
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-goals-testbed.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-introduction.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-intro-basics-pads.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Provide a framework for codec experimentation </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Pads</td></tr></table></div></body></html>

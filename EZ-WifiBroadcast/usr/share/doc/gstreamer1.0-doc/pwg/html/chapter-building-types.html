@@ -1,0 +1,54 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 16. Types and Properties</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-advanced.html" title="Part III. Advanced Filter Concepts"><link rel="prev" href="section-allocation-query.html" title="GST_QUERY_ALLOCATION"><link rel="next" href="section-types-typefind.html" title="Typefind Functions and Autoplugging"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 16. Types and Properties</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-allocation-query.html">Prev</a> </td><th width="60%" align="center">Part III. Advanced Filter Concepts</th><td width="20%" align="right"> <a accesskey="n" href="section-types-typefind.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-building-types"></a>Chapter 16. Types and Properties</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-building-types.html#section-types-test">Building a Simple Format for Testing</a></span></dt><dt><span class="sect1"><a href="section-types-typefind.html">Typefind Functions and Autoplugging</a></span></dt><dt><span class="sect1"><a href="section-types-definitions.html">List of Defined Types</a></span></dt></dl></div><p>
+    There is a very large set of possible types that may be used to pass data
+    between elements. Indeed, each new element that is defined may use a new
+    data format (though unless at least one other element recognises that
+    format, it will be most likely be useless since nothing will be able to
+    link with it).
+  </p><p>
+    In order for types to be useful, and for systems like autopluggers to
+    work, it is necessary that all elements agree on the type definitions,
+    and which properties are required for each type. The <span class="application">GStreamer</span> framework
+    itself simply provides the ability to define types and parameters, but
+    does not fix the meaning of types and parameters, and does not enforce
+    standards on the creation of new types. This is a matter for a policy to
+    decide, not technical systems to enforce.
+  </p><p>
+    For now, the policy is simple:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Do not create a new type if you could use one which already exists.
+        </p></li><li class="listitem"><p>
+          If creating a new type, discuss it first with the other <span class="application">GStreamer</span>
+          developers, on at least one of: IRC, mailing lists.
+        </p></li><li class="listitem"><p>
+          Try to ensure that the name for a new format is as unlikely to
+          conflict with anything else created already, and is not a more
+          generalised name than it should be. For example: "audio/compressed"
+          would be too generalised a name to represent audio data compressed
+          with an mp3 codec. Instead "audio/mp3" might be an appropriate name,
+          or "audio/compressed" could exist and have a property indicating the
+          type of compression used.
+        </p></li><li class="listitem"><p>
+          Ensure that, when you do create a new type, you specify it clearly,
+          and get it added to the list of known types so that other developers
+          can use the type correctly when writing their elements.
+        </p></li></ul></div><p>
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-types-test"></a>Building a Simple Format for Testing</h2></div></div></div><p>
+      If you need a new format that has not yet been defined in our <a class="xref" href="section-types-definitions.html" title="List of Defined Types">List of Defined Types</a>, you will want to have some general
+      guidelines on media type naming, properties and such. A media type would
+      ideally be equivalent to the Mime-type defined by IANA; else, it should
+      be in the form type/x-name, where type is the sort of data this media type
+      handles (audio, video, ...) and name should be something specific for
+      this specific type.  Audio and video media types should try to support the
+      general audio/video properties (see the list), and can use their own
+      properties, too. To get an idea of what properties we think are useful,
+      see (again) the list.
+    </p><p>
+      Take your time to find the right set of properties for your type. There
+      is no reason to hurry. Also, experimenting with this is generally a good
+      idea. Experience learns that theoretically thought-out types are good,
+      but they still need practical use to assure that they serve their needs.
+      Make sure that your property names do not clash with similar properties
+      used in other types. If they match, make sure they mean the same thing;
+      properties with different types but the same names are
+      <span class="emphasis"><em>not</em></span> allowed.
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-allocation-query.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-advanced.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-types-typefind.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">GST_QUERY_ALLOCATION </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Typefind Functions and Autoplugging</td></tr></table></div></body></html>

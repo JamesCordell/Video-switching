@@ -1,0 +1,10 @@
+92ebb6a28fab958dc04660aab9fcecd0  usr/include/arm-linux-gnueabihf/gmp.h
+1281f9e82267940a657c3f49d74b8414  usr/include/gmpxx.h
+931dcb2f83f342c943b8e00cf4cc46b9  usr/lib/arm-linux-gnueabihf/libgmp.a
+e3d66caef7cab09a6cc7b76a6e4fd38b  usr/lib/arm-linux-gnueabihf/libgmpxx.a
+c3f7438fae834d490cf6726adda7e53f  usr/share/doc/libgmp-dev/AUTHORS
+480a0599de2341dcf0e2237f0c79379e  usr/share/doc/libgmp-dev/NEWS.gz
+fd7506583474fa080a35813e4532677b  usr/share/doc/libgmp-dev/README.gz
+3f2de05cf9ded83b69d15fb43eeb914c  usr/share/doc/libgmp-dev/changelog.Debian.gz
+20cc41cf6a5820dcb38da9a15ff74e55  usr/share/doc/libgmp-dev/changelog.gz
+a2e7dae6af89d823171690778148652b  usr/share/doc/libgmp-dev/copyright

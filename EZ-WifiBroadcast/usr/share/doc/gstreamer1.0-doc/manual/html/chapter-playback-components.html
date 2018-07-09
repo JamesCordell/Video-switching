@@ -1,0 +1,104 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 20. Playback Components</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="part-highlevel.html" title="Part IV. Higher-level interfaces for GStreamer applications"><link rel="prev" href="part-highlevel.html" title="Part IV. Higher-level interfaces for GStreamer applications"><link rel="next" href="section-components-decodebin.html" title="Decodebin"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 20. Playback Components</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="part-highlevel.html">Prev</a> </td><th width="60%" align="center">Part IV. Higher-level interfaces for <span class="application">GStreamer</span> applications</th><td width="20%" align="right"> <a accesskey="n" href="section-components-decodebin.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-playback-components"></a>Chapter 20. Playback Components</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-playback-components.html#section-components-playbin">Playbin</a></span></dt><dt><span class="sect1"><a href="section-components-decodebin.html">Decodebin</a></span></dt><dt><span class="sect1"><a href="section-components-uridecodebin.html">URIDecodebin</a></span></dt><dt><span class="sect1"><a href="section-components-playsink.html">Playsink</a></span></dt></dl></div><p>
+    <span class="application">GStreamer</span> includes several higher-level components to simplify an
+    application developer's life. All of the components discussed here (for now) are
+    targetted at media playback. The idea of each of these components is
+    to integrate as closely as possible with a <span class="application">GStreamer</span> pipeline, but
+    to hide the complexity of media type detection and several other
+    rather complex topics that have been discussed in <a class="xref" href="part-advanced.html" title="Part III. Advanced GStreamer concepts">Part III, “Advanced <span class="application">GStreamer</span> concepts”</a>.
+  </p><p>
+    We currently recommend people to use either playbin (see <a class="xref" href="chapter-playback-components.html#section-components-playbin" title="Playbin">the section called “Playbin”</a>) or decodebin (see <a class="xref" href="section-components-decodebin.html" title="Decodebin">the section called “Decodebin”</a>), depending on their needs.
+    Playbin is the recommended solution for everything related to simple
+    playback of media that should just work. Decodebin is a more flexible
+    autoplugger that could be used to add more advanced features, such
+    as playlist support, crossfading of audio tracks and so on. Its
+    programming interface is more low-level than that of playbin, though.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-components-playbin"></a>Playbin</h2></div></div></div><p>
+      Playbin is an element that can be created using the standard <span class="application">GStreamer</span>
+      API (e.g. <code class="function">gst_element_factory_make ()</code>). The factory
+      is conveniently called <span class="quote">“<span class="quote">playbin</span>”</span>. By being a
+      <code class="classname">GstPipeline</code> (and thus a
+      <code class="classname">GstElement</code>), playbin automatically supports all
+      of the features of this class, including error handling, tag support,
+      state handling, getting stream positions, seeking, and so on.
+    </p><p>
+      Setting up a playbin pipeline is as simple as creating an instance of
+      the playbin element, setting a file location using the
+      <span class="quote">“<span class="quote">uri</span>”</span> property on playbin, and then setting the element
+      to the <code class="classname">GST_STATE_PLAYING</code> state (the location has to be a valid
+      URI, so <span class="quote">“<span class="quote">&lt;protocol&gt;://&lt;location&gt;</span>”</span>, e.g.
+      file:///tmp/my.ogg or http://www.example.org/stream.ogg). Internally,
+      playbin will set up a pipeline to playback the media location.
+    </p><pre class="programlisting">
+#include &lt;gst/gst.h&gt;
+
+[.. my_bus_callback goes here ..]
+
+gint
+main (gint   argc,
+      gchar *argv[])
+{
+  GMainLoop *loop;
+  GstElement *play;
+  GstBus *bus;
+
+  /* init GStreamer */
+  gst_init (&amp;argc, &amp;argv);
+  loop = g_main_loop_new (NULL, FALSE);
+
+  /* make sure we have a URI */
+  if (argc != 2) {
+    g_print ("Usage: %s &lt;URI&gt;\n", argv[0]);
+    return -1;
+  }
+
+  /* set up */
+  play = gst_element_factory_make ("playbin", "play");
+  g_object_set (G_OBJECT (play), "uri", argv[1], NULL);
+
+  bus = gst_pipeline_get_bus (GST_PIPELINE (play));
+  gst_bus_add_watch (bus, my_bus_callback, loop);
+  gst_object_unref (bus);
+
+  gst_element_set_state (play, GST_STATE_PLAYING);
+
+  /* now run */
+  g_main_loop_run (loop);
+
+  /* also clean up */
+  gst_element_set_state (play, GST_STATE_NULL);
+  gst_object_unref (GST_OBJECT (play));
+
+  return 0;
+}
+    </pre><p>
+      Playbin has several features that have been discussed previously:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Settable video and audio output (using the <span class="quote">“<span class="quote">video-sink</span>”</span>
+          and <span class="quote">“<span class="quote">audio-sink</span>”</span> properties).
+        </p></li><li class="listitem"><p>
+          Mostly controllable and trackable as a
+          <code class="classname">GstElement</code>, including error handling, eos
+          handling, tag handling, state handling (through the
+          <code class="classname">GstBus</code>), media position handling and
+          seeking.
+        </p></li><li class="listitem"><p>
+          Buffers network-sources, with buffer fullness notifications being
+          passed through the <code class="classname">GstBus</code>.
+        </p></li><li class="listitem"><p>
+          Supports visualizations for audio-only media.
+        </p></li><li class="listitem"><p>
+          Supports subtitles, both in the media as well as from separate
+          files. For separate subtitle files, use the <span class="quote">“<span class="quote">suburi</span>”</span>
+          property.
+        </p></li><li class="listitem"><p>
+          Supports stream selection and disabling. If your media has
+          multiple audio or subtitle tracks, you can dynamically choose
+          which one to play back, or decide to turn it off altogether
+          (which is especially useful to turn off subtitles). For each
+          of those, use the <span class="quote">“<span class="quote">current-text</span>”</span> and other related
+          properties.
+        </p></li></ul></div><p>
+      For convenience, it is possible to test <span class="quote">“<span class="quote">playbin</span>”</span> on
+      the commandline, using the command <span class="quote">“<span class="quote">gst-launch-1.0 playbin
+      uri=file:///path/to/file</span>”</span>.
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="part-highlevel.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-highlevel.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-components-decodebin.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Part IV. Higher-level interfaces for <span class="application">GStreamer</span> applications </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Decodebin</td></tr></table></div></body></html>

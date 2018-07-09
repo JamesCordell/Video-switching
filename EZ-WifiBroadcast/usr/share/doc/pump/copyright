@@ -1,0 +1,34 @@
+This package was debianized by Steve Dunham <dunham@cse.msu.edu> on
+Thu, 10 Jun 1999 14:45:00 -0400.
+
+It was then worked on by Herbert Xu <herbert@debian.org> since
+Mon, 24 Dec 2001 12:05:16 +1100.
+
+It is maintained by Anibal Monsalve Salazar <anibal@debian.org>.
+
+The source tar file was extracted from sources available at
+
+http://download.fedora.redhat.com/pub/fedora/linux/core/development/SRPMS/
+
+Upstream Author: Red Hat
+
+Copyright:
+
+ Copyright 1999 Red Hat Software, Inc.
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; version 2 dated June, 1991.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
+
+On Debian GNU/Linux systems, the complete text of the GNU General
+Public License can be found in `/usr/share/common-licenses/GPL-2'.
+

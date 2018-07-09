@@ -1,0 +1,10 @@
+/.
+/usr
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/libarmmem.so
+/usr/share
+/usr/share/doc
+/usr/share/doc/raspi-copies-and-fills
+/usr/share/doc/raspi-copies-and-fills/copyright
+/usr/share/doc/raspi-copies-and-fills/changelog.Debian.gz

@@ -1,0 +1,136 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 28. Porting 0.8 plug-ins to 0.10</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-appendix.html" title="Part V. Appendices"><link rel="prev" href="section-checklist-testing.html" title="Testing your element"><link rel="next" href="chapter-porting-1_0.html" title="Chapter 29. Porting 0.10 plug-ins to 1.0"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 28. Porting 0.8 plug-ins to 0.10</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-checklist-testing.html">Prev</a> </td><th width="60%" align="center">Part V. Appendices</th><td width="20%" align="right"> <a accesskey="n" href="chapter-porting-1_0.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-porting"></a>Chapter 28. Porting 0.8 plug-ins to 0.10</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-porting.html#section-porting-objects">List of changes</a></span></dt></dl></div><p>
+    This section of the appendix will discuss shortly what changes to
+    plugins will be needed to quickly and conveniently port most
+    applications from <span class="application">GStreamer</span>-0.8 to <span class="application">GStreamer</span>-0.10, with references
+    to the relevant sections in this Plugin Writer's Guide where needed.
+    With this list, it should be possible to port most plugins to
+    <span class="application">GStreamer</span>-0.10 in less than a day. Exceptions are elements that will
+    require a base class in 0.10 (sources, sinks), in which case it may take
+    a lot longer, depending on the coder's skills (however, when using the
+    <code class="classname">GstBaseSink</code> and <code class="classname">GstBaseSrc</code>
+    base-classes, it shouldn't be all too bad), and elements requiring
+    the deprecated bytestream interface, which should take 1-2 days with
+    random access. The scheduling parts of muxers will also need a rewrite,
+    which will take about the same amount of time.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-porting-objects"></a>List of changes</h2></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+        Discont events have been replaced by newsegment events. In 0.10, it is
+        essential that you send a newsegment event downstream before you send 
+        your first buffer (in 0.8 the scheduler would invent discont events if
+        you forgot them, in 0.10 this is no longer the case).
+        </p></li><li class="listitem"><p>
+        In 0.10, buffers have caps attached to them. Elements should allocate
+        new buffers with <code class="function">gst_pad_alloc_buffer ()</code>. See
+        <a class="xref" href="chapter-negotiation.html" title="Chapter 14. Caps negotiation">Caps negotiation</a> for more details.
+        </p></li><li class="listitem"><p>
+          Most functions returning an object or an object property have
+          been changed to return its own reference rather than a constant
+          reference of the one owned by the object itself. The reason for
+          this change is primarily thread-safety. This means effectively
+          that return values of functions such as
+          <code class="function">gst_element_get_pad ()</code>,
+          <code class="function">gst_pad_get_name ()</code>,
+          <code class="function">gst_pad_get_parent ()</code>,
+          <code class="function">gst_object_get_parent ()</code>,
+          and many more like these
+          have to be free'ed or unreferenced after use. Check the API
+          references of each function to know for sure whether return
+          values should be free'ed or not.
+        </p></li><li class="listitem"><p>
+          In 0.8, scheduling could happen in any way. Source elements could
+          be <code class="function">_get ()</code>-based or <code class="function">_loop
+          ()</code>-based, and any other element could be  <code class="function">_chain
+          ()</code>-based or <code class="function">_loop ()</code>-based, with
+          no limitations. Scheduling in 0.10 is simpler for the scheduler,
+          and the element is expected to do some more work. Pads get
+          assigned a scheduling mode, based on which they can either
+          operate in random access-mode, in pipeline driving mode or in
+          push-mode. all this is documented in detail in <a class="xref" href="chapter-scheduling.html" title="Chapter 13. Different scheduling modes">Different scheduling modes</a>. As a result of this, the bytestream
+          object no longer exists. Elements requiring byte-level access should
+          now use random access on their sinkpads.
+        </p></li><li class="listitem"><p>
+          Negotiation is asynchronous. This means that downstream negotiation
+          is done as data comes in and upstream negotiation is done whenever
+          renegotiation is required. All details are described in 
+          <a class="xref" href="chapter-negotiation.html" title="Chapter 14. Caps negotiation">Caps negotiation</a>.
+        </p></li><li class="listitem"><p>
+          For as far as possible, elements should try to use existing base
+          classes in 0.10. Sink and source elements, for example, could derive
+          from <code class="classname">GstBaseSrc</code> and
+          <code class="classname">GstBaseSink</code>. Audio sinks or sources could even
+          derive from audio-specific base classes. All existing base classes
+          have been discussed in <a class="xref" href="chapter-other-base.html" title="Chapter 23. Pre-made base classes">Pre-made base classes</a> and the
+          next few chapters.
+        </p></li><li class="listitem"><p>
+          In 0.10, event handling and buffers are separated once again. This
+          means that in order to receive events, one no longer has to set the
+          <code class="classname">GST_FLAG_EVENT_AWARE</code> flag, but can simply
+          set an event handling function on the element's sinkpad(s), using
+           the function <code class="function">gst_pad_set_event_function ()</code>. The
+          <code class="function">_chain ()</code>-function will only receive buffers.
+        </p></li><li class="listitem"><p>
+          Although core will wrap most threading-related locking for you (e.g.
+          it takes the stream lock before calling your data handling
+          functions), you are still responsible for locking around certain
+          functions, e.g. object properties. Be sure to lock properly here,
+          since applications will change those properties in a different thread
+          than the thread which does the actual data passing! You can use the
+          <code class="function">GST_OBJECT_LOCK ()</code> and <code class="function">GST_OBJECT_UNLOCK
+          ()</code> helpers in most cases, fortunately, which grabs the
+          default property lock of the element.
+        </p></li><li class="listitem"><p>
+          <code class="classname">GstValueFixedList</code> and all
+          <code class="function">*_fixed_list_* ()</code> functions were renamed to
+          <code class="classname">GstValueArray</code> and <code class="function">*_array_*
+          ()</code>.
+        </p></li><li class="listitem"><p>
+          The semantics of <span class="symbol">GST_STATE_PAUSED</span> and 
+          <span class="symbol">GST_STATE_PLAYING</span> have changed for elements that
+          are not sink elements. Non-sink elements need to be able to accept
+          and process data already in the <span class="symbol">GST_STATE_PAUSED</span> 
+          state now (i.e. when prerolling the pipeline). More details can be
+          found in <a class="xref" href="chapter-statemanage-states.html" title="Chapter 8. What are states?">Chapter 8, <i>What are states?</i></a>.
+        </p></li><li class="listitem"><p>
+          If your plugin's state change function hasn't been superseded by
+          virtual start() and stop() methods of one of the new base classes,
+          then your plugin's state change functions may need to be changed in 
+          order to safely handle concurrent access by multiple threads. Your 
+          typical state change function will now first handle upwards state 
+          changes, then chain up to the state change function of the parent 
+          class (usually GstElementClass in these cases), and only then handle
+          downwards state changes. See the vorbis decoder plugin in
+          gst-plugins-base for an example.
+        </p><p>
+          The reason for this is that in the case of downwards state changes
+          you don't want to destroy allocated resources while your plugin's 
+          chain function (for example) is still accessing those resources in
+          another thread. Whether your chain function might be running or not
+          depends on the state of your plugin's pads, and the state of those
+          pads is closely linked to the state of the element. Pad states are
+          handled in the GstElement class's state change function, including
+          proper locking, that's why it is essential to chain up before
+          destroying allocated resources.
+        </p><p>
+          As already mentioned above, you should really rewrite your plugin
+          to derive from one of the new base classes though, so you don't have
+          to worry about these things, as the base class will handle it for you.
+          There are no base classes for decoders and encoders yet, so the above 
+          paragraphs about state changes definitively apply if your plugin is a
+          decoder or an encoder.
+        </p></li><li class="listitem"><p>
+          <code class="function">gst_pad_set_link_function ()</code>, which used to set
+          a function that would be called when a format was negotiated between
+          two <code class="classname">GstPad</code>s, now sets a function that is
+          called when two elements are linked together in an application. For
+          all practical purposes, you most likely want to use the function
+          <code class="function">gst_pad_set_setcaps_function ()</code>, nowadays, which
+          sets a function that is called when the format streaming over a pad
+          changes (so similar to <code class="function">_set_link_function ()</code> in
+          <span class="application">GStreamer</span>-0.8).
+        </p><p>
+          If the element is derived from a <code class="classname">GstBase</code> class,
+          then override the <code class="function">set_caps ()</code>.
+        </p></li><li class="listitem"><p>
+          <code class="function">gst_pad_use_explicit_caps ()</code> has been replaced by
+          <code class="function">gst_pad_use_fixed_caps ()</code>. You can then set the
+          fixed caps to use on a pad with <code class="function">gst_pad_set_caps ()</code>.
+        </p></li></ul></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-checklist-testing.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-appendix.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-porting-1_0.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Testing your element </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 29. Porting 0.10 plug-ins to 1.0</td></tr></table></div></body></html>

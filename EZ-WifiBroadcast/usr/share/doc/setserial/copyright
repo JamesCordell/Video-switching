@@ -1,0 +1,16 @@
+This is the Debian package of setserial. This package was originally put
+together by Bruce Perens. It is now maintained by Gordon Russell
+<g.russell@dcs.napier.ac.uk>.
+
+Original sources may be found at:
+	ftp://ftp.mcc.ac.uk/pub/linux/sources/sbin
+	ftp://tsx-11.mit.edu/pub/linux/sources/sbin
+
+Copyright:
+
+"Setserial is Copyright (C) 1994 by Theodore Ts'o <tytso@mit.edu> This
+file may be redistributed under the terms of the GNU General Public License.
+If this does not suit you, contact <tytso@mit.edu> and we can talk."
+
+On Debian GNU/Linux systems, the complete text of the GNU General
+Public License can be found in `/usr/share/common-licenses/GPL'.

@@ -1,0 +1,63 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 7. The query function</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-building.html" title="Part II. Building a Plugin"><link rel="prev" href="chapter-building-eventfn.html" title="Chapter 6. The event function"><link rel="next" href="chapter-statemanage-states.html" title="Chapter 8. What are states?"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 7. The query function</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-building-eventfn.html">Prev</a> </td><th width="60%" align="center">Part II. Building a Plugin</th><td width="20%" align="right"> <a accesskey="n" href="chapter-statemanage-states.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-building-queryfn"></a>Chapter 7. The query function</h2></div></div></div><p>
+    Through the query function, your element will receive queries that it
+    has to reply to. These are queries like position, duration but also
+    about the supported formats and scheduling modes your element supports.
+    Queries can travel both upstream and downstream, so you can receive them
+    on sink pads as well as source pads. 
+  </p><p>
+    Below follows a very simple query function that we install on the source
+    pad of our element.
+  </p><pre class="programlisting">
+
+static gboolean gst_my_filter_src_query (GstPad    *pad,
+                                         GstObject *parent,
+                                         GstQuery  *query);
+
+[..]
+
+static void
+gst_my_filter_init (GstMyFilter * filter)
+{
+[..]
+  /* configure event function on the pad before adding
+   * the pad to the element */
+  gst_pad_set_query_function (filter-&gt;srcpad,
+      gst_my_filter_src_query);
+[..]
+}
+
+static gboolean
+gst_my_filter_src_query (GstPad    *pad,
+		         GstObject *parent,
+		         GstQuery  *query)
+{
+  gboolean ret;
+  GstMyFilter *filter = GST_MY_FILTER (parent);
+
+  switch (GST_QUERY_TYPE (query)) {
+    case GST_QUERY_POSITION:
+      /* we should report the current position */
+      [...]
+      break;
+    case GST_QUERY_DURATION:
+      /* we should report the duration here */
+      [...]
+      break;
+    case GST_QUERY_CAPS:
+      /* we should report the supported caps here */
+      [...]
+      break;
+    default:
+      /* just call the default handler */
+      ret = gst_pad_query_default (pad, parent, query);
+      break;
+  }
+  return ret;
+}
+
+  </pre><p>
+    It is a good idea to call the default query handler
+    <code class="function">gst_pad_query_default ()</code> for unknown queries.
+    Depending on the query type, the default handler will forward 
+    the query or simply unref it.
+  </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-building-eventfn.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-building.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-statemanage-states.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 6. The event function </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 8. What are states?</td></tr></table></div></body></html>

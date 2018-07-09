@@ -1,0 +1,13 @@
+/.
+/usr
+/usr/share
+/usr/share/doc
+/usr/share/doc/itop
+/usr/share/doc/itop/changelog.Debian.gz
+/usr/share/doc/itop/copyright
+/usr/share/doc/itop/changelog.gz
+/usr/share/man
+/usr/share/man/man1
+/usr/share/man/man1/itop.1.gz
+/usr/bin
+/usr/bin/itop

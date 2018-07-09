@@ -1,0 +1,42 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 3. Constructing the Boilerplate</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-building.html" title="Part II. Building a Plugin"><link rel="prev" href="part-building.html" title="Part II. Building a Plugin"><link rel="next" href="section-boiler-project-stamp.html" title="Using the Project Stamp"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 3. Constructing the Boilerplate</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="part-building.html">Prev</a> </td><th width="60%" align="center">Part II. Building a Plugin</th><td width="20%" align="right"> <a accesskey="n" href="section-boiler-project-stamp.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-building-boiler"></a>Chapter 3. Constructing the Boilerplate</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-building-boiler.html#section-boiler-source">Getting the GStreamer Plugin Templates</a></span></dt><dt><span class="sect1"><a href="section-boiler-project-stamp.html">Using the Project Stamp</a></span></dt><dt><span class="sect1"><a href="section-boiler-examine.html">Examining the Basic Code</a></span></dt><dt><span class="sect1"><a href="section-boiler-details.html">Element metadata</a></span></dt><dt><span class="sect1"><a href="section-boiler-padtemplates.html">GstStaticPadTemplate</a></span></dt><dt><span class="sect1"><a href="section-boiler-constructors.html">Constructor Functions</a></span></dt><dt><span class="sect1"><a href="section-boiler-plugininit.html">The plugin_init function</a></span></dt></dl></div><p>
+    In this chapter you will learn how to construct the bare minimum code for a
+    new plugin. Starting from ground zero, you will see how to get the
+    <span class="application">GStreamer</span> template source. Then you will learn how to use a few basic
+    tools to copy and modify a template plugin to create a new plugin. If you
+    follow the examples here, then by the end of this chapter you will have a
+    functional audio filter plugin that you can compile and use in <span class="application">GStreamer</span>
+    applications.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-boiler-source"></a>Getting the GStreamer Plugin Templates</h2></div></div></div><p>
+      There are currently two ways to develop a new plugin for <span class="application">GStreamer</span>: You
+      can write the entire plugin by hand, or you can copy an existing plugin
+      template and write the plugin code you need. The second method is by far
+      the simpler of the two, so the first method will not even be described
+      here. (Errm, that is, <span class="quote">“<span class="quote">it is left as an exercise to the
+      reader.</span>”</span>)
+    </p><p>
+      The first step is to check out a copy of the
+      <code class="filename">gst-template</code> git module to get an important tool and
+      the source code template for a basic <span class="application">GStreamer</span> plugin. To check out the
+      <code class="filename">gst-template</code> module, make sure you are connected to
+      the internet, and type the following commands at a command console:
+    </p><pre class="screen">
+<code class="prompt">shell $ </code><strong class="userinput"><code>git clone git://anongit.freedesktop.org/gstreamer/gst-template.git</code></strong>
+Initialized empty Git repository in /some/path/gst-template/.git/
+remote: Counting objects: 373, done.
+remote: Compressing objects: 100% (114/114), done.
+remote: Total 373 (delta 240), reused 373 (delta 240)
+Receiving objects: 100% (373/373), 75.16 KiB | 78 KiB/s, done.
+Resolving deltas: 100% (240/240), done.
+    </pre><p>
+      This command will check out a series of files and directories into
+      <code class="filename">gst-template</code>. The template you
+      will be using is in the
+      <code class="filename">gst-template/gst-plugin/</code>
+      directory. You should look over the files in that directory to get a
+      general idea of the structure of a source tree for a plugin.
+    </p><p>
+      If for some reason you can't access the git repository, you can also
+      <a class="ulink" href="http://cgit.freedesktop.org/gstreamer/gst-template/commit/" target="_top">
+      download a snapshot of the latest revision</a> via the cgit web
+      interface.
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="part-building.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-building.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-boiler-project-stamp.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Part II. Building a Plugin </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Using the Project Stamp</td></tr></table></div></body></html>

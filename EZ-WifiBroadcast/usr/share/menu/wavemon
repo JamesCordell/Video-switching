@@ -1,0 +1,3 @@
+?package(wavemon):needs="text" section="Applications/Network/Monitoring" \
+	title="wavemon" \
+	command="/usr/bin/wavemon"

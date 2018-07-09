@@ -1,0 +1,17 @@
+/.
+/usr
+/usr/share
+/usr/share/doc
+/usr/share/doc/pump
+/usr/share/doc/pump/changelog.gz
+/usr/share/doc/pump/changelog.Debian.gz
+/usr/share/doc/pump/TODO.Debian
+/usr/share/doc/pump/CREDITS
+/usr/share/doc/pump/copyright
+/usr/share/man
+/usr/share/man/man8
+/usr/share/man/man8/pump.8.gz
+/var
+/var/run
+/sbin
+/sbin/pump

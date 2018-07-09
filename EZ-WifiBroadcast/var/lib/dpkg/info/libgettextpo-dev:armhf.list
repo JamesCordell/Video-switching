@@ -1,0 +1,14 @@
+/.
+/usr
+/usr/share
+/usr/share/doc
+/usr/share/doc/libgettextpo-dev
+/usr/share/doc/libgettextpo-dev/copyright
+/usr/share/doc/libgettextpo-dev/changelog.gz
+/usr/share/doc/libgettextpo-dev/changelog.Debian.gz
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/libgettextpo.a
+/usr/include
+/usr/include/gettext-po.h
+/usr/lib/arm-linux-gnueabihf/libgettextpo.so

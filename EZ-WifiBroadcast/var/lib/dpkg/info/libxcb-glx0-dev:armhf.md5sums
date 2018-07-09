@@ -1,0 +1,5 @@
+0e2078ab4345c12049199abab3e21e3f  usr/include/xcb/glx.h
+f35b4e44727ff713aa0e49130812fe6f  usr/lib/arm-linux-gnueabihf/libxcb-glx.a
+4d5c983539d60634739129c8dd6cb41c  usr/lib/arm-linux-gnueabihf/pkgconfig/xcb-glx.pc
+6b9a2dbb0f848de8eb0b138ef4066d09  usr/share/doc/libxcb-glx0-dev/changelog.Debian.gz
+360fadb0d222af6607a189d435e3a9f3  usr/share/doc/libxcb-glx0-dev/copyright

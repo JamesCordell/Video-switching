@@ -1,0 +1,14 @@
+/.
+/usr
+/usr/share
+/usr/share/man
+/usr/share/man/man3
+/usr/share/man/man3/Data::Section.3pm.gz
+/usr/share/perl5
+/usr/share/perl5/Data
+/usr/share/perl5/Data/Section.pm
+/usr/share/doc
+/usr/share/doc/libdata-section-perl
+/usr/share/doc/libdata-section-perl/changelog.Debian.gz
+/usr/share/doc/libdata-section-perl/copyright
+/usr/share/doc/libdata-section-perl/changelog.gz

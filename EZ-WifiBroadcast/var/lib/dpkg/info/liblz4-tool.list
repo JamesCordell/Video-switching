@@ -1,0 +1,16 @@
+/.
+/usr
+/usr/bin
+/usr/bin/lz4
+/usr/bin/lz4c
+/usr/share
+/usr/share/doc
+/usr/share/doc/liblz4-tool
+/usr/share/doc/liblz4-tool/copyright
+/usr/share/doc/liblz4-tool/changelog.Debian.gz
+/usr/share/man
+/usr/share/man/man1
+/usr/share/man/man1/lz4.1.gz
+/usr/share/man/man1/lz4c.1.gz
+/usr/share/man/man1/lz4cat.1.gz
+/usr/bin/lz4cat

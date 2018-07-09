@@ -1,0 +1,13 @@
+/.
+/usr
+/usr/lib
+/usr/lib/python2.7
+/usr/lib/python2.7/dist-packages
+/usr/lib/python2.7/dist-packages/pkg_resources.py
+/usr/share
+/usr/share/doc
+/usr/share/doc/python-pkg-resources
+/usr/share/doc/python-pkg-resources/copyright
+/usr/share/doc/python-pkg-resources/pkg_resources.txt.gz
+/usr/share/doc/python-pkg-resources/README.Debian
+/usr/share/doc/python-pkg-resources/changelog.Debian.gz

@@ -1,0 +1,162 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 7. Bus</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="part-building.html" title="Part II. Building an Application"><link rel="prev" href="section-bin-state-change-handling.html" title="Bins manage states of their children"><link rel="next" href="section-bus-message-types.html" title="Message types"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 7. Bus</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-bin-state-change-handling.html">Prev</a> </td><th width="60%" align="center">Part II. Building an Application</th><td width="20%" align="right"> <a accesskey="n" href="section-bus-message-types.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-bus"></a>Chapter 7. Bus</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-bus.html#section-bus-howto">How to use a bus</a></span></dt><dt><span class="sect1"><a href="section-bus-message-types.html">Message types</a></span></dt></dl></div><p>
+    A bus is a simple system that takes care of forwarding messages from
+    the streaming threads to an application in its own thread context. The
+    advantage of a bus is that an application does not need to be
+    thread-aware in order to use <span class="application">GStreamer</span>, even though <span class="application">GStreamer</span>
+    itself is heavily threaded.
+  </p><p>
+    Every pipeline contains a bus by default, so applications do not need
+    to create a bus or anything. The only thing applications should do is
+    set a message handler on a bus, which is similar to a signal handler
+    to an object. When the mainloop is running, the bus will periodically
+    be checked for new messages, and the callback will be called when any
+    message is available.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-bus-howto"></a>How to use a bus</h2></div></div></div><p>
+      There are two different ways to use a bus:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+            Run a GLib/Gtk+ main loop (or iterate the default GLib main
+            context yourself regularly) and attach some kind of watch to the
+            bus. This way the GLib main loop will check the bus for new
+            messages and notify you whenever there are messages.
+          </p><p>
+            Typically you would use <code class="function">gst_bus_add_watch ()</code>
+            or <code class="function">gst_bus_add_signal_watch ()</code> in this case.
+          </p><p>
+            To use a bus, attach a message handler to the bus of a pipeline
+            using <code class="function">gst_bus_add_watch ()</code>. This handler will
+            be called whenever the pipeline emits a message to the bus. In this
+            handler, check the signal type (see next section) and do something
+            accordingly. The return value of the handler should be TRUE to
+            keep the handler attached to the bus, return FALSE to remove it.
+          </p></li><li class="listitem"><p>
+            Check for messages on the bus yourself. This can be done using
+            <code class="function">gst_bus_peek ()</code> and/or
+            <code class="function">gst_bus_poll ()</code>.
+          </p></li></ul></div><p>
+    </p><pre class="programlisting">
+#include &lt;gst/gst.h&gt;
+
+static GMainLoop *loop;
+
+static gboolean
+my_bus_callback (GstBus     *bus,
+		 GstMessage *message,
+		 gpointer    data)
+{
+  g_print ("Got %s message\n", GST_MESSAGE_TYPE_NAME (message));
+
+  switch (GST_MESSAGE_TYPE (message)) {
+    case GST_MESSAGE_ERROR: {
+      GError *err;
+      gchar *debug;
+
+      gst_message_parse_error (message, &amp;err, &amp;debug);
+      g_print ("Error: %s\n", err-&gt;message);
+      g_error_free (err);
+      g_free (debug);
+
+      g_main_loop_quit (loop);
+      break;
+    }
+    case GST_MESSAGE_EOS:
+      /* end-of-stream */
+      g_main_loop_quit (loop);
+      break;
+    default:
+      /* unhandled message */
+      break;
+  }
+
+  /* we want to be notified again the next time there is a message
+   * on the bus, so returning TRUE (FALSE means we want to stop watching
+   * for messages on the bus and our callback should not be called again)
+   */
+  return TRUE;
+}
+
+gint
+main (gint   argc,
+      gchar *argv[])
+{
+  GstElement *pipeline;
+  GstBus *bus;
+  guint bus_watch_id;
+
+  /* init */
+  gst_init (&amp;argc, &amp;argv);
+
+  /* create pipeline, add handler */
+  pipeline = gst_pipeline_new ("my_pipeline");
+
+  /* adds a watch for new message on our pipeline's message bus to
+   * the default GLib main context, which is the main context that our
+   * GLib main loop is attached to below
+   */
+  bus = gst_pipeline_get_bus (GST_PIPELINE (pipeline));
+  bus_watch_id = gst_bus_add_watch (bus, my_bus_callback, NULL);
+  gst_object_unref (bus);
+
+[..]
+
+  /* create a mainloop that runs/iterates the default GLib main context
+   * (context NULL), in other words: makes the context check if anything
+   * it watches for has happened. When a message has been posted on the
+   * bus, the default main context will automatically call our
+   * my_bus_callback() function to notify us of that message.
+   * The main loop will be run until someone calls g_main_loop_quit()
+   */
+  loop = g_main_loop_new (NULL, FALSE);
+  g_main_loop_run (loop);
+
+  /* clean up */
+  gst_element_set_state (pipeline, GST_STATE_NULL);
+  gst_object_unref (pipeline);
+  g_source_remove (bus_watch_id);
+  g_main_loop_unref (loop);
+
+  return 0;
+}
+    
+    </pre><p>
+      It is important to know that the handler will be called in the thread
+      context of the mainloop. This means that the interaction between the
+      pipeline and application over the bus is
+      <span class="emphasis"><em>asynchronous</em></span>, and thus not suited for some
+      real-time purposes, such as cross-fading between audio tracks, doing
+      (theoretically) gapless playback or video effects. All such things
+      should be done in the pipeline context, which is easiest by writing
+      a <span class="application">GStreamer</span> plug-in. It is very useful for its primary purpose,
+      though: passing messages from pipeline to application.
+      The advantage of this approach is that all the threading that
+      <span class="application">GStreamer</span> does internally is hidden from the application and the
+      application developer does not have to worry about thread issues at
+      all.
+    </p><p>
+      Note that if you're using the default GLib mainloop integration, you
+      can, instead of attaching a watch, connect to the <span class="quote">“<span class="quote">message</span>”</span> 
+      signal on the bus. This way you don't have to
+      <code class="function">switch()</code> 
+      on all possible message types; just connect to the interesting signals
+      in form of <span class="quote">“<span class="quote">message::&lt;type&gt;</span>”</span>, where &lt;type&gt; 
+      is a specific message type (see the next section for an explanation of 
+      message types).
+    </p><p>
+      The above snippet could then also be written as:
+    </p><pre class="programlisting">
+GstBus *bus;
+
+[..]
+
+bus = gst_pipeline_get_bus (GST_PIPELINE (pipeline);
+gst_bus_add_signal_watch (bus);
+g_signal_connect (bus, "message::error", G_CALLBACK (cb_message_error), NULL);
+g_signal_connect (bus, "message::eos", G_CALLBACK (cb_message_eos), NULL);
+
+[..]
+    </pre><p>
+      If you aren't using GLib mainloop, the asynchronous message signals won't
+      be available by default. You can however install a custom sync handler
+      that wakes up the custom mainloop and that uses
+      <code class="function">gst_bus_async_signal_func ()</code> to emit the signals.
+      (see also <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/stable/gstreamer/html/GstBus.html" target="_top">documentation</a> for details)
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-bin-state-change-handling.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-building.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-bus-message-types.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Bins manage states of their children </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Message types</td></tr></table></div></body></html>

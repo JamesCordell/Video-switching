@@ -1,0 +1,6 @@
+63e6eb4a11cc94e1f8f3f31ed84afcad  usr/lib/arm-linux-gnueabihf/libtermcap.so
+a6c78ba3540dd9f8f791cb2dd42cd9a7  usr/lib/arm-linux-gnueabihf/libtic.a
+956ee2a51c3073b6982282f25606ecfb  usr/lib/arm-linux-gnueabihf/libtinfo.a
+557736cfe42bb187fa997316810ba675  usr/lib/arm-linux-gnueabihf/pkgconfig/tic.pc
+12b81ab87e84f8aba9e3366ae552f524  usr/lib/arm-linux-gnueabihf/pkgconfig/tinfo.pc
+956131e1b6a418e783a0953ea303d204  usr/lib/valgrind/ncurses.supp

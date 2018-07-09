@@ -1,0 +1,23 @@
+Metadata-Version: 2.0
+Name: dronekit
+Version: 2.9.1
+Summary: Developer Tools for Drones.
+Home-page: https://github.com/dronekit/dronekit-python
+Author: 3D Robotics
+Author-email: tim@3drobotics.com, kevinh@geeksville.com
+License: apache
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Topic :: Scientific/Engineering
+Requires-Dist: future (==0.15.2)
+Requires-Dist: monotonic (==1.2)
+Requires-Dist: pymavlink (==2.0.6)
+
+Python API for communication and control of drones over MAVLink.
+
+

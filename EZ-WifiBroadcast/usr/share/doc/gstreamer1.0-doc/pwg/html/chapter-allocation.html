@@ -1,0 +1,82 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 15. Memory allocation</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-advanced.html" title="Part III. Advanced Filter Concepts"><link rel="prev" href="section-nego-pullmode.html" title="Pull-mode Caps negotiation"><link rel="next" href="section-allocation-buffer.html" title="GstBuffer"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 15. Memory allocation</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-nego-pullmode.html">Prev</a> </td><th width="60%" align="center">Part III. Advanced Filter Concepts</th><td width="20%" align="right"> <a accesskey="n" href="section-allocation-buffer.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-allocation"></a>Chapter 15. Memory allocation</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-allocation.html#section-allocation-memory">GstMemory</a></span></dt><dd><dl><dt><span class="sect2"><a href="chapter-allocation.html#section-allocation-allocator">GstAllocator</a></span></dt><dt><span class="sect2"><a href="chapter-allocation.html#section-allocation-memory-ex">GstMemory API example</a></span></dt><dt><span class="sect2"><a href="chapter-allocation.html#section-allocation-allocator-ex">Implementing a GstAllocator</a></span></dt></dl></dd><dt><span class="sect1"><a href="section-allocation-buffer.html">GstBuffer</a></span></dt><dd><dl><dt><span class="sect2"><a href="section-allocation-buffer.html#section-allocation-writability">GstBuffer writability</a></span></dt><dt><span class="sect2"><a href="section-allocation-buffer.html#section-allocation-buffer-ex">GstBuffer API examples</a></span></dt></dl></dd><dt><span class="sect1"><a href="section-allocation-meta.html">GstMeta</a></span></dt><dd><dl><dt><span class="sect2"><a href="section-allocation-meta.html#section-allocation-meta-ex">GstMeta API example</a></span></dt><dt><span class="sect2"><a href="section-allocation-meta.html#section-allocation-meta-new">Implementing new GstMeta</a></span></dt></dl></dd><dt><span class="sect1"><a href="section-allocation-bufferpool.html">GstBufferPool</a></span></dt><dd><dl><dt><span class="sect2"><a href="section-allocation-bufferpool.html#section-allocation-pool-ex">GstBufferPool API example</a></span></dt><dt><span class="sect2"><a href="section-allocation-bufferpool.html#section-allocation-pool-impl">Implementing a new GstBufferPool</a></span></dt></dl></dd><dt><span class="sect1"><a href="section-allocation-query.html">GST_QUERY_ALLOCATION</a></span></dt><dd><dl><dt><span class="sect2"><a href="section-allocation-query.html#section-allocation-query-ex">ALLOCATION query example</a></span></dt><dt><span class="sect2"><a href="section-allocation-query.html#section-allocation-query-base">The ALLOCATION query in base classes</a></span></dt></dl></dd></dl></div><p>
+    Memory allocation and management is a very important topic in
+    multimedia. High definition video uses many magabytes to store
+    one single frame of video. It is important to reuse the memory
+    when possible instead of constantly allocating and freeing
+    the memory.
+  </p><p>
+    Multimedia systems usually use special purpose chips, such as
+    DSPs or GPUs to perform the heavy lifting (especially for video).
+    These special purpose chips have usually strict requirements
+    for the memory that they can operate on and how the memory
+    is accessed.
+  </p><p>
+    This chapter talks about the memory management features that
+    <span class="application">GStreamer</span> plugins can use. We will first talk about the
+    lowlevel <code class="classname">GstMemory</code> object that manages
+    access to a piece of memory. We then continue with
+    <code class="classname">GstBuffer</code> that is used to exchange data
+    between plugins (and the application) and that uses
+    <code class="classname">GstMemory</code>. We talk about
+    <code class="classname">GstMeta</code> that can be placed on buffers to
+    give extra info about the buffer and its memory.
+    For efficiently managing buffers of the same size, we take a
+    look at <code class="classname">GstBufferPool</code>. To conclude this
+    chapter we take a look at the GST_QUERY_ALLOCATION query that
+    is used to negotiate memory management options between elements.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-allocation-memory"></a>GstMemory</h2></div></div></div><p>
+      <code class="classname">GstMemory</code> is an object that manages a region
+      of memory. The memory object points to a region of memory of
+      <span class="quote">“<span class="quote">maxsize</span>”</span>. The area in this memory starting at
+      <span class="quote">“<span class="quote">offset</span>”</span> and for <span class="quote">“<span class="quote">size</span>”</span> bytes is the
+      accessible region in the memory. the maxsize of the memory can
+      never be changed after the object is created, however, the offset
+      and size can be changed.
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-allocation-allocator"></a>GstAllocator</h3></div></div></div><p>
+        <code class="classname">GstMemory</code> objects are created by a
+        <code class="classname">GstAllocator</code> object. Most allocators implement the
+        default <code class="function">gst_allocator_alloc()</code> method but some allocator
+        might implement a different method, for example when additional parameters
+        are needed to allocate the specific memory.
+      </p><p>
+        Different allocators exist for, for example, system memory, shared memory
+        and memory backed by a DMAbuf file descriptor. To implement support for a
+        new kind of memory type, you must implement a new allocator object as shown
+        below.
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-allocation-memory-ex"></a>GstMemory API example</h3></div></div></div><p>
+        Data access to the memory wrapped by the <code class="classname">GstMemory</code>
+        object is always protected with a <code class="function">gst_memory_map()</code>
+        and <code class="function">gst_memory_unmap()</code> pair. An access mode
+        (read/write) must be given when mapping memory. The map
+        function returns a pointer to the valid memory region that can
+        then be accessed according to the requested access mode. 
+      </p><p>
+        Below is an example of making a <code class="classname">GstMemory</code>
+        object and using the <code class="function">gst_memory_map()</code> to
+        access the memory region.
+      </p><pre class="programlisting">
+
+[...]
+
+  GstMemory *mem;
+  GstMapInfo info;
+  gint i;
+
+  /* allocate 100 bytes */
+  mem = gst_allocator_alloc (NULL, 100, NULL);
+
+  /* get access to the memory in write mode */
+  gst_memory_map (mem, &amp;info, GST_MAP_WRITE);
+
+  /* fill with pattern */
+  for (i = 0; i &lt; info.size; i++)
+    info.data[i] = i;
+
+  /* release memory */
+  gst_memory_unmap (mem, &amp;info);
+
+[...]
+
+      </pre></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-allocation-allocator-ex"></a>Implementing a GstAllocator</h3></div></div></div><p>
+        WRITEME
+      </p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-nego-pullmode.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-advanced.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-allocation-buffer.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Pull-mode Caps negotiation </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> GstBuffer</td></tr></table></div></body></html>

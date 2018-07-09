@@ -1,0 +1,46 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 2. Foundations</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-introduction.html" title="Part I. Introduction"><link rel="prev" href="section-preface-structure.html" title="Structure of This Guide"><link rel="next" href="section-basics-pads.html" title="Pads"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 2. Foundations</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-preface-structure.html">Prev</a> </td><th width="60%" align="center">Part I. Introduction</th><td width="20%" align="right"> <a accesskey="n" href="section-basics-pads.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-intro-basics"></a>Chapter 2. Foundations</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-intro-basics.html#section-basics-elements">Elements and Plugins</a></span></dt><dt><span class="sect1"><a href="section-basics-pads.html">Pads</a></span></dt><dt><span class="sect1"><a href="section-basics-data.html">GstMiniObject, Buffers and Events</a></span></dt><dd><dl><dt><span class="sect2"><a href="section-basics-data.html#sect2-buffer-allocation">Buffer Allocation</a></span></dt></dl></dd><dt><span class="sect1"><a href="section-basics-types.html">Media types and Properties</a></span></dt><dd><dl><dt><span class="sect2"><a href="section-basics-types.html#sect2-types-basictypes">The Basic Types</a></span></dt></dl></dd></dl></div><p>
+    This chapter of the guide introduces the basic concepts of <span class="application">GStreamer</span>.
+    Understanding these concepts will help you grok the issues involved in
+    extending <span class="application">GStreamer</span>. Many of these concepts are explained in greater
+    detail in the <span class="emphasis"><em>GStreamer Application Development Manual</em></span>; the basic concepts presented here serve mainly
+    to refresh your memory.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-basics-elements"></a>Elements and Plugins</h2></div></div></div><p>
+      Elements are at the core of <span class="application">GStreamer</span>. In the context of plugin
+      development, an <span class="emphasis"><em>element</em></span> is an object derived from the
+      <a class="ulink" href="../../gstreamer/html/GstElement.html" target="_top"><code class="classname">
+      GstElement</code></a> class. Elements provide some sort of
+      functionality when linked with other elements: For example, a source
+      element provides data to a stream, and a filter element acts on the data
+      in a stream. Without elements, <span class="application">GStreamer</span> is just a bunch of conceptual
+      pipe fittings with nothing to link. A large number of elements ship
+      with <span class="application">GStreamer</span>, but extra elements can also be written.
+    </p><p>
+      Just writing a new element is not entirely enough, however: You will need
+      to encapsulate your element in a <span class="emphasis"><em>plugin</em></span> to enable
+      <span class="application">GStreamer</span> to use it. A plugin is essentially a loadable block of code,
+      usually called a shared object file or a dynamically linked library. A
+      single plugin may contain the implementation of several elements, or just
+      a single one. For simplicity, this guide concentrates primarily on plugins
+      containing one element.
+    </p><p>
+      A <span class="emphasis"><em>filter</em></span> is an important type of element that
+      processes a stream of data. Producers and consumers of data are called
+      <span class="emphasis"><em>source</em></span> and <span class="emphasis"><em>sink</em></span> elements,
+      respectively. <span class="emphasis"><em>Bin</em></span> elements contain other elements.
+      One type of bin is responsible for synchronization of the elements that they
+      contain so that data flows smoothly. Another type of bin, called
+      <span class="emphasis"><em>autoplugger</em></span> elements, automatically add other
+      elements to the bin and links them together so that they act as a
+      filter between two arbitrary stream types.
+    </p><p>
+      The plugin mechanism is used everywhere in <span class="application">GStreamer</span>, even if only the
+      standard packages are being used. A few very basic functions reside in the
+      core library, and all others are implemented in plugins. A plugin registry
+      is used to store the details of the plugins in an binary registry file.
+      This way, a program using <span class="application">GStreamer</span> does not have to load all plugins to
+      determine which are needed. Plugins are only loaded when their provided
+      elements are requested.
+    </p><p>
+      See the <span class="emphasis"><em>GStreamer Library Reference</em></span> for the current implementation details of <a class="ulink" href="../../gstreamer/html/GstElement.html" target="_top"><code class="classname">GstElement</code></a>
+      and <a class="ulink" href="../../gstreamer/html/GstPlugin.html" target="_top"><code class="classname">GstPlugin</code></a>.
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-preface-structure.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-introduction.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-basics-pads.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Structure of This Guide </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Pads</td></tr></table></div></body></html>

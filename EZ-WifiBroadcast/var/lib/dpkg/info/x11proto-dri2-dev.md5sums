@@ -1,0 +1,7 @@
+805180c1fa60517ad5b87ad6052173b5  usr/include/X11/extensions/dri2proto.h
+82a985819cada0e87be9dc8f74f499d7  usr/include/X11/extensions/dri2tokens.h
+88d0ecc9387d76e4f7bce6b0e1f86ff7  usr/share/doc/x11proto-dri2-dev/changelog.Debian.gz
+95a5824dc02561ba5ebd378181c97d9d  usr/share/doc/x11proto-dri2-dev/changelog.gz
+1f7a7113f221468977993fdb16b3b8dd  usr/share/doc/x11proto-dri2-dev/copyright
+be94d6318bea13a2b8871390d80dc76d  usr/share/doc/x11proto-dri2-dev/dri2proto.txt.gz
+7aef4accfc8ad8e1be83d09e1acffa97  usr/share/pkgconfig/dri2proto.pc

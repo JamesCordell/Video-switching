@@ -1,0 +1,17 @@
+/.
+/usr
+/usr/lib
+/usr/lib/python2.7
+/usr/lib/python2.7/dist-packages
+/usr/lib/python2.7/dist-packages/RPi.GPIO-0.6.2.egg-info
+/usr/lib/python2.7/dist-packages/RPi
+/usr/lib/python2.7/dist-packages/RPi/GPIO
+/usr/lib/python2.7/dist-packages/RPi/GPIO/__init__.py
+/usr/lib/python2.7/dist-packages/RPi/_GPIO.arm-linux-gnueabihf.so
+/usr/lib/python2.7/dist-packages/RPi/__init__.py
+/usr/share
+/usr/share/doc
+/usr/share/doc/python-rpi.gpio
+/usr/share/doc/python-rpi.gpio/changelog.Debian.gz
+/usr/share/doc/python-rpi.gpio/changelog.gz
+/usr/share/doc/python-rpi.gpio/copyright

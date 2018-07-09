@@ -1,0 +1,17 @@
+/.
+/usr
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/dri
+/usr/lib/arm-linux-gnueabihf/dri/vdpau_drv_video.so
+/usr/share
+/usr/share/doc
+/usr/share/doc/vdpau-va-driver
+/usr/share/doc/vdpau-va-driver/copyright
+/usr/share/doc/vdpau-va-driver/changelog.Debian.gz
+/usr/share/doc/vdpau-va-driver/changelog.gz
+/usr/lib/arm-linux-gnueabihf/dri/r600_drv_video.so
+/usr/lib/arm-linux-gnueabihf/dri/radeonsi_drv_video.so
+/usr/lib/arm-linux-gnueabihf/dri/nouveau_drv_video.so
+/usr/lib/arm-linux-gnueabihf/dri/s3g_drv_video.so
+/usr/lib/arm-linux-gnueabihf/dri/nvidia_drv_video.so

@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Abort if any command returns an error value
+set -e
+
+case "$1" in
+	purge)
+		# This package has previously been removed and is now having
+		# its configuration purged from the system.
+		:
+		rm -rf /var/cache/powertop
+		;;
+esac
+
+exit 0

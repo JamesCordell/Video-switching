@@ -1,0 +1,6 @@
+802e60818471c35278bd99daca82cf1c  usr/lib/arm-linux-gnueabihf/libv4lconvert.so.0.0.0
+89aa96e0c84724cc35ea977a3129a129  usr/lib/arm-linux-gnueabihf/libv4lconvert0/ov511-decomp
+d6549b0a9b08bfb5eb0b556449a0aa7f  usr/lib/arm-linux-gnueabihf/libv4lconvert0/ov518-decomp
+ae755bfa08d525c80d06078e1f8b89cf  usr/share/doc/libv4lconvert0/changelog.Debian.gz
+19b06278d22f83c409fd288f55e387ac  usr/share/doc/libv4lconvert0/changelog.gz
+f5e022ccf3e8c47d818a0f45f91e8788  usr/share/doc/libv4lconvert0/copyright

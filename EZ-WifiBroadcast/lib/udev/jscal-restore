@@ -1,0 +1,10 @@
+#!/bin/sh -e
+#
+# udev script for jscal-restore
+
+(
+	. /lib/udev/hotplug.functions
+	wait_for_file /usr/bin/jscal-restore
+	exec /usr/bin/jscal-restore $*
+) &
+

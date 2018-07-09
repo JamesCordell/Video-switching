@@ -1,0 +1,17 @@
+/.
+/usr
+/usr/include
+/usr/include/lz4.h
+/usr/include/lz4hc.h
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/pkgconfig
+/usr/lib/arm-linux-gnueabihf/pkgconfig/liblz4.pc
+/usr/lib/arm-linux-gnueabihf/liblz4.a
+/usr/share
+/usr/share/doc
+/usr/share/doc/liblz4-dev
+/usr/share/doc/liblz4-dev/copyright
+/usr/share/doc/liblz4-dev/lz4_format_description.txt.gz
+/usr/share/doc/liblz4-dev/changelog.Debian.gz
+/usr/lib/arm-linux-gnueabihf/liblz4.so

@@ -1,0 +1,58 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Typefind Functions and Autoplugging</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-building-types.html" title="Chapter 16. Types and Properties"><link rel="prev" href="chapter-building-types.html" title="Chapter 16. Types and Properties"><link rel="next" href="section-types-definitions.html" title="List of Defined Types"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Typefind Functions and Autoplugging</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-building-types.html">Prev</a> </td><th width="60%" align="center">Chapter 16. Types and Properties</th><td width="20%" align="right"> <a accesskey="n" href="section-types-definitions.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-types-typefind"></a>Typefind Functions and Autoplugging</h2></div></div></div><p>
+      With only <span class="emphasis"><em>defining</em></span> the types, we're not yet there.
+      In order for a random data file to be recognized and played back as
+      such, we need a way of recognizing their type out of the blue. For this
+      purpose, <span class="quote">“<span class="quote">typefinding</span>”</span> was introduced. Typefinding is the
+      process of detecting the type of a data stream. Typefinding consists of
+      two separate parts: first, there's an unlimited number of functions
+      that we call <span class="emphasis"><em>typefind functions</em></span>, which are each
+      able to recognize one or more types from an input stream. Then,
+      secondly, there's a small engine which registers and calls each of
+      those functions. This is the typefind core. On top of this typefind
+      core, you would normally write an autoplugger, which is able to use
+      this type detection system to dynamically build a pipeline around an
+      input stream. Here, we will focus only on typefind functions.
+    </p><p>
+      A typefind function usually lives in
+      <code class="filename">gst-plugins-base/gst/typefind/gsttypefindfunctions.c</code>,
+      unless there's a good reason (like library dependencies) to put it
+      elsewhere. The reason for this centralization is to reduce the
+      number of plugins that need to be loaded in order to detect a stream's
+      type. Below is an example that will recognize AVI files, which start
+      with a <span class="quote">“<span class="quote">RIFF</span>”</span> tag, then the size of the file and then an
+      <span class="quote">“<span class="quote">AVI </span>”</span> tag:
+    </p><pre class="programlisting">
+static void
+gst_my_typefind_function (GstTypeFind *tf,
+			  gpointer     data)
+{
+  guint8 *data = gst_type_find_peek (tf, 0, 12);
+
+  if (data &amp;&amp;
+      GUINT32_FROM_LE (&amp;((guint32 *) data)[0]) == GST_MAKE_FOURCC ('R','I','F','F') &amp;&amp;
+      GUINT32_FROM_LE (&amp;((guint32 *) data)[2]) == GST_MAKE_FOURCC ('A','V','I',' ')) {
+    gst_type_find_suggest (tf, GST_TYPE_FIND_MAXIMUM,
+			   gst_caps_new_simple ("video/x-msvideo", NULL));
+  }
+}
+
+static gboolean
+plugin_init (GstPlugin *plugin)
+{
+  static gchar *exts[] = { "avi", NULL };
+  if (!gst_type_find_register (plugin, "", GST_RANK_PRIMARY,
+			       gst_my_typefind_function, exts,
+			       gst_caps_new_simple ("video/x-msvideo",
+						    NULL), NULL))
+    return FALSE;
+}
+    </pre><p>
+      Note that
+      <code class="filename">gst-plugins/gst/typefind/gsttypefindfunctions.c</code>
+      has some simplification macros to decrease the amount of code. Make
+      good use of those if you want to submit typefinding patches with new
+      typefind functions.
+    </p><p>
+      Autoplugging has been discussed in great detail in the Application
+      Development Manual.
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-building-types.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-building-types.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-types-definitions.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 16. Types and Properties </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> List of Defined Types</td></tr></table></div></body></html>

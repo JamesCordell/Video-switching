@@ -1,0 +1,11 @@
+/.
+/usr
+/usr/share
+/usr/share/doc
+/usr/share/doc/libisccfg-export90
+/usr/share/doc/libisccfg-export90/copyright
+/usr/share/doc/libisccfg-export90/changelog.Debian.gz
+/lib
+/lib/arm-linux-gnueabihf
+/lib/arm-linux-gnueabihf/libisccfg-export.so.90.1.0
+/lib/arm-linux-gnueabihf/libisccfg-export.so.90

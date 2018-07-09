@@ -1,0 +1,11 @@
+/.
+/usr
+/usr/share
+/usr/share/doc
+/usr/share/doc/libisc-export95
+/usr/share/doc/libisc-export95/copyright
+/usr/share/doc/libisc-export95/changelog.Debian.gz
+/lib
+/lib/arm-linux-gnueabihf
+/lib/arm-linux-gnueabihf/libisc-export.so.95.5.0
+/lib/arm-linux-gnueabihf/libisc-export.so.95

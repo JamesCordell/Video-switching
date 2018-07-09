@@ -1,0 +1,99 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Handling QoS</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-advanced-qos.html" title="Chapter 19. Quality Of Service (QoS)"><link rel="prev" href="chapter-advanced-qos.html" title="Chapter 19. Quality Of Service (QoS)"><link rel="next" href="section-throttle.html" title="Throttling"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Handling QoS</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-advanced-qos.html">Prev</a> </td><th width="60%" align="center">Chapter 19. Quality Of Service (QoS)</th><td width="20%" align="right"> <a accesskey="n" href="section-throttle.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-handling"></a>Handling QoS</h2></div></div></div><p>
+      An element will have to install an event function on its source pads
+      in order to receive QOS events. Usually, the element will need to
+      store the value of the QOS event and use them in the data processing
+      function. The element will need to use a lock to protect these QoS
+      values as shown in the example below. Also make sure to pass the
+      QoS event upstream.
+    </p><pre class="programlisting">
+
+    [...]
+
+    case GST_EVENT_QOS:
+    {
+      GstQOSType type;
+      gdouble proportion;
+      GstClockTimeDiff diff;
+      GstClockTime timestamp;
+
+      gst_event_parse_qos (event, &amp;type, &amp;proportion, &amp;diff, &amp;timestamp);
+
+      GST_OBJECT_LOCK (decoder);
+      priv-&gt;qos_proportion = proportion;
+      priv-&gt;qos_timestamp = timestamp;
+      priv-&gt;qos_diff = diff;
+      GST_OBJECT_UNLOCK (decoder);
+
+      res = gst_pad_push_event (decoder-&gt;sinkpad, event);
+      break;
+    }
+
+    [...]
+
+    </pre><p>
+      With the QoS values, there are two types of corrections that an element
+      can do:
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-handling-short"></a>Short term correction</h3></div></div></div><p>
+        The timestamp and the jitter value in the QOS event can be used to
+        perform a short term correction. If the jitter is positive, the
+        previous buffer arrived late and we can be sure that a buffer with
+        a timestamp &lt; timestamp + jitter is also going to be late. We
+        can thus drop all buffers with a timestamp less than timestamp +
+        jitter.
+      </p><p>
+        If the buffer duration is known, a better estimation for the next
+        likely timestamp as: timestamp + 2 * jitter + duration.
+      </p><p>
+        A possible algorithm typically looks like this:
+      </p><pre class="programlisting">
+
+  [...]
+
+  GST_OBJECT_LOCK (dec);
+  qos_proportion = priv-&gt;qos_proportion;
+  qos_timestamp = priv-&gt;qos_timestamp;
+  qos_diff = priv-&gt;qos_diff;
+  GST_OBJECT_UNLOCK (dec);
+
+  /* calculate the earliest valid timestamp */
+  if (G_LIKELY (GST_CLOCK_TIME_IS_VALID (qos_timestamp))) {
+    if (G_UNLIKELY (qos_diff &gt; 0)) {
+      earliest_time = qos_timestamp + 2 * qos_diff + frame_duration;
+    } else {
+      earliest_time = qos_timestamp + qos_diff;
+    }
+  } else {
+    earliest_time = GST_CLOCK_TIME_NONE;
+  }
+
+  /* compare earliest_time to running-time of next buffer */
+  if (earliest_time &gt; timestamp)
+    goto drop_buffer;
+
+  [...]
+
+      </pre></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-handling-long"></a>Long term correction</h3></div></div></div><p>
+        Long term corrections are a bit more difficult to perform. They
+        rely on the value of the proportion in the QOS event. Elements should
+        reduce the amount of resources they comsume by the proportion 
+        field in the QoS message.
+      </p><p>
+        Here are some possible strategies to achieve this:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+            Permanently dropping frames or reducing the CPU or bandwidth
+            requirements of the element. Some decoders might be able to
+            skip decoding of B frames.
+          </p></li><li class="listitem"><p>
+            Switch to lower quality processing or reduce the algorithmic
+            complexity. Care should be taken that this doesn't introduce
+            disturbing visual or audible glitches.
+          </p></li><li class="listitem"><p>
+            Switch to a lower quality source to reduce network bandwidth.
+          </p></li><li class="listitem"><p>
+            Assign more CPU cycles to critical parts of the pipeline. This
+            could, for example, be done by increasing the thread priority.
+          </p></li></ul></div><p>
+        In all cases, elements should be prepared to go back to their normal
+        processing rate when the proportion member in the QOS event approaches
+        the ideal proportion of 1.0 again.
+      </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-advanced-qos.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-advanced-qos.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-throttle.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 19. Quality Of Service (QoS) </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Throttling</td></tr></table></div></body></html>

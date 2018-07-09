@@ -1,0 +1,14 @@
+/.
+/usr
+/usr/bin
+/usr/bin/tshark
+/usr/share
+/usr/share/doc
+/usr/share/doc/tshark
+/usr/share/doc/tshark/README.Debian
+/usr/share/doc/tshark/copyright
+/usr/share/doc/tshark/changelog.Debian.gz
+/usr/share/doc/tshark/changelog.gz
+/usr/share/man
+/usr/share/man/man1
+/usr/share/man/man1/tshark.1.gz

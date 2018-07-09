@@ -1,0 +1,5 @@
+d57f24d2aa272cb6362f93b13f438de2  usr/bin/listcomponents
+543ed5539fa0e08c21ac5ec52f98444e  usr/lib/arm-linux-gnueabihf/gstreamer-1.0/libgstomx.so
+969850d8caf8166650220a4cef14f5d4  usr/share/doc/gstreamer1.0-omx/changelog.Debian.gz
+d21033fab92f32bd6087797b9fcb1b3f  usr/share/doc/gstreamer1.0-omx/changelog.gz
+a1be659c24c95add09052234fa85f1da  usr/share/doc/gstreamer1.0-omx/copyright

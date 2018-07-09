@@ -1,0 +1,13 @@
+/.
+/usr
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/libwiretap.so.4.0.1
+/usr/share
+/usr/share/doc
+/usr/share/doc/libwiretap4
+/usr/share/doc/libwiretap4/copyright
+/usr/share/doc/libwiretap4/README.gz
+/usr/share/doc/libwiretap4/changelog.Debian.gz
+/usr/share/doc/libwiretap4/changelog.gz
+/usr/lib/arm-linux-gnueabihf/libwiretap.so.4

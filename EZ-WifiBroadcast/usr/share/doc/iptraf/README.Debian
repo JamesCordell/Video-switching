@@ -1,0 +1,16 @@
+iptraf for Debian
+-----------------
+
+Since 2.1.1, old config files (versions below 1.4.0) won't be updated to the
+new format. Binary config files are a pain; let's suffer :( (old tools don't
+compile anymore)
+
+IPTraf does _not_ work with IPv6. you've been warned.
+
+IPTraf for Debian supports wvlan and lec interfaces that upstream doesn't
+support by lack of thorough testing. This support is here since users
+requested it but no tests have been done !
+
+-- 
+Frederic Peters <fpeters@debian.org>, Wed, 19 Dec 2001 10:27:54 +0100
+

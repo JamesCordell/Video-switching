@@ -1,0 +1,171 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Pads driving the pipeline</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-scheduling.html" title="Chapter 13. Different scheduling modes"><link rel="prev" href="chapter-scheduling.html" title="Chapter 13. Different scheduling modes"><link rel="next" href="section-scheduling-randomxs.html" title="Providing random access"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Pads driving the pipeline</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-scheduling.html">Prev</a> </td><th width="60%" align="center">Chapter 13. Different scheduling modes</th><td width="20%" align="right"> <a accesskey="n" href="section-scheduling-randomxs.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-scheduling-loop"></a>Pads driving the pipeline</h2></div></div></div><p>
+      Sinkpads operating in pull-mode, with the sourcepads operating in
+      push-mode (or it has no sourcepads when it is a sink), can start a task
+      that will drive the pipeline data flow.
+      Within this task function, you have random access over all of the sinkpads,
+      and push data over the sourcepads.
+      This can come in useful for several different kinds of elements:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Demuxers, parsers and certain kinds of decoders where data comes
+          in unparsed (such as MPEG-audio or video streams), since those will
+          prefer byte-exact (random) access from their input. If possible,
+          however, such elements should be prepared to operate in push-mode
+          mode, too.
+        </p></li><li class="listitem"><p>
+          Certain kind of audio outputs, which require control over their
+          input data flow, such as the Jack sound server.
+        </p></li></ul></div><p>
+      First you need to perform a SCHEDULING query to check if the upstream
+      element(s) support pull-mode scheduling. If that is possible, you
+      can activate the sinkpad in pull-mode. Inside the activate_mode
+      function you can then start the task.
+    </p><pre class="programlisting">
+#include "filter.h"
+#include &lt;string.h&gt;
+
+static gboolean	gst_my_filter_activate	    (GstPad      * pad,
+                                             GstObject   * parent);
+static gboolean	gst_my_filter_activate_mode (GstPad      * pad,
+                                             GstObject   * parent,
+                                             GstPadMode    mode
+					     gboolean      active);
+static void	gst_my_filter_loop	    (GstMyFilter * filter);
+
+G_DEFINE_TYPE (GstMyFilter, gst_my_filter, GST_TYPE_ELEMENT);
+
+
+static void
+gst_my_filter_init (GstMyFilter * filter)
+{
+
+[..]
+
+  gst_pad_set_activate_function (filter-&gt;sinkpad, gst_my_filter_activate);
+  gst_pad_set_activatemode_function (filter-&gt;sinkpad,
+      gst_my_filter_activate_mode);
+
+
+[..]
+}
+
+[..]
+
+static gboolean
+gst_my_filter_activate (GstPad * pad, GstObject * parent)
+{
+  GstQuery *query;
+  gboolean pull_mode;
+
+  /* first check what upstream scheduling is supported */
+  query = gst_query_new_scheduling ();
+
+  if (!gst_pad_peer_query (pad, query)) {
+    gst_query_unref (query);
+    goto activate_push;
+  }
+
+  /* see if pull-mode is supported */
+  pull_mode = gst_query_has_scheduling_mode_with_flags (query,
+      GST_PAD_MODE_PULL, GST_SCHEDULING_FLAG_SEEKABLE);
+  gst_query_unref (query);
+
+  if (!pull_mode)
+    goto activate_push;
+
+  /* now we can activate in pull-mode. GStreamer will also
+   * activate the upstream peer in pull-mode */
+  return gst_pad_activate_mode (pad, GST_PAD_MODE_PULL, TRUE);
+
+activate_push:
+  {
+    /* something not right, we fallback to push-mode */
+    return gst_pad_activate_mode (pad, GST_PAD_MODE_PUSH, TRUE);
+  }
+}
+
+static gboolean
+gst_my_filter_activate_pull (GstPad    * pad,
+			     GstObject * parent,
+			     GstPadMode  mode,
+			     gboolean    active)
+{
+  gboolean res;
+  GstMyFilter *filter = GST_MY_FILTER (parent);
+
+  switch (mode) {
+    case GST_PAD_MODE_PUSH:
+      res = TRUE;
+      break;
+    case GST_PAD_MODE_PULL:
+      if (active) {
+        filter-&gt;offset = 0;
+        res = gst_pad_start_task (pad,
+            (GstTaskFunction) gst_my_filter_loop, filter, NULL);
+      } else {
+        res = gst_pad_stop_task (pad);
+      }
+      break;
+    default:
+      /* unknown scheduling mode */
+      res = FALSE;
+      break;
+  }
+  return res;
+}
+    </pre><p>
+      Once started, your task has full control over input and output. The
+      most simple case of a task function is one that reads input and pushes
+      that over its source pad. It's not all that useful, but provides some
+      more flexibility than the old push-mode case that we've been looking
+      at so far.
+    </p><pre class="programlisting">
+#define BLOCKSIZE 2048
+
+static void
+gst_my_filter_loop (GstMyFilter * filter)
+{
+  GstFlowReturn ret;
+  guint64 len;
+  GstFormat fmt = GST_FORMAT_BYTES;
+  GstBuffer *buf = NULL;
+
+  if (!gst_pad_query_duration (filter-&gt;sinkpad, fmt, &amp;len)) {
+    GST_DEBUG_OBJECT (filter, "failed to query duration, pausing");
+    goto stop;
+  }
+
+   if (filter-&gt;offset &gt;= len) {
+    GST_DEBUG_OBJECT (filter, "at end of input, sending EOS, pausing");
+    gst_pad_push_event (filter-&gt;srcpad, gst_event_new_eos ());
+    goto stop;
+  }
+
+  /* now, read BLOCKSIZE bytes from byte offset filter-&gt;offset */
+  ret = gst_pad_pull_range (filter-&gt;sinkpad, filter-&gt;offset,
+      BLOCKSIZE, &amp;buf);
+
+  if (ret != GST_FLOW_OK) {
+    GST_DEBUG_OBJECT (filter, "pull_range failed: %s", gst_flow_get_name (ret));
+    goto stop;
+  }
+
+  /* now push buffer downstream */
+  ret = gst_pad_push (filter-&gt;srcpad, buf);
+
+  buf = NULL; /* gst_pad_push() took ownership of buffer */
+
+  if (ret != GST_FLOW_OK) {
+    GST_DEBUG_OBJECT (filter, "pad_push failed: %s", gst_flow_get_name (ret));
+    goto stop;
+  }
+
+  /* everything is fine, increase offset and wait for us to be called again */
+  filter-&gt;offset += BLOCKSIZE;
+  return;
+
+stop:
+  GST_DEBUG_OBJECT (filter, "pausing task");
+  gst_pad_pause_task (filter-&gt;sinkpad);
+}
+
+</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-scheduling.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-scheduling.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-scheduling-randomxs.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 13. Different scheduling modes </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Providing random access</td></tr></table></div></body></html>

@@ -1,0 +1,17 @@
+/.
+/usr
+/usr/share
+/usr/share/doc
+/usr/share/doc/libxshmfence-dev
+/usr/share/doc/libxshmfence-dev/changelog.Debian.gz
+/usr/share/doc/libxshmfence-dev/copyright
+/usr/share/doc/libxshmfence-dev/changelog.gz
+/usr/include
+/usr/include/X11
+/usr/include/X11/xshmfence.h
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/pkgconfig
+/usr/lib/arm-linux-gnueabihf/pkgconfig/xshmfence.pc
+/usr/lib/arm-linux-gnueabihf/libxshmfence.a
+/usr/lib/arm-linux-gnueabihf/libxshmfence.so

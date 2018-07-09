@@ -1,0 +1,30 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 17. Threads</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="part-advanced.html" title="Part III. Advanced GStreamer concepts"><link rel="prev" href="section-dparams-parameters.html" title="Setting up parameter control"><link rel="next" href="section-threads-status.html" title="Configuring Threads in GStreamer"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 17. Threads</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-dparams-parameters.html">Prev</a> </td><th width="60%" align="center">Part III. Advanced <span class="application">GStreamer</span> concepts</th><td width="20%" align="right"> <a accesskey="n" href="section-threads-status.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-threads"></a>Chapter 17. Threads</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-threads.html#section-threads-scheduling">Scheduling in <span class="application">GStreamer</span></a></span></dt><dt><span class="sect1"><a href="section-threads-status.html">Configuring Threads in <span class="application">GStreamer</span></a></span></dt><dd><dl><dt><span class="sect2"><a href="section-threads-status.html#section-threads-rt">Boost priority of a thread</a></span></dt></dl></dd><dt><span class="sect1"><a href="section-threads-uses.html">When would you want to force a thread?</a></span></dt></dl></div><p> 
+    <span class="application">GStreamer</span> is inherently multi-threaded, and is fully thread-safe.
+    Most threading internals are hidden from the application, which should
+    make application development easier. However, in some cases, applications
+    may want to have influence on some parts of those. <span class="application">GStreamer</span> allows
+    applications to force the use of multiple threads over some parts of
+    a pipeline.
+    See <a class="xref" href="section-threads-uses.html" title="When would you want to force a thread?">the section called “When would you want to force a thread?”</a>.
+  </p><p> 
+    <span class="application">GStreamer</span> can also notify you when threads are created so that you can
+    configure things such as the thread priority or the threadpool to use.
+    See <a class="xref" href="section-threads-status.html" title="Configuring Threads in GStreamer">the section called “Configuring Threads in <span class="application">GStreamer</span>”</a>.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-threads-scheduling"></a>Scheduling in <span class="application">GStreamer</span></h2></div></div></div><p>
+      Each element in the <span class="application">GStreamer</span> pipeline decides how it is going to
+      be scheduled. Elements can choose if their pads are to be scheduled
+      push-based or pull-based. An element can, for example, choose to start
+      a thread to start pulling from the sink pad or/and start pushing on
+      the source pad. An element can also choose to use the upstream or
+      downstream thread for its data processing in push and pull mode
+      respectively. <span class="application">GStreamer</span> does not pose any restrictions on how the
+      element chooses to be scheduled. See the Plugin Writer Guide for more
+      details.
+    </p><p>
+      What will happen in any case is that some elements will start a thread
+      for their data processing, called the <span class="quote">“<span class="quote">streaming threads</span>”</span>. 
+      The streaming threads, or <code class="classname">GstTask</code> objects, are
+      created from a <code class="classname">GstTaskPool</code> when the element
+      needs to make a streaming thread. In the next section we see how we
+      can receive notifications of the tasks and pools.
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-dparams-parameters.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-advanced.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-threads-status.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Setting up parameter control </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Configuring Threads in <span class="application">GStreamer</span></td></tr></table></div></body></html>

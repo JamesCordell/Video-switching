@@ -1,0 +1,48 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Setting up parameter control</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-dparams.html" title="Chapter 16. Dynamic Controllable Parameters"><link rel="prev" href="chapter-dparams.html" title="Chapter 16. Dynamic Controllable Parameters"><link rel="next" href="chapter-threads.html" title="Chapter 17. Threads"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Setting up parameter control</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-dparams.html">Prev</a> </td><th width="60%" align="center">Chapter 16. Dynamic Controllable Parameters</th><td width="20%" align="right"> <a accesskey="n" href="chapter-threads.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-dparams-parameters"></a>Setting up parameter control</h2></div></div></div><p>
+      If we have our pipeline set up and want to control some parameters, we first
+      need to create a control-source. Lets use an interpolation control-source:
+    </p><pre class="programlisting">
+  csource = gst_interpolation_control_source_new ();
+  g_object_set (csource, "mode", GST_INTERPOLATION_MODE_LINEAR, NULL);
+    </pre><p>
+      Now we need to attach the control-source to the gobject property. This is done
+      with a control-binding. One control source can be attached to several object
+      properties (even in different objects) using separate control-bindings.
+    </p><pre class="programlisting">
+      gst_object_add_control_binding (object, gst_direct_control_binding_new (object, "prop1", csource));
+    </pre><p>
+      This type control-source takes new property values from a list of time-stamped
+      parameter changes. The source can e.g. fill gaps by smoothing parameter changes
+      This behavior can be configured by setting the mode property of the
+      control-source. Other control sources e.g. produce a stream of values by
+      calling <code class="function">sin()</code> function. They have parameters to control
+      e.g. the frequency. As control-sources are GstObjects too, one can attach
+      control-sources to these properties too.
+    </p><p>
+      Now we can set some control points. These are time-stamped gdouble values and
+      are usually in the range of 0.0 to 1.0. A value of 1.0 is later mapped to the
+      maximum value in the target properties value range.
+      The values become active when the timestamp is reached. They still stay
+      in the list. If e.g. the pipeline runs a loop (using a segmented seek),
+      the control-curve gets repeated as well.
+    </p><pre class="programlisting">
+  GstTimedValueControlSource *tv_csource = (GstTimedValueControlSource *)csource;
+  gst_timed_value_control_source_set (tv_csource, 0 * GST_SECOND, 0.0);
+  gst_timed_value_control_source_set (tv_csource, 1 * GST_SECOND, 1.0);
+    </pre><p>
+      Now everything is ready to play. If the control-source is e.g. bound to a
+      volume property, we will head a fade-in over 1 second. One word of caution,
+      the volume element that comes with gstreamer has a value range of 0.0 to 4.0
+      on its volume property. If the above control-source is attached to the property
+      the volume will ramp up to 400%!
+    </p><p>
+      One final note - the controller subsystem has a built-in live-mode. Even though
+      a property has a control-source assigned one can change the GObject property
+      through the <code class="function">g_object_set()</code>.
+      This is highly useful when binding the GObject properties to GUI widgets.
+      When the user adjusts the value with the widget, one can set the GObject
+      property and this remains active until the next programmed control-source
+      value overrides it. This also works with smoothed parameters. It does not
+      work for control-sources that constantly update the property (e.g. the
+      lfo_control_source).
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-dparams.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-dparams.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-threads.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 16. Dynamic Controllable Parameters </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 17. Threads</td></tr></table></div></body></html>

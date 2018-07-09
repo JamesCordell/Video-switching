@@ -1,0 +1,12 @@
+feac4f434fcf95c26b68ab4e55757efe  usr/bin/hg
+5ee5e6383ac1e30598dc99340d170329  usr/lib/python2.7/dist-packages/mercurial/base85.so
+53984bfa9df9b6cd5fc264ed6555714c  usr/lib/python2.7/dist-packages/mercurial/bdiff.so
+a726262a66e276d0f864546edcc442c8  usr/lib/python2.7/dist-packages/mercurial/diffhelpers.so
+5d9726f31fd981610a09768ab17a2485  usr/lib/python2.7/dist-packages/mercurial/mpatch.so
+1e28376343a2dbd39de8a48737e5248d  usr/lib/python2.7/dist-packages/mercurial/osutil.so
+3c739ab7f5809ef47517841668e7d2a6  usr/lib/python2.7/dist-packages/mercurial/parsers.so
+005f89daa34296fb399cc41b04024c09  usr/share/doc/mercurial/NEWS.Debian.gz
+966767ba664f0a77ae941a74fa9e7e97  usr/share/doc/mercurial/changelog.Debian.gz
+fe533e5c5eea9eda0b013b0fb7eb6627  usr/share/doc/mercurial/copyright
+3bf0d5275bacc0ee48eee4ae8088d694  usr/share/mercurial/hgext.rc
+4301dd96556917738b895bf82f9124e3  usr/share/mercurial/hgext.rc.md5sums

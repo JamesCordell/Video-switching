@@ -1,0 +1,76 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>GstBuffer</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-allocation.html" title="Chapter 15. Memory allocation"><link rel="prev" href="chapter-allocation.html" title="Chapter 15. Memory allocation"><link rel="next" href="section-allocation-meta.html" title="GstMeta"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">GstBuffer</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-allocation.html">Prev</a> </td><th width="60%" align="center">Chapter 15. Memory allocation</th><td width="20%" align="right"> <a accesskey="n" href="section-allocation-meta.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-allocation-buffer"></a>GstBuffer</h2></div></div></div><p>
+      A <code class="classname">GstBuffer</code> is an lightweight object that
+      is passed from an upstream to a downstream element and contains
+      memory and metadata. It represents the multimedia content that
+      is pushed or pull downstream by elements.
+    </p><p>
+      The buffer contains one or more <code class="classname">GstMemory</code>
+      objects thet represent the data in the buffer.
+    </p><p>
+      Metadata in the buffer consists of:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: opencircle; "><li class="listitem" style="list-style-type: circle"><p>
+          DTS and PTS timestamps. These represent the decoding and
+          presentation timestamps of the buffer content and is used by
+          synchronizing elements to schedule buffers. Both these timestamps
+          can be GST_CLOCK_TIME_NONE when unknown/undefined.
+        </p></li><li class="listitem" style="list-style-type: circle"><p>
+          The duration of the buffer contents. This duration can be
+          GST_CLOCK_TIME_NONE when unknown/undefined.
+        </p></li><li class="listitem" style="list-style-type: circle"><p>
+          Media specific offsets and offset_end. For video this is the 
+          frame number in the stream and for audio the sample number. Other
+          definitions for other media exist. 
+        </p></li><li class="listitem" style="list-style-type: circle"><p>
+          Arbitrary structures via <code class="classname">GstMeta</code>, see below.
+        </p></li></ul></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-allocation-writability"></a>GstBuffer writability</h3></div></div></div><p>
+        A buffer is writable when the refcount of the object is exactly 1, meaning
+        that only one object is holding a ref to the buffer. You can only
+        modify anything in the buffer when the buffer is writable. This means
+        that you need to call <code class="function">gst_buffer_make_writable()</code>
+        before changing the timestamps, offsets, metadata or adding and
+        removing memory blocks.
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-allocation-buffer-ex"></a>GstBuffer API examples</h3></div></div></div><p>
+        You can create a buffer with <code class="function">gst_buffer_new ()</code>
+        and then add memory objects to it or you can use a convenience function
+        <code class="function">gst_buffer_new_allocate ()</code> which combines the
+        two. It's also possible to wrap existing memory with 
+        <code class="function">gst_buffer_new_wrapped_full () </code> where you can
+        give the function to call when the memory should be freed.
+      </p><p>
+        You can access the memory of the buffer by getting and mapping the 
+        <code class="classname">GstMemory</code> objects individually or by using
+        <code class="function">gst_buffer_map ()</code>. The latter merges all the
+        memory into one big block and then gives you a pointer to this block.
+      </p><p>
+        Below is an example of how to create a buffer and access its memory.
+      </p><pre class="programlisting">
+
+[...]
+  GstBuffer *buffer;
+  GstMemory *mem;
+  GstMapInfo info;
+
+  /* make empty buffer */
+  buffer = gst_buffer_new ();
+
+  /* make memory holding 100 bytes */
+  mem = gst_allocator_alloc (NULL, 100, NULL);
+
+  /* add the buffer */
+  gst_buffer_append_memory (buffer, mem);
+
+[...]
+
+  /* get WRITE access to the memory and fill with 0xff */
+  gst_buffer_map (buffer, &amp;info, GST_MAP_WRITE);
+  memset (info.data, 0xff, info.size);
+  gst_buffer_unmap (buffer, &amp;info);
+
+[...]
+
+  /* free the buffer */
+  gst_buffer_unref (buffer);
+
+[...]
+
+      </pre></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-allocation.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-allocation.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-allocation-meta.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 15. Memory allocation </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> GstMeta</td></tr></table></div></body></html>

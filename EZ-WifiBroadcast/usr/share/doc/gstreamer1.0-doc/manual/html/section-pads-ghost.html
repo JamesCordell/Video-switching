@@ -1,0 +1,54 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Ghost pads</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-pads.html" title="Chapter 8. Pads and capabilities"><link rel="prev" href="section-caps-api.html" title="What capabilities are used for"><link rel="next" href="chapter-data.html" title="Chapter 9. Buffers and Events"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Ghost pads</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-caps-api.html">Prev</a> </td><th width="60%" align="center">Chapter 8. Pads and capabilities</th><td width="20%" align="right"> <a accesskey="n" href="chapter-data.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-pads-ghost"></a>Ghost pads</h2></div></div></div><p>
+      You can see from <a class="xref" href="section-pads-ghost.html#section-bin-noghost-img" title="Figure 8.1. Visualisation of a GstBin element without ghost pads">Figure 8.1, “Visualisation of a <code class="classname">GstBin</code>
+      element without ghost pads”</a> how a bin
+      has no pads of its own. This is where "ghost pads" come into play.
+    </p><div class="figure-float" style="float: left;"><div class="figure"><a name="section-bin-noghost-img"></a><p class="title"><b>Figure 8.1. Visualisation of a <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/stable/gstreamer/html/GstBin.html" target="_top"><code class="classname">GstBin</code></a>
+      element without ghost pads</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/bin-element-noghost.png" width="405" alt="Visualisation of a GstBin element without ghost pads"></div></div></div><br class="figure-break"></div><p>
+      A ghost pad is a pad from some element in the bin that can be
+      accessed directly from the bin as well. Compare it to a symbolic
+      link in UNIX filesystems. Using ghost pads on bins, the bin also
+      has a pad and can transparently be used as an element in other
+      parts of your code.
+    </p><div class="figure-float" style="float: left;"><div class="figure"><a name="section-bin-ghost-img"></a><p class="title"><b>Figure 8.2. Visualisation of a <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/stable/gstreamer/html/GstBin.html" target="_top"><code class="classname">GstBin</code></a>
+      element with a ghost pad</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/bin-element-ghost.png" width="405" alt="Visualisation of a GstBin element with a ghost pad"></div></div></div><br class="figure-break"></div><p>
+      <a class="xref" href="section-pads-ghost.html#section-bin-ghost-img" title="Figure 8.2. Visualisation of a GstBin element with a ghost pad">Figure 8.2, “Visualisation of a <code class="classname">GstBin</code>
+      element with a ghost pad”</a> is a representation of a
+      ghost pad. The sink pad of element one is now also a pad of the bin.
+      Because ghost pads look and work like any other pads, they can be added 
+      to any type of elements, not just to a <code class="classname">GstBin</code>,
+      just like ordinary pads.
+    </p><p>
+      A ghostpad is created using the function
+      <code class="function">gst_ghost_pad_new ()</code>:
+    </p><pre class="programlisting">
+#include &lt;gst/gst.h&gt;
+
+int
+main (int   argc,
+      char *argv[])
+{
+  GstElement *bin, *sink;
+  GstPad *pad;
+
+  /* init */
+  gst_init (&amp;argc, &amp;argv);
+
+  /* create element, add to bin */
+  sink = gst_element_factory_make ("fakesink", "sink");
+  bin = gst_bin_new ("mybin");
+  gst_bin_add (GST_BIN (bin), sink);
+
+  /* add ghostpad */
+  pad = gst_element_get_static_pad (sink, "sink");
+  gst_element_add_pad (bin, gst_ghost_pad_new ("sink", pad));
+  gst_object_unref (GST_OBJECT (pad));
+
+[..]
+
+}
+    </pre><p>
+      In the above example, the bin now also has a pad: the pad called
+      <span class="quote">“<span class="quote">sink</span>”</span> of the given element. The bin can, from here
+      on, be used as a substitute for the sink element. You could, for
+      example, link another element to the bin.
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-caps-api.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-pads.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-data.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">What capabilities are used for </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 9. Buffers and Events</td></tr></table></div></body></html>

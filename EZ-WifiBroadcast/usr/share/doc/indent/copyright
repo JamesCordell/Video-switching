@@ -1,0 +1,71 @@
+This is the Debian prepackaged version of GNU indent, a C language
+source code formatting program. GNU indent was written by Joseph Arceneaux,
+and it is currently maintained by David Ingamells.
+
+This package was first put together by Bill Mitchell
+<mitchell@mdd.comm.mot.com>.
+
+It is currently maintained by Santiago Vila <sanvila@debian.org>.
+The source for this release was taken from:
+
+http://indent.isidore-it.eu/indent-2.2.11.tar.gz
+
+Copyright for the indent program:
+================================
+
+  Copyright (c) 2001 David Ingamells.
+  Copyright (c) 1999, 2000 Carlo Wood.
+  Copyright (c) 1995, 1996 Joseph Arceneaux.
+  Copyright (c) 1989, 1992, 1993, 1994, 1995, 1996 Free Software Foundation
+  Copyright (c) 1985 Sun Microsystems, Inc.
+  Copyright (c) 1980 The Regents of the University of California.
+  Copyright (c) 1976 Board of Trustees of the University of Illinois.
+  All rights reserved.
+
+  Redistribution and use in source and binary forms are permitted
+  provided that the above copyright notice and this paragraph are
+  duplicated in all such forms and that any documentation,
+  advertising materials, and other materials related to such
+  distribution and use acknowledge that the software was developed
+  by the University of California, Berkeley, the University of Illinois,
+  Urbana, and Sun Microsystems, Inc.  The name of either University
+  or Sun Microsystems may not be used to endorse or promote products
+  derived from this software without specific prior written permission.
+  THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+  IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+  WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR
+  PURPOSE.
+
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 3
+  of the License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License version 3 for more details.
+
+On Debian systems, the complete text of the GNU General Public License
+can be found in `/usr/share/common-licenses/GPL'.
+
+Copyright for the indent manual:
+===============================
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided also that the
+section entitled ``GNU General Public License'' is included exactly as
+in the original, and provided that the entire resulting derived work is
+distributed under the terms of a permission notice identical to this
+one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that the section entitled ``GNU General Public License'' may be
+included in a translation approved by the author instead of in the
+original English.

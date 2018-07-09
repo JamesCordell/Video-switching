@@ -1,0 +1,40 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Reading Tags from Streams</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-advanced-tagging.html" title="Chapter 22. Tagging (Metadata and Streaminfo)"><link rel="prev" href="chapter-advanced-tagging.html" title="Chapter 22. Tagging (Metadata and Streaminfo)"><link rel="next" href="section-tagging-write.html" title="Writing Tags to Streams"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Reading Tags from Streams</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-advanced-tagging.html">Prev</a> </td><th width="60%" align="center">Chapter 22. Tagging (Metadata and Streaminfo)</th><td width="20%" align="right"> <a accesskey="n" href="section-tagging-write.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-tagging-read"></a>Reading Tags from Streams</h2></div></div></div><p>
+      The basic object for tags is a <a class="ulink" href="../../gstreamer/html/GstTagList.html" target="_top"><code class="classname">GstTagList
+      </code></a>. An element that is reading tags from a stream should
+      create an empty taglist and fill this with individual tags. Empty tag
+      lists can be created with <code class="function">gst_tag_list_new ()</code>. Then,
+      the element can fill the list using <code class="function">gst_tag_list_add ()
+      </code> or <code class="function">gst_tag_list_add_values ()</code>.
+      Note that elements often read metadata as strings, but the
+      values in the taglist might not necessarily be strings - they need to be
+      of the type the tag was registered as (the API documentation for each
+      predefined tag should contain the type). Be sure to use functions like
+      <code class="function">gst_value_transform ()</code>
+      to make sure that your data is of the right type.
+      After data reading, you can send the tags downstream with the TAG event.
+      When the TAG event reaches the sink, it will post the TAG message on
+      the pipeline's GstBus for the application to pick up.
+    </p><p>
+      We currently require the core to know the GType of tags before they are
+      being used, so all tags must be registered first.  You can add new tags
+      to the list of known tags using <code class="function">gst_tag_register ()</code>.
+      If you think the tag will be useful in more cases than just your own
+      element, it might be a good idea to add it to <code class="filename">gsttag.c</code>
+      instead. That's up to you to decide. If you want to do it in your own
+      element, it's easiest to register the tag in one of your class init
+      functions, preferably <code class="function">_class_init ()</code>.
+    </p><pre class="programlisting">
+
+static void
+gst_my_filter_class_init (GstMyFilterClass *klass)
+{
+[..]
+  gst_tag_register ("my_tag_name", GST_TAG_FLAG_META,
+		    G_TYPE_STRING,
+		    _("my own tag"),
+		    _("a tag that is specific to my own element"),
+		    NULL);
+[..]
+}
+
+    </pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-advanced-tagging.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-advanced-tagging.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-tagging-write.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 22. Tagging (Metadata and Streaminfo) </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Writing Tags to Streams</td></tr></table></div></body></html>

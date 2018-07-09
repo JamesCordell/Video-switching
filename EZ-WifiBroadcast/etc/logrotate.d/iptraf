@@ -1,0 +1,12 @@
+
+/var/log/iptraf/*.log {
+	rotate 7
+	daily
+	compress
+	missingok
+	notifempty
+	postrotate
+		/usr/bin/killall -USR1 iptraf 2> /dev/null || :
+	endscript
+}
+

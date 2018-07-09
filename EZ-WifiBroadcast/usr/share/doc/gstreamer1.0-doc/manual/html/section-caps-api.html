@@ -1,0 +1,171 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>What capabilities are used for</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-pads.html" title="Chapter 8. Pads and capabilities"><link rel="prev" href="section-caps.html" title="Capabilities of a pad"><link rel="next" href="section-pads-ghost.html" title="Ghost pads"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">What capabilities are used for</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-caps.html">Prev</a> </td><th width="60%" align="center">Chapter 8. Pads and capabilities</th><td width="20%" align="right"> <a accesskey="n" href="section-pads-ghost.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-caps-api"></a>What capabilities are used for</h2></div></div></div><p> 
+      Capabilities (short: caps) describe the type of data that is streamed
+      between two pads, or that one pad (template) supports. This makes them
+      very useful for various purposes:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Autoplugging: automatically finding elements to link to a
+          pad based on its capabilities. All autopluggers use this
+          method.
+        </p></li><li class="listitem"><p>
+          Compatibility detection: when two pads are linked, <span class="application">GStreamer</span>
+          can verify if the two pads are talking about the same media
+          type. The process of linking two pads and checking if they
+          are compatible is called <span class="quote">“<span class="quote">caps negotiation</span>”</span>.
+        </p></li><li class="listitem"><p>
+          Metadata: by reading the capabilities from a pad, applications
+          can provide information about the type of media that is being
+          streamed over the pad, which is information about the stream
+          that is currently being played back.
+        </p></li><li class="listitem"><p>
+          Filtering: an application can use capabilities to limit the
+          possible media types that can stream between two pads to a
+          specific subset of their supported stream types. An application
+          can, for example, use <span class="quote">“<span class="quote">filtered caps</span>”</span> to set a
+          specific (fixed or non-fixed) video size that should stream
+          between two pads. You will see an example of filtered caps
+          later in this manual, in <a class="xref" href="section-data-spoof.html" title="Manually adding or removing data from/to a pipeline">the section called “Manually adding or removing data from/to a pipeline”</a>.
+          You can do caps filtering by inserting a capsfilter element into
+          your pipeline and setting its <span class="quote">“<span class="quote">caps</span>”</span> property. Caps
+          filters are often placed after converter elements like audioconvert,
+          audioresample, videoconvert or videoscale to force those
+          converters to convert data to a specific output format at a
+          certain point in a stream.
+        </p></li></ul></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-caps-metadata"></a>Using capabilities for metadata</h3></div></div></div><p> 
+        A pad can have a set (i.e. one or more) of capabilities attached
+        to it. Capabilities (<code class="classname">GstCaps</code>) are represented
+        as an array of one or more <code class="classname">GstStructure</code>s, and
+        each <code class="classname">GstStructure</code> is an array of fields where
+        each field consists of a field name string (e.g. "width") and a
+        typed value (e.g. <code class="classname">G_TYPE_INT</code> or
+        <code class="classname">GST_TYPE_INT_RANGE</code>).
+      </p><p>
+        Note that there is a distinct difference between the
+        <span class="emphasis"><em>possible</em></span> capabilities of a pad (ie. usually what
+        you find as caps of pad templates as they are shown in gst-inspect),
+        the <span class="emphasis"><em>allowed</em></span> caps of a pad (can be the same as
+        the pad's template caps or a subset of them, depending on the possible
+        caps of the peer pad) and lastly <span class="emphasis"><em>negotiated</em></span> caps
+        (these describe the exact format of a stream or buffer and contain
+        exactly one structure and have no variable bits like ranges or lists,
+        ie. they are fixed caps).
+      </p><p>
+        You can get values of properties in a set of capabilities
+        by querying individual properties of one structure. You can get
+        a structure from a caps using
+        <code class="function">gst_caps_get_structure ()</code> and the number of
+        structures in a <code class="classname">GstCaps</code> using
+        <code class="function">gst_caps_get_size ()</code>.
+      </p><p>
+        Caps are called <span class="emphasis"><em>simple caps</em></span> when they contain
+        only one structure, and <span class="emphasis"><em>fixed caps</em></span> when they
+        contain only one structure and have no variable field types (like
+        ranges or lists of possible values). Two other special types of caps
+        are <span class="emphasis"><em>ANY caps</em></span> and <span class="emphasis"><em>empty caps</em></span>.
+      </p><p>
+        Here is an example of how to extract the width and height from
+        a set of fixed video caps:
+      </p><pre class="programlisting">
+static void
+read_video_props (GstCaps *caps)
+{
+  gint width, height;
+  const GstStructure *str;
+
+  g_return_if_fail (gst_caps_is_fixed (caps));
+
+  str = gst_caps_get_structure (caps, 0);
+  if (!gst_structure_get_int (str, "width", &amp;width) ||
+      !gst_structure_get_int (str, "height", &amp;height)) {
+    g_print ("No width/height available\n");
+    return;
+  }
+
+  g_print ("The video size of this set of capabilities is %dx%d\n",
+	   width, height);
+}
+      </pre><p>
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-caps-filter"></a>Creating capabilities for filtering</h3></div></div></div><p> 
+        While capabilities are mainly used inside a plugin to describe the
+        media type of the pads, the application programmer often also has
+        to have basic understanding of capabilities in order to interface
+        with the plugins, especially when using filtered caps. When you're
+        using filtered caps or fixation, you're limiting the allowed types of
+        media that can stream between two pads to a subset of their supported
+        media types. You do this using a <code class="classname">capsfilter</code>
+        element in your pipeline. In order to do this, you also need to
+        create your own <code class="classname">GstCaps</code>. The easiest way to
+        do this is by using the convenience function
+        <code class="function">gst_caps_new_simple ()</code>:
+      </p><p>
+      </p><pre class="programlisting">
+static gboolean
+link_elements_with_filter (GstElement *element1, GstElement *element2)
+{
+  gboolean link_ok;
+  GstCaps *caps;
+
+  caps = gst_caps_new_simple ("video/x-raw",
+  	      "format", G_TYPE_STRING, "I420",
+	      "width", G_TYPE_INT, 384,
+	      "height", G_TYPE_INT, 288,
+	      "framerate", GST_TYPE_FRACTION, 25, 1,
+	      NULL);
+
+  link_ok = gst_element_link_filtered (element1, element2, caps);
+  gst_caps_unref (caps);
+
+  if (!link_ok) {
+    g_warning ("Failed to link element1 and element2!");
+  }
+
+  return link_ok;
+}
+      </pre><p>
+      This will force the data flow between those two elements to
+      a certain video format, width, height and framerate (or the linking
+      will fail if that cannot be achieved in the context of the elements
+      involved). Keep in mind that when you use <code class="function">
+      gst_element_link_filtered ()</code> it will automatically create
+      a <code class="classname">capsfilter</code> element for you and insert it into
+      your bin or pipeline between the two elements you want to connect (this
+      is important if you ever want to disconnect those elements because then
+      you will have to disconnect both elements from the capsfilter instead).
+      </p><p>
+        In some cases, you will want to create a more elaborate set of
+        capabilities to filter a link between two pads. Then, this function
+        is too simplistic and you'll want to use the method
+        <code class="function">gst_caps_new_full ()</code>:
+      </p><pre class="programlisting">
+static gboolean
+link_elements_with_filter (GstElement *element1, GstElement *element2)
+{
+  gboolean link_ok;
+  GstCaps *caps;
+                                                                                
+  caps = gst_caps_new_full (
+      gst_structure_new ("video/x-raw",
+			 "width", G_TYPE_INT, 384,
+			 "height", G_TYPE_INT, 288,
+			 "framerate", GST_TYPE_FRACTION, 25, 1,
+			 NULL),
+      gst_structure_new ("video/x-bayer",
+			 "width", G_TYPE_INT, 384,
+			 "height", G_TYPE_INT, 288,
+			 "framerate", GST_TYPE_FRACTION, 25, 1,
+			 NULL),
+      NULL);
+
+  link_ok = gst_element_link_filtered (element1, element2, caps);
+  gst_caps_unref (caps);
+
+  if (!link_ok) {
+    g_warning ("Failed to link element1 and element2!");
+  }
+
+  return link_ok;
+}
+      </pre><p>
+        See the API references for the full API of
+	<a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/stable/gstreamer/html/gstreamer-GstStructure.html" target="_top"><code class="classname">GstStructure</code></a>
+	and <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/stable/gstreamer/html/gstreamer-GstCaps.html" target="_top"><code class="classname">GstCaps</code></a>.
+      </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-caps.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-pads.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-pads-ghost.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Capabilities of a pad </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Ghost pads</td></tr></table></div></body></html>

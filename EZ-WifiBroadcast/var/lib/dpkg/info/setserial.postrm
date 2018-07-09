@@ -1,0 +1,54 @@
+#! /bin/sh
+
+set -e
+package="setserial"
+
+if [ purge = "$1" ]; then
+  update-rc.d setserial remove >/dev/null
+  update-rc.d etc-setserial remove >/dev/null
+  if [ -e /var/lib/setserial/etc.serial.conf.bkp ] ; then
+      rm -f /var/lib/setserial/etc.serial.conf.bkp
+  fi
+  if [ -e /var/lib/setserial/autoserial.conf ] ; then
+      rm -f /var/lib/setserial/autoserial.conf
+  fi
+  if [ -e /var/lib/setserial/autoserial.conf.old ] ; then
+      rm -f /var/lib/setserial/autoserial.conf.old
+  fi
+fi
+
+
+if [ -f /usr/share/debconf/confmodule ]; then # debconf exists
+. /usr/share/debconf/confmodule
+
+# HHH update-modules removed
+# if [ -x /sbin/update-modules ]; then
+#  #db_get setserial/usemodup
+#  #if [ "$RET" = "true" ]; then
+#   if ! /sbin/update-modules ; then
+#    # cannot easily tell the user there was a problem, so silently ignore it
+#    WHOCARES=0;
+#   fi
+#  #fi
+# fi
+fi
+#ENDOF DEBCONF
+
+#if [ -x /sbin/update-modules ]; then
+#  mv /etc/modules.conf /etc/modules.conf.old.$package
+#  if ! /sbin/update-modules ; then
+#    mv /etc/modules.conf.old.$package /etc/modules.conf
+#  else
+#    mv /etc/modules.conf /etc/modules.conf.new.$package
+#    mv /etc/modules.conf.old.$package /etc/modules.conf
+#    ucf /etc/modules.conf.new.$package /etc/modules.conf
+#  fi
+#fi
+
+# Automatically added by dh_installdebconf
+if [ "$1" = purge ] && [ -e /usr/share/debconf/confmodule ]; then
+	. /usr/share/debconf/confmodule
+	db_purge
+fi
+# End automatically added section
+

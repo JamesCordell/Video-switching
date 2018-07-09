@@ -1,0 +1,23 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Clock running-time</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-advanced-clock.html" title="Chapter 18. Clocking"><link rel="prev" href="chapter-advanced-clock.html" title="Chapter 18. Clocking"><link rel="next" href="section-buffer-time-types.html" title="Buffer running-time"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center"> Clock running-time </th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-advanced-clock.html">Prev</a> </td><th width="60%" align="center">Chapter 18. Clocking</th><td width="20%" align="right"> <a accesskey="n" href="section-buffer-time-types.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-clock-time-types"></a> Clock running-time </h2></div></div></div><p>
+      A clock returns the <span class="strong"><strong>absolute-time</strong></span>
+      according to that clock with <code class="function">gst_clock_get_time ()</code>.
+      From the absolute-time is a <span class="strong"><strong>running-time</strong></span>
+      calculated, which is simply the difference between a previous snapshot
+      of the absolute-time called the <span class="strong"><strong>base-time</strong></span>.
+      So:
+    </p><p>
+      running-time = absolute-time - base-time
+    </p><p>
+      A <span class="application">GStreamer</span> <code class="classname">GstPipeline</code> object maintains a 
+      <code class="classname">GstClock</code> object and a base-time when it goes
+      to the PLAYING state.  The pipeline gives a handle to the selected
+      <code class="classname">GstClock</code> to each element in the pipeline along
+      with selected base-time. The pipeline will select a base-time in such
+      a way that the running-time reflects the total time spent in the
+      PLAYING state. As a result, when the pipeline is PAUSED, the
+      running-time stands still.
+    </p><p>
+      Because all objects in the pipeline have the same clock and base-time,
+      they can thus all calculate the running-time according to the pipeline
+      clock.
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-advanced-clock.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-advanced-clock.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-buffer-time-types.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 18. Clocking </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">  Buffer running-time </td></tr></table></div></body></html>

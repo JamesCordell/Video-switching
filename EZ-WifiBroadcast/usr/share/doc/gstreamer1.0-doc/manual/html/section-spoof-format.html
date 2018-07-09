@@ -1,0 +1,110 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Forcing a format</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-dataaccess.html" title="Chapter 19. Pipeline manipulation"><link rel="prev" href="section-data-spoof.html" title="Manually adding or removing data from/to a pipeline"><link rel="next" href="section-dynamic-pipelines.html" title="Dynamically changing the pipeline"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Forcing a format</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-data-spoof.html">Prev</a> </td><th width="60%" align="center">Chapter 19. Pipeline manipulation</th><td width="20%" align="right"> <a accesskey="n" href="section-dynamic-pipelines.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-spoof-format"></a>Forcing a format</h2></div></div></div><p>
+      Sometimes you'll want to set a specific format, for example a video
+      size and format or an audio bitsize and number of channels. You can
+      do this by forcing a specific <code class="classname">GstCaps</code> on
+      the pipeline, which is possible by using
+      <span class="emphasis"><em>filtered caps</em></span>. You can set a filtered caps on
+      a link by using the <span class="quote">“<span class="quote">capsfilter</span>”</span> element in between the
+      two elements, and specifying a <code class="classname">GstCaps</code> as
+      <span class="quote">“<span class="quote">caps</span>”</span> property on this element. It will then
+      only allow types matching that specified capability set for
+      negotiation.  See also <a class="xref" href="section-caps-api.html#section-caps-filter" title="Creating capabilities for filtering">the section called “Creating capabilities for filtering”</a>.
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-dynamic-format"></a>Changing format in a PLAYING pipeline</h3></div></div></div><p>
+        It is also possible to dynamically change the format in a pipeline
+        while PLAYING. This can simply be done by changing the caps 
+        property on a capsfilter. The capsfilter will send a RECONFIGURE
+        event upstream that will make the upstream element attempt to
+        renegotiate a new format and allocator. This only works if
+        the upstream element is not using fixed caps on the source pad.
+      </p><p>
+        Below is an example of how you can change the caps of a pipeline
+        while in the PLAYING state:
+      </p><pre class="programlisting">
+
+
+#include &lt;stdlib.h&gt;
+
+#include &lt;gst/gst.h&gt;
+
+#define MAX_ROUND 100
+
+int
+main (int argc, char **argv)
+{
+  GstElement *pipe, *filter;
+  GstCaps *caps;
+  gint width, height;
+  gint xdir, ydir;
+  gint round;
+  GstMessage *message;
+
+  gst_init (&amp;argc, &amp;argv);
+
+  pipe = gst_parse_launch_full ("videotestsrc ! capsfilter name=filter ! "
+             "ximagesink", NULL, GST_PARSE_FLAG_NONE, NULL);
+  g_assert (pipe != NULL);
+
+  filter = gst_bin_get_by_name (GST_BIN (pipe), "filter");
+  g_assert (filter);
+
+  width = 320;
+  height = 240;
+  xdir = ydir = -10;
+
+  for (round = 0; round &lt; MAX_ROUND; round++) {
+    gchar *capsstr;
+    g_print ("resize to %dx%d (%d/%d)   \r", width, height, round, MAX_ROUND);
+
+    /* we prefer our fixed width and height but allow other dimensions to pass
+     * as well */
+    capsstr = g_strdup_printf ("video/x-raw, width=(int)%d, height=(int)%d",
+        width, height);
+
+    caps = gst_caps_from_string (capsstr);
+    g_free (capsstr);
+    g_object_set (filter, "caps", caps, NULL);
+    gst_caps_unref (caps);
+
+    if (round == 0)
+      gst_element_set_state (pipe, GST_STATE_PLAYING);
+
+    width += xdir;
+    if (width &gt;= 320)
+      xdir = -10;
+    else if (width &lt; 200)
+      xdir = 10;
+
+    height += ydir;
+    if (height &gt;= 240)
+      ydir = -10;
+    else if (height &lt; 150)
+      ydir = 10;
+
+    message =
+        gst_bus_poll (GST_ELEMENT_BUS (pipe), GST_MESSAGE_ERROR,
+        50 * GST_MSECOND);
+    if (message) {
+      g_print ("got error           \n");
+
+      gst_message_unref (message);
+    }
+  }
+  g_print ("done                    \n");
+
+  gst_object_unref (filter);
+  gst_element_set_state (pipe, GST_STATE_NULL);
+  gst_object_unref (pipe);
+
+  return 0;
+}
+
+
+      </pre><p>
+        Note how we use <code class="function">gst_bus_poll()</code> with a
+        small timeout to get messages and also introduce a short
+        sleep.
+      </p><p>
+        It is possible to set multiple caps for the capsfilter separated
+        with a ;. The capsfilter will try to renegotiate to the first
+        possible format from the list.
+      </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-data-spoof.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-dataaccess.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-dynamic-pipelines.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Manually adding or removing data from/to a pipeline </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Dynamically changing the pipeline</td></tr></table></div></body></html>

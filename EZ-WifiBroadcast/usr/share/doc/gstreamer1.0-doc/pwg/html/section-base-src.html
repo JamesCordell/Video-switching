@@ -1,0 +1,58 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Writing a source</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-other-base.html" title="Chapter 23. Pre-made base classes"><link rel="prev" href="chapter-other-base.html" title="Chapter 23. Pre-made base classes"><link rel="next" href="section-base-transform.html" title="Writing a transformation element"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Writing a source</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-other-base.html">Prev</a> </td><th width="60%" align="center">Chapter 23. Pre-made base classes</th><td width="20%" align="right"> <a accesskey="n" href="section-base-transform.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-base-src"></a>Writing a source</h2></div></div></div><p>
+      In the previous part, particularly <a class="xref" href="section-scheduling-randomxs.html" title="Providing random access">Providing random access</a>, we have learned that some types
+      of elements can provide random access. This applies most definitely to
+      source elements reading from a randomly seekable location, such as file
+      sources. However, other source elements may be better described as a
+      live source element, such as a camera source, an audio card source and
+      such; those are not seekable and do not provide byte-exact access. For
+      all such use cases, <span class="application">GStreamer</span> provides two base classes:
+      <code class="classname">GstBaseSrc</code> for the basic source functionality, and
+      <code class="classname">GstPushSrc</code>, which is a non-byte exact source
+      base-class. The pushsource base class itself derives from basesource as
+      well, and thus all statements about the basesource apply to the
+      pushsource, too.
+    </p><p>
+      The basesrc class does several things automatically for derived classes,
+      so they no longer have to worry about it:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Fixes to <code class="classname">GstBaseSrc</code> apply to all derived
+          classes automatically.
+        </p></li><li class="listitem"><p>
+          Automatic pad activation handling, and task-wrapping in case we get
+          assigned to start a task ourselves.
+        </p></li></ul></div><p>
+      The <code class="classname">GstBaseSrc</code> may not be suitable for all cases,
+      though; it has limitations:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          There is one and only one sourcepad. Source elements requiring
+          multiple sourcepads must implement a manager bin and use multiple
+          source elements internally or make a manager element that uses
+          a source element and a demuxer inside.
+        </p></li></ul></div><p>
+      It is possible to use special memory, such as X server memory pointers
+      or <code class="function">mmap ()</code>'ed memory areas, as data pointers in
+      buffers returned from the <code class="function">create()</code> virtual function.
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-base-audiosrc"></a>Writing an audio source</h3></div></div></div><p>
+        An audio source is nothing more but a special case of a pushsource.
+        Audio sources would be anything that reads audio, such as a source
+        reading from a soundserver, a kernel interface (such as ALSA) or a
+        test sound / signal generator. <span class="application">GStreamer</span> provides two base classes,
+        similar to the two audiosinks described in <a class="xref" href="chapter-other-base.html#section-base-audiosink" title="Writing an audio sink">Writing an audio sink</a>; one is ringbuffer-based, and
+        requires the derived class to take care of its own scheduling,
+        synchronization and such. The other is based on this
+        <code class="classname">GstAudioBaseSrc</code> and is called
+        <code class="classname">GstAudioSrc</code>, and provides a simple
+        <code class="function">open ()</code>, <code class="function">close ()</code> and
+        <code class="function">read ()</code> interface, which is rather simple to
+        implement and will suffice for most soundserver sources and audio
+        interfaces (e.g. ALSA or OSS) out there.
+      </p><p>
+        The <code class="classname">GstAudioSrc</code> base-class has several benefits
+        for derived classes, on top of the benefits of the
+        <code class="classname">GstPushSrc</code> base-class that it is based on:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+            Does syncronization and provides a clock.
+          </p></li><li class="listitem"><p>
+            New features can be added to it and will apply to all derived
+            classes automatically.
+          </p></li></ul></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-other-base.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-other-base.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-base-transform.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 23. Pre-made base classes </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Writing a transformation element</td></tr></table></div></body></html>

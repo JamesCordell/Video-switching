@@ -1,0 +1,141 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 21. Programs</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="part-appendices.html" title="Part V. Appendices"><link rel="prev" href="part-appendices.html" title="Part V. Appendices"><link rel="next" href="section-programs-gst-inspect.html" title="gst-inspect"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 21. Programs</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="part-appendices.html">Prev</a> </td><th width="60%" align="center">Part V. Appendices</th><td width="20%" align="right"> <a accesskey="n" href="section-programs-gst-inspect.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-programs"></a>Chapter 21. Programs</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-programs.html#section-programs-gst-launch"><span class="command"><strong>gst-launch</strong></span></a></span></dt><dd><dl><dt><span class="sect2"><a href="chapter-programs.html#idp71648512">Grammar Reference</a></span></dt></dl></dd><dt><span class="sect1"><a href="section-programs-gst-inspect.html"><span class="command"><strong>gst-inspect</strong></span></a></span></dt></dl></div><p> 
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-programs-gst-launch"></a><span class="command"><strong>gst-launch</strong></span></h2></div></div></div><p> 
+      This is a tool that will construct pipelines based on a command-line
+      syntax.
+    </p><p> 
+      A simple commandline looks like:
+
+    </p><pre class="screen">
+gst-launch filesrc location=hello.mp3 ! mad ! audioresample ! osssink
+    </pre><p>
+
+      A more complex pipeline looks like:
+
+    </p><pre class="screen">
+gst-launch filesrc location=redpill.vob ! dvddemux name=demux \
+ demux.audio_00 ! queue ! a52dec ! audioconvert ! audioresample ! osssink \
+ demux.video_00 ! queue ! mpeg2dec ! videoconvert ! xvimagesink
+    </pre><p>
+
+    </p><p>
+      You can also use the parser in you own
+      code. <span class="application">GStreamer</span> provides a function
+      gst_parse_launch () that you can use to construct a pipeline.
+      The following program lets you create an MP3 pipeline using the
+      gst_parse_launch () function:
+    </p><pre class="programlisting">
+#include &lt;gst/gst.h&gt;
+
+int
+main (int argc, char *argv[])
+{
+  GstElement *pipeline;
+  GstElement *filesrc;
+  GstMessage *msg;
+  GstBus *bus;
+  GError *error = NULL;
+
+  gst_init (&amp;argc, &amp;argv);
+
+  if (argc != 2) {
+    g_print ("usage: %s &lt;filename&gt;\n", argv[0]);
+    return -1;
+  }
+
+  pipeline = gst_parse_launch ("filesrc name=my_filesrc ! mad ! osssink", &amp;error);
+  if (!pipeline) {
+    g_print ("Parse error: %s\n", error-&gt;message);
+    exit (1);
+  }
+  
+  filesrc = gst_bin_get_by_name (GST_BIN (pipeline), "my_filesrc");
+  g_object_set (filesrc, "location", argv[1], NULL);
+
+  gst_element_set_state (pipeline, GST_STATE_PLAYING);
+
+  bus = gst_element_get_bus (pipeline);
+
+  /* wait until we either get an EOS or an ERROR message. Note that in a real
+   * program you would probably not use gst_bus_poll(), but rather set up an
+   * async signal watch on the bus and run a main loop and connect to the
+   * bus's signals to catch certain messages or all messages */
+  msg = gst_bus_poll (bus, GST_MESSAGE_EOS | GST_MESSAGE_ERROR, -1);
+
+  switch (GST_MESSAGE_TYPE (msg)) {
+    case GST_MESSAGE_EOS: {
+      g_print ("EOS\n");
+      break;
+    }
+    case GST_MESSAGE_ERROR: {
+      GError *err = NULL; /* error to show to users                 */
+      gchar *dbg = NULL;  /* additional debug string for developers */
+
+      gst_message_parse_error (msg, &amp;err, &amp;dbg);
+      if (err) {
+        g_printerr ("ERROR: %s\n", err-&gt;message);
+        g_error_free (err);
+      }
+      if (dbg) {
+        g_printerr ("[Debug details: %s]\n", dbg);
+        g_free (dbg);
+      }
+    }
+    default:
+      g_printerr ("Unexpected message of type %d", GST_MESSAGE_TYPE (msg));
+      break;
+  }
+  gst_message_unref (msg);
+
+  gst_element_set_state (pipeline, GST_STATE_NULL);
+  gst_object_unref (pipeline);
+  gst_object_unref (bus);
+
+  return 0;
+}
+    </pre><p>
+      Note how we can retrieve the filesrc element from the constructed bin using the
+      element name.
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idp71648512"></a>Grammar Reference</h3></div></div></div><p>
+        The <span class="command"><strong>gst-launch</strong></span> syntax is processed by a flex/bison parser. This section
+        is intended to provide a full specification of the grammar; any deviations from this
+        specification is considered a bug.
+      </p><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a name="idp71650384"></a>Elements</h4></div></div></div><pre class="screen">
+          ... mad ...
+        </pre><p>
+          A bare identifier (a string beginning with a letter and containing
+          only letters, numbers, dashes, underscores, percent signs, or colons)
+          will create an element from a given element factory. In this example,
+          an instance of the "mad" MP3 decoding plugin will be created.
+        </p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a name="idp71652496"></a>Links</h4></div></div></div><pre class="screen">
+          ... !sink ...
+        </pre><p>
+          An exclamation point, optionally having a qualified pad name (an the name of the pad,
+          optionally preceded by the name of the element) on both sides, will link two pads. If
+          the source pad is not specified, a source pad from the immediately preceding element
+          will be automatically chosen. If the sink pad is not specified, a sink pad from the next
+          element to be constructed will be chosen. An attempt will be made to find compatible
+          pads. Pad names may be preceded by an element name, as in
+          <code class="computeroutput">my_element_name.sink_pad</code>.
+        </p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a name="idp71655472"></a>Properties</h4></div></div></div><pre class="screen">
+          ... location="http://gstreamer.net" ...
+        </pre><p>
+          The name of a property, optionally qualified with an element name, and a value,
+          separated by an equals sign, will set a property on an element. If the element is not
+          specified, the previous element is assumed. Strings can optionally be enclosed in
+          quotation marks. Characters in strings may be escaped with the backtick
+          (<code class="literal">\</code>). If the right-hand side is all digits, it is considered to be an
+          integer. If it is all digits and a decimal point, it is a double. If it is "true",
+          "false", "TRUE", or "FALSE" it is considered to be boolean. Otherwise, it is parsed as a
+          string. The type of the property is determined later on in the parsing, and the value is
+          converted to the target type. This conversion is not guaranteed to work, it relies on
+          the g_value_convert routines. No error message will be displayed on an invalid
+          conversion, due to limitations in the value convert API.
+        </p></div><div class="sect3"><div class="titlepage"><div><div><h4 class="title"><a name="idp71658976"></a>Bins, Threads, and Pipelines</h4></div></div></div><pre class="screen">
+          ( ... )
+        </pre><p>
+          A pipeline description between parentheses is placed into a bin. The open paren may be
+          preceded by a type name, as in <code class="computeroutput">jackbin.( ... )</code> to make
+          a bin of a specified type. Square brackets make pipelines, and curly braces make
+          threads. The default toplevel bin type is a pipeline, although putting the whole
+          description within parentheses or braces can override this default.
+        </p></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="part-appendices.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-appendices.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-programs-gst-inspect.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Part V. Appendices </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> <span class="command"><strong>gst-inspect</strong></span></td></tr></table></div></body></html>

@@ -1,0 +1,103 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>GST_QUERY_ALLOCATION</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-allocation.html" title="Chapter 15. Memory allocation"><link rel="prev" href="section-allocation-bufferpool.html" title="GstBufferPool"><link rel="next" href="chapter-building-types.html" title="Chapter 16. Types and Properties"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">GST_QUERY_ALLOCATION</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-allocation-bufferpool.html">Prev</a> </td><th width="60%" align="center">Chapter 15. Memory allocation</th><td width="20%" align="right"> <a accesskey="n" href="chapter-building-types.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-allocation-query"></a>GST_QUERY_ALLOCATION</h2></div></div></div><p>
+      The ALLOCATION query is used to negotiate
+      <code class="classname">GstMeta</code>, <code class="classname">GstBufferPool</code>
+      and <code class="classname">GstAllocator</code> between elements. Negotiation
+      of the allocation strategy is always initiated and decided by a srcpad
+      after it has negotiated a format and before it decides to push buffers.
+      A sinkpad can suggest an allocation strategy but it is ultimately the
+      source pad that will decide based on the suggestions of the downstream
+      sink pad.
+    </p><p>
+      The source pad will do a GST_QUERY_ALLOCATION with the negotiated caps
+      as a parameter. This is needed so that the downstream element knows
+      what media type is being handled. A downstream sink pad can answer the
+      allocation query with the following results:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: opencircle; "><li class="listitem" style="list-style-type: circle"><p>
+          An array of possible <code class="classname">GstBufferPool</code> suggestions
+          with suggested size, minimum and maximum amount of buffers.
+        </p></li><li class="listitem" style="list-style-type: circle"><p>
+          An array of GstAllocator objects along with suggested allocation
+          parameters such as flags, prefix, alignment and padding. These
+          allocators can also be configured in a bufferpool when this is
+          supported by the bufferpool.
+        </p></li><li class="listitem" style="list-style-type: circle"><p>
+          An array of supported <code class="classname">GstMeta</code> implementations
+          along with metadata specific parameters.
+          It is important that the upstream element knows what kind of
+          metadata is supported downstream before it places that metadata
+          on buffers.
+        </p></li></ul></div><p>
+      When the GST_QUERY_ALLOCATION returns, the source pad will select
+      from the available bufferpools, allocators and metadata how it will
+      allocate buffers.
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-allocation-query-ex"></a>ALLOCATION query example</h3></div></div></div><p>
+        Below is an example of the ALLOCATION query.
+      </p><pre class="programlisting">
+
+#include &lt;gst/video/video.h&gt;
+#include &lt;gst/video/gstvideometa.h&gt;
+#include &lt;gst/video/gstvideopool.h&gt;
+
+  GstCaps *caps;
+  GstQuery *query;
+  GstStructure *structure;
+  GstBufferPool *pool;
+  GstStructure *config;
+  guint size, min, max;
+
+[...]
+
+  /* find a pool for the negotiated caps now */
+  query = gst_query_new_allocation (caps, TRUE);
+
+  if (!gst_pad_peer_query (scope-&gt;srcpad, query)) {
+    /* query failed, not a problem, we use the query defaults */
+  }
+
+  if (gst_query_get_n_allocation_pools (query) &gt; 0) {
+    /* we got configuration from our peer, parse them */
+    gst_query_parse_nth_allocation_pool (query, 0, &amp;pool, &amp;size, &amp;min, &amp;max);
+  } else {
+    pool = NULL;
+    size = 0;
+    min = max = 0;
+  }
+
+  if (pool == NULL) {
+    /* we did not get a pool, make one ourselves then */
+    pool = gst_video_buffer_pool_new ();
+  }
+
+  config = gst_buffer_pool_get_config (pool);
+  gst_buffer_pool_config_add_option (config, GST_BUFFER_POOL_OPTION_VIDEO_META);
+  gst_buffer_pool_config_set_params (config, caps, size, min, max);
+  gst_buffer_pool_set_config (pool, config);
+
+  /* and activate */
+  gst_buffer_pool_set_active (pool, TRUE);
+
+[...]
+
+      </pre><p>
+        This particular implementation will make a custom
+        <code class="classname">GstVideoBufferPool</code> object that is specialized
+        in allocating video buffers. You can also enable the pool to
+        put <code class="classname">GstVideoMeta</code> metadata on the buffers from
+        the pool doing
+        <code class="function">gst_buffer_pool_config_add_option (config,
+          GST_BUFFER_POOL_OPTION_VIDEO_META)</code>.
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-allocation-query-base"></a>The ALLOCATION query in base classes</h3></div></div></div><p>
+        In many baseclasses you will see the following virtual methods for
+        influencing the allocation strategy:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+            <code class="function">propose_allocation ()</code> should suggest
+            allocation parameters for the upstream element.
+          </p></li><li class="listitem"><p>
+            <code class="function">decide_allocation ()</code> should decide the
+            allocation parameters from the suggestions received from
+            downstream.
+          </p></li></ul></div><p>
+        Implementors of these methods should modify the given
+        <code class="classname">GstQuery</code> object by updating the pool options
+        and allocation options.
+      </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-allocation-bufferpool.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-allocation.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-building-types.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">GstBufferPool </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 16. Types and Properties</td></tr></table></div></body></html>

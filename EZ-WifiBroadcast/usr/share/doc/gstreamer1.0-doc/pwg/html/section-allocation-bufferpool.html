@@ -1,0 +1,124 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>GstBufferPool</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-allocation.html" title="Chapter 15. Memory allocation"><link rel="prev" href="section-allocation-meta.html" title="GstMeta"><link rel="next" href="section-allocation-query.html" title="GST_QUERY_ALLOCATION"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">GstBufferPool</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-allocation-meta.html">Prev</a> </td><th width="60%" align="center">Chapter 15. Memory allocation</th><td width="20%" align="right"> <a accesskey="n" href="section-allocation-query.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-allocation-bufferpool"></a>GstBufferPool</h2></div></div></div><p>
+      The <code class="classname">GstBufferPool</code> object provides a convenient
+      base class for managing lists of reusable buffers. Essential for this
+      object is that all the buffers have the same properties such as size,
+      padding, metadata and alignment.
+    </p><p>
+      A bufferpool object can be configured to manage a minimum and maximum
+      amount of buffers of a specific size. A bufferpool can also be
+      configured to use a specific <code class="classname">GstAllocator</code> for
+      the memory of the buffers. There is support in the bufferpool to enable
+      bufferpool specific options, such as adding <code class="classname">GstMeta</code>
+      to the buffers in the pool or such as enabling specific padding on
+      the memory in the buffers.
+    </p><p>
+      A Bufferpool can be inactivate and active. In the inactive state,
+      you can configure the pool. In the active state, you can't change
+      the configuration anymore but you can acquire and release buffers
+      from/to the pool.
+    </p><p>
+      In the following sections we take a look at how you can use
+      a bufferpool. 
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-allocation-pool-ex"></a>GstBufferPool API example</h3></div></div></div><p>
+        Many different bufferpool implementations can exist; they are all
+        subclasses of the base class <code class="classname">GstBufferPool</code>.
+        For this example, we will assume we somehow have access to a
+        bufferpool, either because we created it ourselves or because
+        we were given one as a result of the ALLOCATION query as we will
+        see below.
+      </p><p>
+        The bufferpool is initially in the inactive state so that we can
+        configure it. Trying to configure a bufferpool that is not in the
+        inactive state will fail. Likewise, trying to activate a bufferpool
+        that is not configured will fail.
+      </p><pre class="programlisting">
+
+  GstStructure *config;
+
+[...]
+
+  /* get config structure */
+  config = gst_buffer_pool_get_config (pool);
+
+  /* set caps, size, minimum and maximum buffers in the pool */
+  gst_buffer_pool_config_set_params (config, caps, size, min, max);
+
+  /* configure allocator and parameters */
+  gst_buffer_pool_config_set_allocator (config, allocator, &amp;params);
+
+  /* store the updated configuration again */
+  gst_buffer_pool_set_config (pool, config);
+
+[...]
+
+      </pre><p>
+        The configuration of the bufferpool is maintained in a generic
+        <code class="classname">GstStructure</code> that can be obtained with
+        <code class="function">gst_buffer_pool_get_config()</code>. Convenience
+        methods exist to get and set the configuration options in this
+        structure. After updating the structure, it is set as the current
+        configuration in the bufferpool again with
+        <code class="function">gst_buffer_pool_set_config()</code>.
+      </p><p>
+        The following options can be configured on a bufferpool:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: opencircle; "><li class="listitem" style="list-style-type: circle"><p>
+            The caps of the buffers to allocate.
+          </p></li><li class="listitem" style="list-style-type: circle"><p>
+            The size of the buffers. This is the suggested size of the
+            buffers in the pool. The pool might decide to allocate larger
+            buffers to add padding.
+          </p></li><li class="listitem" style="list-style-type: circle"><p>
+            The minimum and maximum amount of buffers in the pool. When
+            minimum is set to &gt; 0, the bufferpool will pre-allocate this
+            amount of buffers. When maximum is not 0, the bufferpool
+            will allocate up to maximum amount of buffers.
+          </p></li><li class="listitem" style="list-style-type: circle"><p>
+            The allocator and parameters to use. Some bufferpools might
+            ignore the allocator and use its internal one.
+          </p></li><li class="listitem" style="list-style-type: circle"><p>
+            Other arbitrary bufferpool options identified with a string.
+            a bufferpool lists the supported options with
+            <code class="function">gst_buffer_pool_get_options()</code> and you 
+            can ask if an option is supported with
+            <code class="function">gst_buffer_pool_has_option()</code>. The option
+            can be enabled by adding it to the configuration structure
+            with <code class="function">gst_buffer_pool_config_add_option ()</code>.
+            These options are used to enable things like letting the
+            pool set metadata on the buffers or to add extra configuration
+            options for padding, for example.
+          </p></li></ul></div><p>
+        After the configuration is set on the bufferpool, the pool can
+        be activated with
+        <code class="function">gst_buffer_pool_set_active (pool, TRUE)</code>. From
+        that point on you can use
+        <code class="function">gst_buffer_pool_acquire_buffer ()</code> to retrieve
+        a buffer from the pool, like this:
+      </p><pre class="programlisting">
+
+  [...]
+
+  GstFlowReturn ret;
+  GstBuffer *buffer;
+
+  ret = gst_buffer_pool_acquire_buffer (pool, &amp;buffer, NULL);
+  if (G_UNLIKELY (ret != GST_FLOW_OK))
+    goto pool_failed;
+
+  [...]
+
+      </pre><p>
+        It is important to check the return value of the acquire function
+        because it is possible that it fails: When your
+        element shuts down, it will deactivate the bufferpool and then
+        all calls to acquire will return GST_FLOW_FLUSHNG.
+      </p><p>
+        All buffers that are acquired from the pool will have their pool
+        member set to the original pool. When the last ref is decremented
+        on the buffer, <span class="application">GStreamer</span> will automatically call
+        <code class="function">gst_buffer_pool_release_buffer()</code> to release
+        the buffer back to the pool. You (or any other downstream element)
+        don't need to know if a buffer came from a pool, you can just
+        unref it.
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-allocation-pool-impl"></a>Implementing a new GstBufferPool</h3></div></div></div><p>
+        WRITEME
+      </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-allocation-meta.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-allocation.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-allocation-query.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">GstMeta </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> GST_QUERY_ALLOCATION</td></tr></table></div></body></html>

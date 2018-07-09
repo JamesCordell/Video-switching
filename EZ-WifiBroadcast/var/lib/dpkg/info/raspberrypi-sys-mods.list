@@ -1,0 +1,16 @@
+/.
+/lib
+/lib/systemd
+/lib/systemd/system
+/lib/systemd/system/rpi-display-backlight.service
+/etc
+/etc/udev
+/etc/udev/rules.d
+/etc/udev/rules.d/99-com.rules
+/usr
+/usr/share
+/usr/share/doc
+/usr/share/doc/raspberrypi-sys-mods
+/usr/share/doc/raspberrypi-sys-mods/NEWS.Debian.gz
+/usr/share/doc/raspberrypi-sys-mods/copyright
+/usr/share/doc/raspberrypi-sys-mods/changelog.gz

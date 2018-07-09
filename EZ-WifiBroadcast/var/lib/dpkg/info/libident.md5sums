@@ -1,0 +1,6 @@
+a5e516e3605bab1506f229d6635fe3e0  usr/sbin/in.identtestd
+620b423d789b470d2b59b84e3a064a30  usr/lib/libident.so.0.22
+a01e4efb8527770a410785d85b7a4e3f  usr/share/doc/libident/changelog.Debian.gz
+de7e1fa199d3d95d360e910aec4dc9a2  usr/share/doc/libident/README.gz
+f7c59f1535e53bc9ed5682ee68033a8e  usr/share/doc/libident/copyright
+f9fa07f1aa649e4b3e370061d1df9047  usr/share/man/man8/in.identtestd.8.gz

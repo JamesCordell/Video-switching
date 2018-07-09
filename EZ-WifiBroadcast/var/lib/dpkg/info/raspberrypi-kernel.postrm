@@ -1,0 +1,23 @@
+#!/bin/sh
+export INITRD=No
+if [ -d "/etc/kernel/postrm.d" ]; then
+  run-parts -v --report --exit-on-error --arg=4.4.11+ --arg=/boot/kernel.img /etc/kernel/postrm.d
+  run-parts -v --report --exit-on-error --arg=4.4.11-v7+ --arg=/boot/kernel7.img /etc/kernel/postrm.d
+fi
+if [ -d "/etc/kernel/postrm.d/4.4.11+" ]; then
+  run-parts -v --report --exit-on-error --arg=4.4.11+ --arg=/boot/kernel.img /etc/kernel/postrm.d/4.4.11+
+fi
+if [ -d "/etc/kernel/postrm.d/4.4.11-v7+" ]; then
+  run-parts -v --report --exit-on-error --arg=4.4.11-v7+ --arg=/boot/kernel7.img /etc/kernel/postrm.d/4.4.11-v7+
+fi
+# Automatically added by dh_installmodules
+if [ -e /boot/System.map-4.4.11+ ]; then
+	depmod -a -F /boot/System.map-4.4.11+ 4.4.11+ || true
+fi
+# End automatically added section
+# Automatically added by dh_installmodules
+if [ -e /boot/System.map-4.4.11-v7+ ]; then
+	depmod -a -F /boot/System.map-4.4.11-v7+ 4.4.11-v7+ || true
+fi
+# End automatically added section
+

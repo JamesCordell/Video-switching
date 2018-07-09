@@ -1,0 +1,7 @@
+1e5cf4af88746cc0746d30781d9d51e9  usr/include/lz4.h
+5af6c906d6f4f6cd931ab952a12b62ea  usr/include/lz4hc.h
+5778ff06e47c64379490e13f4eb122d2  usr/lib/arm-linux-gnueabihf/liblz4.a
+c6dff39a82b058a66798c7cbca5be40b  usr/lib/arm-linux-gnueabihf/pkgconfig/liblz4.pc
+d4db53c67f4febbc8eefff1e92a786b1  usr/share/doc/liblz4-dev/changelog.Debian.gz
+be6d8d09daf3df78d11a7cd963cc803e  usr/share/doc/liblz4-dev/copyright
+964e4642f5929d2c1997a3a8d3cd06bf  usr/share/doc/liblz4-dev/lz4_format_description.txt.gz

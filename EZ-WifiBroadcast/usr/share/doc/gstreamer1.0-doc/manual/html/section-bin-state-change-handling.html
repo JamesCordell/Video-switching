@@ -1,0 +1,25 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Bins manage states of their children</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-bins.html" title="Chapter 6. Bins"><link rel="prev" href="section-bin-custom.html" title="Custom bins"><link rel="next" href="chapter-bus.html" title="Chapter 7. Bus"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Bins manage states of their children</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-bin-custom.html">Prev</a> </td><th width="60%" align="center">Chapter 6. Bins</th><td width="20%" align="right"> <a accesskey="n" href="chapter-bus.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-bin-state-change-handling"></a>Bins manage states of their children</h2></div></div></div><p>
+      Bins manage the state of all elements contained in them. If you set
+      a bin (or a pipeline, which is a special top-level type of bin) to
+      a certain target state using <code class="function">gst_element_set_state ()</code>,
+      it will make sure all elements contained within it will also be set
+      to this state. This means it's usually only necessary to set the state
+      of the top-level pipeline to start up the pipeline or shut it down.
+    </p><p>
+      The bin will perform the state changes on all its children from the
+      sink element to the source element. This ensures that the downstream
+      element is ready to receive data when the upstream element is brought
+      to PAUSED or PLAYING. Similarly when shutting down, the sink elements
+      will be set to READY or NULL first, which will cause the upstream
+      elements to receive a FLUSHING error and stop the streaming threads
+      before the elements are set to the READY or NULL state.
+    </p><p>
+      Note, however, that if elements are added to a bin or pipeline that's
+      already running, , e.g. from within a "pad-added"
+      signal callback, its state will not automatically be brought in line with
+      the current state or target state of the bin or pipeline it was added to.
+      Instead, you have to need to set it to the desired target state yourself
+      using <code class="function">gst_element_set_state ()</code> or
+      <code class="function">gst_element_sync_state_with_parent ()</code> when adding
+      elements to an already-running pipeline.
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-bin-custom.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-bins.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-bus.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Custom bins </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 7. Bus</td></tr></table></div></body></html>

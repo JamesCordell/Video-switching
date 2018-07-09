@@ -1,0 +1,744 @@
+Package: lua5.1
+Architecture: armhf
+Auto-Installed: 0
+
+Package: triggerhappy
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libsamplerate0
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libparted2
+Architecture: armhf
+Auto-Installed: 1
+
+Package: parted
+Architecture: armhf
+Auto-Installed: 0
+
+Package: libasound2
+Architecture: armhf
+Auto-Installed: 1
+
+Package: alsa-utils
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libasound2-data
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libcap-ng0
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libkrb5-3
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libk5crypto3
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libkeyutils1
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libtalloc2
+Architecture: armhf
+Auto-Installed: 1
+
+Package: samba-common
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libkrb5support0
+Architecture: armhf
+Auto-Installed: 1
+
+Package: ucf
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libwbclient0
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libgssapi-krb5-2
+Architecture: armhf
+Auto-Installed: 1
+
+Package: dc
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libglib2.0-data
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libdpkg-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libpython2.7-minimal
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libmpfr4
+Architecture: armhf
+Auto-Installed: 1
+
+Package: ncurses-term
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libopts25
+Architecture: armhf
+Auto-Installed: 1
+
+Package: perl-modules
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libdaemon0
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libsasl2-2
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libpod-readme-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libv4l-0
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libfile-fcntllock-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libtext-template-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: python2.7
+Architecture: armhf
+Auto-Installed: 1
+
+Package: perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: make
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libmro-compat-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libxml2
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libpython2.7-stdlib
+Architecture: armhf
+Auto-Installed: 1
+
+Package: xkb-data
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libpcsclite1
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libx11-data
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libmodule-signature-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libterm-ui-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libcloog-isl4
+Architecture: armhf
+Auto-Installed: 1
+
+Package: dbus
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libv4lconvert0
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libmagic1
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libtirpc1
+Architecture: armhf
+Auto-Installed: 1
+
+Package: liblog-message-simple-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libnl-3-200
+Architecture: armhf
+Auto-Installed: 1
+
+Package: python-minimal
+Architecture: armhf
+Auto-Installed: 1
+
+Package: geoip-database
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libpng12-dev
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libcurl3
+Architecture: armhf
+Auto-Installed: 1
+
+Package: fakeroot
+Architecture: armhf
+Auto-Installed: 1
+
+Package: openssh-sftp-server
+Architecture: armhf
+Auto-Installed: 1
+
+Package: dpkg-dev
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libalgorithm-merge-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libxmuu1
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libc6-dbg
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libpod-latex-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: openssh-server
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libsasl2-modules-db
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libssh2-1
+Architecture: armhf
+Auto-Installed: 1
+
+Package: rename
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libisccc90
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libsub-exporter-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: file
+Architecture: armhf
+Auto-Installed: 1
+
+Package: console-setup-linux
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libtext-soundex-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libxdmcp6
+Architecture: armhf
+Auto-Installed: 1
+
+Package: rpcbind
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libclass-c3-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libc6-dev
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libdata-optlist-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libclass-c3-xs-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libpython-stdlib
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libwrap0
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libavahi-common-data
+Architecture: armhf
+Auto-Installed: 1
+
+Package: g++-4.9
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libatomic1
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libgcc-4.9-dev
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libfcgi-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libregexp-common-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libx11-6
+Architecture: armhf
+Auto-Installed: 1
+
+Package: patch
+Architecture: armhf
+Auto-Installed: 1
+
+Package: mime-support
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libalgorithm-diff-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: g++
+Architecture: armhf
+Auto-Installed: 0
+
+Package: xml-core
+Architecture: armhf
+Auto-Installed: 1
+
+Package: gdbserver
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libisc95
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libparams-util-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libbind9-90
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libdns100
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libstdc++-4.9-dev
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libtimedate-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libpackage-constants-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libnss-mdns
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libevent-2.0-5
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libglib2.0-0
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libedit2
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libisl10
+Architecture: armhf
+Auto-Installed: 1
+
+Package: bzip2
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libldap-2.4-2
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libasan1
+Architecture: armhf
+Auto-Installed: 1
+
+Package: liblwres90
+Architecture: armhf
+Auto-Installed: 1
+
+Package: sgml-base
+Architecture: armhf
+Auto-Installed: 1
+
+Package: openssl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libavahi-common3
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libc-dev-bin
+Architecture: armhf
+Auto-Installed: 1
+
+Package: gcc
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libsasl2-modules
+Architecture: armhf
+Auto-Installed: 1
+
+Package: linux-libc-dev
+Architecture: armhf
+Auto-Installed: 1
+
+Package: zlib1g-dev
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libdata-section-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libmpc3
+Architecture: armhf
+Auto-Installed: 1
+
+Package: openssh-client
+Architecture: armhf
+Auto-Installed: 1
+
+Package: bluez-firmware
+Architecture: armhf
+Auto-Installed: 1
+
+Package: cpp
+Architecture: armhf
+Auto-Installed: 1
+
+Package: bluez
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libfakeroot
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libxext6
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libexpat1
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libmodule-build-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libisccfg90
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libxau6
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libusb-1.0-0
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libcpan-meta-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libgomp1
+Architecture: armhf
+Auto-Installed: 1
+
+Package: liblog-message-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libgeoip1
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libcgi-pm-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: shared-mime-info
+Architecture: armhf
+Auto-Installed: 1
+
+Package: python2.7-minimal
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libarchive-extract-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libsoftware-license-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: bind9-host
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libjpeg62-turbo
+Architecture: armhf
+Auto-Installed: 1
+
+Package: kbd
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libiw30
+Architecture: armhf
+Auto-Installed: 1
+
+Package: binutils
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libv4l2rds0
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libsub-install-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libalgorithm-c3-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libpython2.7
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libmodule-pluggable-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libnl-genl-3-200
+Architecture: armhf
+Auto-Installed: 1
+
+Package: xdg-user-dirs
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libfreetype6
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libnfsidmap2
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libcgi-fast-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libxcb1
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libluajit-5.1-common
+Architecture: armhf
+Auto-Installed: 1
+
+Package: xauth
+Architecture: armhf
+Auto-Installed: 1
+
+Package: cpp-4.9
+Architecture: armhf
+Auto-Installed: 1
+
+Package: gcc-4.9
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libubsan0
+Architecture: armhf
+Auto-Installed: 1
+
+Package: librtmp1
+Architecture: armhf
+Auto-Installed: 1
+
+Package: tcpd
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libalgorithm-diff-xs-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libavahi-core7
+Architecture: armhf
+Auto-Installed: 1
+
+Package: liblua5.2-0
+Architecture: armhf
+Auto-Installed: 1
+
+Package: mc-data
+Architecture: armhf
+Auto-Installed: 1
+
+Package: wireshark-common
+Architecture: armhf
+Auto-Installed: 1
+
+Package: liberror-perl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libjs-excanvas
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libpcap0.8
+Architecture: armhf
+Auto-Installed: 1
+
+Package: javascript-common
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libtinfo-dev
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libwsutil4
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libwireshark5
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libsmi2ldbl
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libgpm2
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libc-ares2
+Architecture: armhf
+Auto-Installed: 1
+
+Package: mercurial-common
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libcurl3-gnutls
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libwireshark-data
+Architecture: armhf
+Auto-Installed: 1
+
+Package: rsync
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libwiretap4
+Architecture: armhf
+Auto-Installed: 1
+
+Package: git-man
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libssl-doc
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libpcap0.8-dev
+Architecture: armhf
+Auto-Installed: 1
+
+Package: libarchive13
+Architecture: armhf
+Auto-Installed: 1
+
+Package: liblzo2-2
+Architecture: armhf
+Auto-Installed: 1
+
+Package: cmake-data
+Architecture: armhf
+Auto-Installed: 1
+

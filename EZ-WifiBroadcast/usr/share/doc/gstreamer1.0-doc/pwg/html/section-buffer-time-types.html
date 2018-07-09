@@ -1,0 +1,17 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Buffer running-time</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-advanced-clock.html" title="Chapter 18. Clocking"><link rel="prev" href="section-clock-time-types.html" title="Clock running-time"><link rel="next" href="section-clock-obligations-of-each-element.html" title="Obligations of each element."></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center"> Buffer running-time </th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-clock-time-types.html">Prev</a> </td><th width="60%" align="center">Chapter 18. Clocking</th><td width="20%" align="right"> <a accesskey="n" href="section-clock-obligations-of-each-element.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-buffer-time-types"></a> Buffer running-time </h2></div></div></div><p>
+      To calculate a buffer running-time, we need a buffer timestamp and
+      the SEGMENT event that preceeded the buffer. First we can convert
+      the SEGMENT event into a <code class="classname">GstSegment</code> object
+      and then we can use the
+      <code class="function">gst_segment_to_running_time ()</code> function to
+      perform the calculation of the buffer running-time.
+    </p><p>
+      Synchronization is now a matter of making sure that a buffer with a
+      certain running-time is played when the clock reaches the same
+      running-time. Usually this task is done by sink elements. Sink also
+      have to take into account the latency configured in the pipeline and
+      add this to the buffer running-time before synchronizing to the
+      pipeline clock.
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-clock-time-types.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-advanced-clock.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-clock-obligations-of-each-element.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> Clock running-time  </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 
+      Obligations of each element.
+    </td></tr></table></div></body></html>

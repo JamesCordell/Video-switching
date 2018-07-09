@@ -1,0 +1,17 @@
+This package was debianized by JaldharH. Vyas <jaldhar@debian.org>
+Mon,  5 Jun 2000 11:26:00 -0500
+from the original package found at CPAN, the only modification was the
+addition of the /debian subdir.
+
+The original package can be downloaded from:
+    http://www.perl.org/CPAN/modules/by-module/Mail/
+
+COPYRIGHT
+
+© 2003 Milivoj Ivkovic mi@alma.ch or ivkovic@csi.com
+
+You can use it freely. (Someone complained this is too vague. So, more
+precisely: do whatever you want with it, but be warned that terrible
+things will happen to you if you use it badly, like for sending spam,
+claiming you wrote it alone, or ...?) 
+

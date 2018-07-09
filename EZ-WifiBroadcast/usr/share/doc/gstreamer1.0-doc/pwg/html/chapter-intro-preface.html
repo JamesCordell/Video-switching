@@ -1,0 +1,32 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 1. Preface</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-introduction.html" title="Part I. Introduction"><link rel="prev" href="part-introduction.html" title="Part I. Introduction"><link rel="next" href="section-preface-who.html" title="Who Should Read This Guide?"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 1. Preface</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="part-introduction.html">Prev</a> </td><th width="60%" align="center">Part I. Introduction</th><td width="20%" align="right"> <a accesskey="n" href="section-preface-who.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-intro-preface"></a>Chapter 1. Preface</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-intro-preface.html#section-intro-what">What is <span class="application">GStreamer</span>?</a></span></dt><dt><span class="sect1"><a href="section-preface-who.html">Who Should Read This Guide?</a></span></dt><dt><span class="sect1"><a href="section-preface-reading.html">Preliminary Reading</a></span></dt><dt><span class="sect1"><a href="section-preface-structure.html">Structure of This Guide</a></span></dt></dl></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-intro-what"></a>What is <span class="application">GStreamer</span>?</h2></div></div></div><p> 
+      <span class="application">GStreamer</span> is a framework for creating streaming media applications.
+      The fundamental design comes from the video pipeline at Oregon Graduate
+      Institute, as well as some ideas from DirectShow.  
+    </p><p>
+      <span class="application">GStreamer</span>'s development framework makes it possible to write any
+      type of streaming multimedia application. The <span class="application">GStreamer</span> framework
+      is designed to make it easy to write applications that handle audio
+      or video or both. It isn't restricted to audio and video, and can
+      process any kind of data flow.
+      The pipeline design is made to have little overhead above what the
+      applied filters induce. This makes <span class="application">GStreamer</span> a good framework for
+      designing even high-end audio applications which put high demands on
+      latency or performance. 
+    </p><p>
+      One of the most obvious uses of <span class="application">GStreamer</span> is using it to build
+      a media player. <span class="application">GStreamer</span> already includes components for building a
+      media player that can support a very wide variety of formats, including
+      MP3, Ogg/Vorbis, MPEG-1/2, AVI, Quicktime, mod, and more. <span class="application">GStreamer</span>,
+      however, is much more than just another media player. Its main advantages
+      are that the pluggable components can be mixed and matched into arbitrary
+      pipelines so that it's possible to write a full-fledged video or audio
+      editing application.
+    </p><p>
+      The framework is based on plugins that will provide the various codec 
+      and other functionality. The plugins can be linked and arranged in
+      a pipeline. This pipeline defines the flow of the data.
+    </p><p>
+      The <span class="application">GStreamer</span> core function is to provide a framework for plugins,
+      data flow, synchronization and media type handling/negotiation. It
+      also provides an API to write applications using the various plugins.
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="part-introduction.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-introduction.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-preface-who.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Part I. Introduction </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Who Should Read This Guide?</td></tr></table></div></body></html>

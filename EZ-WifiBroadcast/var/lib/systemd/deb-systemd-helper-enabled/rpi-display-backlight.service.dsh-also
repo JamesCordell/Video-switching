@@ -1,0 +1,3 @@
+/etc/systemd/system/reboot.target.wants/rpi-display-backlight.service
+/etc/systemd/system/halt.target.wants/rpi-display-backlight.service
+/etc/systemd/system/poweroff.target.wants/rpi-display-backlight.service

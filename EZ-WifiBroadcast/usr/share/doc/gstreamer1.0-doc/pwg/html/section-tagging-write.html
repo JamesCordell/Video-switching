@@ -1,0 +1,134 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Writing Tags to Streams</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-advanced-tagging.html" title="Chapter 22. Tagging (Metadata and Streaminfo)"><link rel="prev" href="section-tagging-read.html" title="Reading Tags from Streams"><link rel="next" href="part-other.html" title="Part IV. Creating special element types"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Writing Tags to Streams</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-tagging-read.html">Prev</a> </td><th width="60%" align="center">Chapter 22. Tagging (Metadata and Streaminfo)</th><td width="20%" align="right"> <a accesskey="n" href="part-other.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-tagging-write"></a>Writing Tags to Streams</h2></div></div></div><p>
+      Tag writers are the opposite of tag readers. Tag writers only take
+      metadata tags into account, since that's the only type of tags that have
+      to be written into a stream. Tag writers can receive tags in three ways:
+      internal, application and pipeline. Internal tags are tags read by the
+      element itself, which means that the tag writer is - in that case - a tag
+      reader, too. Application tags are tags provided to the element via the
+      TagSetter interface (which is just a layer). Pipeline tags are tags
+      provided to the element from within the pipeline. The element receives
+      such tags via the <span class="symbol">GST_EVENT_TAG</span> event, which means
+      that tags writers should implment an event handler. The tag writer is
+      responsible for combining all these three into one list and writing them
+      to the output stream.
+    </p><p>
+      The example below will receive tags from both application and pipeline,
+      combine them and write them to the output stream. It implements the tag
+      setter so applications can set tags, and retrieves pipeline tags from
+      incoming events.
+    </p><p>
+      Warning, this example is outdated and doesn't work with the 1.0 version
+      of <span class="application">GStreamer</span> anymore.
+    </p><pre class="programlisting">
+
+GType
+gst_my_filter_get_type (void)
+{
+[..]
+    static const GInterfaceInfo tag_setter_info = {
+      NULL,
+      NULL,
+      NULL
+    };
+[..]
+    g_type_add_interface_static (my_filter_type,
+				 GST_TYPE_TAG_SETTER,
+				 &amp;tag_setter_info);
+[..]
+}
+
+static void
+gst_my_filter_init (GstMyFilter *filter)
+{
+[..]
+}
+
+/*
+ * Write one tag.
+ */
+
+static void
+gst_my_filter_write_tag (const GstTagList *taglist,
+			 const gchar      *tagname,
+			 gpointer          data)
+{
+  GstMyFilter *filter = GST_MY_FILTER (data);
+  GstBuffer *buffer;
+  guint num_values = gst_tag_list_get_tag_size (list, tag_name), n;
+  const GValue *from;
+  GValue to = { 0 };
+
+  g_value_init (&amp;to, G_TYPE_STRING);
+
+  for (n = 0; n &lt; num_values; n++) {
+    guint8 * data;
+    gsize size;
+
+    from = gst_tag_list_get_value_index (taglist, tagname, n);
+    g_value_transform (from, &amp;to);
+
+    data = g_strdup_printf ("%s:%s", tagname,
+		g_value_get_string (&amp;to));
+    size = strlen (data);
+
+    buf = gst_buffer_new_wrapped (data, size);
+    gst_pad_push (filter-&gt;srcpad, buf);
+  }
+
+  g_value_unset (&amp;to);
+}
+
+static void
+gst_my_filter_task_func (GstElement *element)
+{
+  GstMyFilter *filter = GST_MY_FILTER (element);
+  GstTagSetter *tagsetter = GST_TAG_SETTER (element);
+  GstData *data;
+  GstEvent *event;
+  gboolean eos = FALSE;
+  GstTagList *taglist = gst_tag_list_new ();
+
+  while (!eos) {
+    data = gst_pad_pull (filter-&gt;sinkpad);
+
+    /* We're not very much interested in data right now */
+    if (GST_IS_BUFFER (data))
+      gst_buffer_unref (GST_BUFFER (data));
+    event = GST_EVENT (data);
+
+    switch (GST_EVENT_TYPE (event)) {
+      case GST_EVENT_TAG:
+        gst_tag_list_insert (taglist, gst_event_tag_get_list (event),
+			     GST_TAG_MERGE_PREPEND);
+        gst_event_unref (event);
+        break;
+      case GST_EVENT_EOS:
+        eos = TRUE;
+        gst_event_unref (event);
+        break;
+      default:
+        gst_pad_event_default (filter-&gt;sinkpad, event);
+        break;
+    }
+  }
+
+  /* merge tags with the ones retrieved from the application */
+  if ((gst_tag_setter_get_tag_list (tagsetter)) {
+    gst_tag_list_insert (taglist,
+			 gst_tag_setter_get_tag_list (tagsetter),
+			 gst_tag_setter_get_tag_merge_mode (tagsetter));
+  }
+
+  /* write tags */
+  gst_tag_list_foreach (taglist, gst_my_filter_write_tag, filter);
+
+  /* signal EOS */
+  gst_pad_push (filter-&gt;srcpad, gst_event_new (GST_EVENT_EOS));
+}
+
+    </pre><p>
+      Note that normally, elements would not read the full stream before
+      processing tags. Rather, they would read from each sinkpad until they've
+      received data (since tags usually come in before the first data buffer)
+      and process that.
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-tagging-read.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-advanced-tagging.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="part-other.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Reading Tags from Streams </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Part IV. Creating special element types</td></tr></table></div></body></html>

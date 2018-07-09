@@ -1,0 +1,7 @@
+a98b4dbc695180a9e36da60faeb64b55  usr/bin/lz4
+a274ef6e6b8a53fede0a55c57c653a89  usr/bin/lz4c
+d4db53c67f4febbc8eefff1e92a786b1  usr/share/doc/liblz4-tool/changelog.Debian.gz
+be6d8d09daf3df78d11a7cd963cc803e  usr/share/doc/liblz4-tool/copyright
+c3ffb832656c8eca42529e6c70d05750  usr/share/man/man1/lz4.1.gz
+ed04de4ee471ce77f09be87312157d26  usr/share/man/man1/lz4c.1.gz
+1123d886d461b145b800191d73cf50d6  usr/share/man/man1/lz4cat.1.gz

@@ -1,0 +1,41 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Dependencies</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer FAQ (1.4.4)"><link rel="up" href="index.html" title="GStreamer FAQ (1.4.4)"><link rel="prev" href="chapter-general.html" title="General"><link rel="next" href="chapter-getting.html" title="Getting GStreamer"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Dependencies</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-general.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="chapter-getting.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="chapter-dependencies"></a>Dependencies</h2></div></div></div><div class="qandaset"><a name="idp51540496"></a><dl><dt>Q: <a href="chapter-dependencies.html#idp51541024">Why are there so many dependencies ?</a></dt><dt>Q: <a href="chapter-dependencies.html#idp51587408">Is GStreamer X independent ?</a></dt><dt>Q: <a href="chapter-dependencies.html#idp51589936">What is GStreamer's position on efforts such as LADSPA ?</a></dt><dt>Q: <a href="chapter-dependencies.html#idp51592992">Does GStreamer support MIDI ?</a></dt><dt>Q: <a href="chapter-dependencies.html#idp51595792">Does GStreamer depend on GNOME or GTK+ ?</a></dt></dl><table border="0" style="width: 100%;"><colgroup><col align="left" width="1%"><col></colgroup><tbody><tr class="question"><td align="left" valign="top"><a name="idp51541024"></a><a name="dependencies-why-so-many"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>Why are there so many dependencies ?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>
+Making a full-featured media framework is a huge undertaking in itself.
+By using the work done by others, we both reduce the amount of redundant work 
+being done and leave ourselves free to work on the architecture itself 
+instead of working on the low-level stuff.  We would be stupid not to reuse
+the code others have written.
+        </p><p>
+However, do realize that in no way you are forced to have all dependencies
+installed.  None of the core developers has all of them installed.  GStreamer
+has only a few obligate dependencies : GLib 2.0, liborc, and very
+common stuff like glibc, a C compiler, and so on.  All of the other
+dependencies are optional.
+        </p><p>
+So, in closing, let's rephrase the question to 
+<span class="quote">“<span class="quote">Why are you giving me so many choices and such a rich environment ?
+</span>”</span>
+        </p></td></tr><tr class="question"><td align="left" valign="top"><a name="idp51587408"></a><a name="dependencies-x"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>Is GStreamer X independent ?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>
+Yes, we have no hard X dependency in any of our modules. There are many
+GStreamer applications that run fine without any need for X, for example
+streaming servers, transcoding applications, or audio applications that
+don't output any video. Other applications output video to a framebuffer,
+custom-made hardware sinks, or via wayland.
+        </p></td></tr><tr class="question"><td align="left" valign="top"><a name="idp51589936"></a><a name="dependencies-ladspa"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>What is GStreamer's position on efforts such as LADSPA ?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>
+GStreamer actively supports such efforts, and in the case of 
+<a class="ulink" href="http://www.ladspa.org/" target="_top"><em class="citetitle">LADSPA</em></a>,
+we already have a wrapper plugin. This wrapper plug-in detects the LADSPA
+plugins present on your system at run time.
+        </p></td></tr><tr class="question"><td align="left" valign="top"><a name="idp51592992"></a><a name="dependencies-midi"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>Does GStreamer support MIDI ?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>
+Not yet. The GStreamer architecture should be able to support the needs of 
+MIDI applications very well however. If you are a developer interested in 
+adding MIDI support to GStreamer we are very interested in getting in touch 
+with you.
+        </p><p>
+MIDI playback is provided by plugins such as wildmidi and timidity.
+        </p></td></tr><tr class="question"><td align="left" valign="top"><a name="idp51595792"></a><a name="dependencies-gnome"></a><p><b>Q:</b></p></td><td align="left" valign="top"><p>Does GStreamer depend on GNOME or GTK+ ?</p></td></tr><tr class="answer"><td align="left" valign="top"><p><b>A:</b></p></td><td align="left" valign="top"><p>
+No. But many of the applications developed for GStreamer do, including some
+of our sample applications. Other applications use the Qt toolkit, or are
+written for Mac OS/X or Windows. We aim to provide API that is toolkit
+agnostic and can be used from any toolkit, desktop environment or operating
+system.
+        </p></td></tr></tbody></table></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-general.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="chapter-getting.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">General </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Getting GStreamer</td></tr></table></div></body></html>

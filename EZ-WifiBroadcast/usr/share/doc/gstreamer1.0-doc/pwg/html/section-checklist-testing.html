@@ -1,0 +1,27 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Testing your element</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-checklist-element.html" title="Chapter 27. Things to check when writing an element"><link rel="prev" href="section-checklist-query.html" title="Querying, events and the like"><link rel="next" href="chapter-porting.html" title="Chapter 28. Porting 0.8 plug-ins to 0.10"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Testing your element</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-checklist-query.html">Prev</a> </td><th width="60%" align="center">Chapter 27. Things to check when writing an element</th><td width="20%" align="right"> <a accesskey="n" href="chapter-porting.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-checklist-testing"></a>Testing your element</h2></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          <span class="command"><strong>gst-launch</strong></span> is <span class="emphasis"><em>not</em></span> a good
+          tool to show that your element is finished. Applications such as
+          Rhythmbox and Totem (for GNOME) or AmaroK (for KDE)
+          <span class="emphasis"><em>are</em></span>. <span class="command"><strong>gst-launch</strong></span> will not
+          test various things such as proper clean-up on reset, event
+          handling, querying and so on.
+        </p></li><li class="listitem"><p>
+          Parsers and demuxers should make sure to check their input. Input
+          cannot be trusted. Prevent possible buffer overflows and the like.
+          Feel free to error out on unrecoverable stream errors. Test your
+          demuxer using stream corruption elements such as
+          <code class="classname">breakmydata</code> (included in gst-plugins). It
+          will randomly insert, delete and modify bytes in a stream, and is
+          therefore a good test for robustness. If your element crashes
+          when adding this element, your element needs fixing. If it errors
+          out properly, it's good enough. Ideally, it'd just continue to
+          work and forward data as much as possible.
+        </p></li><li class="listitem"><p>
+          Demuxers should not assume that seeking works. Be prepared to
+          work with unseekable input streams (e.g. network sources) as
+          well.
+        </p></li><li class="listitem"><p>
+          Sources and sinks should be prepared to be assigned another clock
+          then the one they expose themselves. Always use the provided clock
+          for synchronization, else you'll get A/V sync issues.
+        </p></li></ul></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-checklist-query.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-checklist-element.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-porting.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Querying, events and the like </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 28. Porting 0.8 plug-ins to 0.10</td></tr></table></div></body></html>

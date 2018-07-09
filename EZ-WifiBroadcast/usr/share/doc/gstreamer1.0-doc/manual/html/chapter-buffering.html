@@ -1,0 +1,133 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 15. Buffering</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="part-advanced.html" title="Part III. Advanced GStreamer concepts"><link rel="prev" href="section-clocks-latency.html" title="Latency"><link rel="next" href="section-buffering-download.html" title="Download buffering"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 15. Buffering</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-clocks-latency.html">Prev</a> </td><th width="60%" align="center">Part III. Advanced <span class="application">GStreamer</span> concepts</th><td width="20%" align="right"> <a accesskey="n" href="section-buffering-download.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-buffering"></a>Chapter 15. Buffering</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-buffering.html#section-buffering-stream">Stream buffering </a></span></dt><dt><span class="sect1"><a href="section-buffering-download.html">Download buffering </a></span></dt><dt><span class="sect1"><a href="section-buffering-timeshift.html">Timeshift buffering </a></span></dt><dt><span class="sect1"><a href="section-buffering-live.html">Live buffering </a></span></dt><dt><span class="sect1"><a href="section-buffering-strategies.html">Buffering strategies </a></span></dt><dd><dl><dt><span class="sect2"><a href="section-buffering-strategies.html#section-buffering-norebuffer">No-rebuffer strategy </a></span></dt></dl></dd></dl></div><p>
+    The purpose of buffering is to accumulate enough data in a pipeline so that
+    playback can occur smoothly and without interruptions. It is typically done
+    when reading from a (slow) and non-live network source but can also be
+    used for live sources.
+  </p><p>
+    <span class="application">GStreamer</span> provides support for the following use cases:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Buffering up to a specific amount of data, in memory, before starting
+          playback so that network fluctuations are minimized.
+          See <a class="xref" href="chapter-buffering.html#section-buffering-stream" title="Stream buffering">the section called “Stream buffering ”</a>.
+        </p></li><li class="listitem"><p>
+          Download of the network file to a local disk with fast seeking in the
+          downloaded data. This is similar to the quicktime/youtube players.
+          See <a class="xref" href="section-buffering-download.html" title="Download buffering">the section called “Download buffering ”</a>.
+        </p></li><li class="listitem"><p>
+          Caching of (semi)-live streams to a local, on disk, ringbuffer with
+          seeking in the cached area. This is similar to tivo-like timeshifting.
+          See <a class="xref" href="section-buffering-timeshift.html" title="Timeshift buffering">the section called “Timeshift buffering ”</a>.
+        </p></li></ul></div><p>
+  </p><p>
+    <span class="application">GStreamer</span> can provide the application with progress reports about the
+    current buffering state as well as let the application decide on how
+    to buffer and when the buffering stops.
+  </p><p>
+    In the most simple case, the application has to listen for BUFFERING
+    messages on the bus. If the percent indicator inside the BUFFERING message
+    is smaller than 100, the pipeline is buffering. When a message is
+    received with 100 percent, buffering is complete. In the buffering state,
+    the application should keep the pipeline in the PAUSED state. When buffering
+    completes, it can put the pipeline (back) in the PLAYING state.
+  </p><p>
+    What follows is an example of how the message handler could deal with
+    the BUFFERING messages. We will see more advanced methods in
+    <a class="xref" href="section-buffering-strategies.html" title="Buffering strategies">the section called “Buffering strategies ”</a>.
+  </p><pre class="programlisting">
+
+  [...]
+
+  switch (GST_MESSAGE_TYPE (message)) {
+    case GST_MESSAGE_BUFFERING:{
+      gint percent;
+
+      /* no state management needed for live pipelines */
+      if (is_live)
+        break;
+
+      gst_message_parse_buffering (message, &amp;percent);
+
+      if (percent == 100) {
+        /* a 100% message means buffering is done */
+        buffering = FALSE;
+        /* if the desired state is playing, go back */
+        if (target_state == GST_STATE_PLAYING) {
+          gst_element_set_state (pipeline, GST_STATE_PLAYING);
+        }
+      } else {
+        /* buffering busy */
+        if (buffering == FALSE &amp;&amp; target_state == GST_STATE_PLAYING) {
+          /* we were not buffering but PLAYING, PAUSE  the pipeline. */
+          gst_element_set_state (pipeline, GST_STATE_PAUSED);
+        }
+        buffering = TRUE;
+      }
+      break;
+    case ...
+
+  [...]
+
+  </pre><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-buffering-stream"></a>Stream buffering </h2></div></div></div><pre class="programlisting">
+      +---------+     +---------+     +-------+
+      | httpsrc |     | buffer  |     | demux |
+      |        src - sink      src - sink     ....
+      +---------+     +---------+     +-------+
+    </pre><p>
+      In this case we are reading from a slow network source into a buffer
+      element (such as queue2).
+    </p><p>
+      The buffer element has a low and high watermark expressed in bytes. The
+      buffer uses the watermarks as follows:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          The buffer element will post BUFFERING messages until the high
+          watermark is hit. This instructs the application to keep the pipeline
+          PAUSED, which will eventually block the srcpad from pushing while
+          data is prerolled in the sinks.
+        </p></li><li class="listitem"><p>
+          When the high watermark is hit, a BUFFERING message with 100% will be
+          posted, which instructs the application to continue playback.
+        </p></li><li class="listitem"><p>
+          When during playback, the low watermark is hit, the queue will start
+          posting BUFFERING messages again, making the application PAUSE the
+          pipeline again until the high watermark is hit again. This is called
+          the rebuffering stage.
+        </p></li><li class="listitem"><p>
+          During playback, the queue level will fluctuate between the high and
+          the low watermark as a way to compensate for network irregularities.
+        </p></li></ul></div><p>
+     This buffering method is usable when the demuxer operates in push mode.
+     Seeking in the stream requires the seek to happen in the network source.
+     It is mostly desirable when the total duration of the file is not known,
+     such as in live streaming or when efficient seeking is not
+     possible/required.
+   </p><p>
+     The problem is configuring a good low and high watermark. Here are some
+     ideas:
+   </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          It is possible to measure the network bandwidth and configure the
+          low/high watermarks in such a way that buffering takes a fixed
+          amount of time.
+        </p><p>
+          The queue2 element in <span class="application">GStreamer</span> core has the max-size-time property
+          that, together with the use-rate-estimate property, does exactly
+          that. Also the playbin buffer-duration property uses the rate estimate
+          to scale the amount of data that is buffered.
+        </p></li><li class="listitem"><p>
+          Based on the codec bitrate, it is also possible to set the watermarks
+          in such a way that a fixed amount of data is buffered before playback
+          starts. Normally, the buffering element doesn't know about the
+          bitrate of the stream but it can get this with a query.
+        </p></li><li class="listitem"><p>
+          Start with a fixed amount of bytes, measure the time between
+          rebuffering and increase the queue size until the time between
+          rebuffering is within the application's chosen limits.
+        </p></li></ul></div><p>
+     The buffering element can be inserted anywhere in the pipeline. You could,
+     for example, insert the buffering element before a decoder. This would
+     make it possible to set the low/high watermarks based on time.
+   </p><p>
+     The buffering flag on playbin, performs buffering on the parsed data.
+     Another advantage of doing the buffering at a later stage is that you can
+     let the demuxer operate in pull mode. When reading data from a slow
+     network drive (with filesrc) this can be an interesting way to buffer.
+   </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-clocks-latency.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-advanced.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-buffering-download.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Latency </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Download buffering </td></tr></table></div></body></html>

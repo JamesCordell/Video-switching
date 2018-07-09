@@ -1,0 +1,52 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Obligations of each element.</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-advanced-clock.html" title="Chapter 18. Clocking"><link rel="prev" href="section-buffer-time-types.html" title="Buffer running-time"><link rel="next" href="chapter-advanced-qos.html" title="Chapter 19. Quality Of Service (QoS)"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">
+      Obligations of each element.
+    </th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-buffer-time-types.html">Prev</a> </td><th width="60%" align="center">Chapter 18. Clocking</th><td width="20%" align="right"> <a accesskey="n" href="chapter-advanced-qos.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-clock-obligations-of-each-element"></a>
+      Obligations of each element.
+    </h2></div></div></div><p>
+      Let us clarify the contract between GStreamer and each element in the
+      pipeline.
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idp44528896"></a>Non-live source elements </h3></div></div></div><p>
+        Non-live source elements must place a timestamp in each buffer that
+        they deliver when this is possible.  They must choose the timestamps
+        and the values of the SEGMENT event in such a way that the
+        running-time of the buffer starts from 0.
+      </p><p>
+        Some sources, such as filesrc, is not able to generate timestamps
+        on all buffers. It can and must however create a timestamp on the
+        first buffer (with a running-time of 0).
+      </p><p>
+        The source then pushes out the SEGMENT event followed by the
+        timestamped buffers.
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idp44531504"></a>Live source elements </h3></div></div></div><p>
+        Live source elements must place a timestamp in each buffer that
+        they deliver. They must choose the timestamps and the values of the
+        SEGMENT event in such a way that the running-time of the buffer
+        matches exactly the running-time of the pipeline clock when the first 
+        byte in the buffer was captured.
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idp44533056"></a>Parser/Decoder/Encoder elements </h3></div></div></div><p>
+        Parser/Decoder elements must use the incoming timestamps and transfer
+        those to the resulting output buffers. They are allowed to interpolate
+        or reconstruct timestamps on missing input buffers when they can.
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idp44534512"></a>Demuxer elements </h3></div></div></div><p>
+        Demuxer elements can usually set the timestamps stored inside the media
+        file onto the outgoing buffers. They need to make sure that outgoing
+        buffers that are to be played at the same time have the same
+        running-time. Demuxers also need to take into account the incoming
+        timestamps on buffers and use that to calculate an offset on the outgoing
+        buffer timestamps.
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idp44536128"></a>Muxer elements</h3></div></div></div><p>
+        Muxer elements should use the incoming buffer running-time to mux the
+        different streams together. They should copy the incoming running-time
+        to the outgoing buffers.
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="idp44537520"></a>Sink elements</h3></div></div></div><p>
+	If the element is intended to emit samples at a specific time (real time
+	playing), the element should require a clock, and thus implement the
+	method <code class="function">set_clock</code>.
+      </p><p>
+        The sink should then make sure that the sample with running-time is played
+        exactly when the pipeline clock reaches that running-time + latency.
+        Some elements might use the clock API such as
+        <code class="function">gst_clock_id_wait()</code>
+        to perform this action. Other sinks might need to use other means of
+        scheduling timely playback of the data.
+      </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-buffer-time-types.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-advanced-clock.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-advanced-qos.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> Buffer running-time  </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 19. Quality Of Service (QoS)</td></tr></table></div></body></html>

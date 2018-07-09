@@ -1,0 +1,7 @@
+distlib for Debian
+------------------
+
+The package has the windows binary installers removed from the source
+and the binary packages.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 31 Dec 2013 15:32:00 +0000

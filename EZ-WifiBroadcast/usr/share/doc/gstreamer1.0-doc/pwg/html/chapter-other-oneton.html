@@ -1,0 +1,31 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 24. Writing a Demuxer or Parser</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-other.html" title="Part IV. Creating special element types"><link rel="prev" href="section-base-transform.html" title="Writing a transformation element"><link rel="next" href="chapter-other-ntoone.html" title="Chapter 25. Writing a N-to-1 Element or Muxer"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 24. Writing a Demuxer or Parser</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-base-transform.html">Prev</a> </td><th width="60%" align="center">Part IV. Creating special element types</th><td width="20%" align="right"> <a accesskey="n" href="chapter-other-ntoone.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-other-oneton"></a>Chapter 24. Writing a Demuxer or Parser</h2></div></div></div><p>
+    Demuxers are the 1-to-N elements that need very special care.
+    They are responsible for timestamping raw, unparsed data into
+    elementary video or audio streams, and there are many things that you
+    can optimize or do wrong. Here, several culprits will be mentioned
+    and common solutions will be offered. Parsers are demuxers with only
+    one source pad. Also, they only cut the stream into buffers, they
+    don't touch the data otherwise.
+  </p><p>
+    As mentioned previously in <a class="xref" href="chapter-negotiation.html" title="Chapter 14. Caps negotiation">Caps negotiation</a>,
+    demuxers should use fixed caps, since their data type will not change.
+  </p><p>
+    As discussed in <a class="xref" href="chapter-scheduling.html" title="Chapter 13. Different scheduling modes">Different scheduling modes</a>, demuxer elements
+    can be written in multiple ways:
+  </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+        They can be the driving force of the pipeline, by running their own
+        task. This works particularly well for elements that need random
+        access, for example an AVI demuxer.
+      </p></li><li class="listitem"><p>
+        They can also run in push-based mode, which means that an upstream
+        element drives the pipeline. This works particularly well for streams
+        that may come from network, such as Ogg.
+      </p></li></ul></div><p>
+    In addition, audio parsers with one output can, in theory, also be written
+    in random access mode. Although simple playback will mostly work if your
+    element only accepts one mode, it may be required to implement multiple
+    modes to work in combination with all sorts of applications, such as
+    editing. Also, performance may become better if you implement multiple
+    modes. See <a class="xref" href="chapter-scheduling.html" title="Chapter 13. Different scheduling modes">Different scheduling modes</a> to see how an element
+    can accept multiple scheduling modes.
+  </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-base-transform.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-other.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-other-ntoone.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Writing a transformation element </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 25. Writing a N-to-1 Element or Muxer</td></tr></table></div></body></html>

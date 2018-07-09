@@ -1,0 +1,16 @@
+/.
+/usr
+/usr/sbin
+/usr/sbin/in.identtestd
+/usr/lib
+/usr/lib/libident.so.0.22
+/usr/share
+/usr/share/doc
+/usr/share/doc/libident
+/usr/share/doc/libident/changelog.Debian.gz
+/usr/share/doc/libident/README.gz
+/usr/share/doc/libident/copyright
+/usr/share/man
+/usr/share/man/man8
+/usr/share/man/man8/in.identtestd.8.gz
+/usr/lib/libident.so.0

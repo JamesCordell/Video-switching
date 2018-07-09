@@ -1,0 +1,10 @@
+
+Start-Date: 1970-01-01  01:02:11
+Commandline: apt-get install dos2unix
+Install: dos2unix:armhf (6.0.4-1)
+End-Date: 1970-01-01  01:02:13
+
+Start-Date: 1970-01-01  01:01:13
+Commandline: apt-get autoremove
+Remove: dc:armhf (1.06.95-9), libdpkg-perl:armhf (1.17.26), libcap-ng0:armhf (0.7.4-2), libopts25:armhf (5.18.4-3), libdaemon0:armhf (0.14-6), libfile-fcntllock-perl:armhf (0.22-1+b1), fakeroot:armhf (1.20.2-1), libalgorithm-merge-perl:armhf (0.08-2), libisccc90:armhf (9.9.5.dfsg-9+deb8u6), libavahi-common-data:armhf (0.6.31-5), libalgorithm-diff-perl:armhf (1.19.02-3), libisc95:armhf (9.9.5.dfsg-9+deb8u6), libbind9-90:armhf (9.9.5.dfsg-9+deb8u6), libdns100:armhf (9.9.5.dfsg-9+deb8u6), libtimedate-perl:armhf (2.3000-2), liblwres90:armhf (9.9.5.dfsg-9+deb8u6), libavahi-common3:armhf (0.6.31-5), libfakeroot:armhf (1.20.2-1), libisccfg90:armhf (9.9.5.dfsg-9+deb8u6), bind9-host:armhf (9.9.5.dfsg-9+deb8u6), libalgorithm-diff-xs-perl:armhf (0.04-3+b1), libavahi-core7:armhf (0.6.31-5)
+End-Date: 1970-01-01  01:02:11

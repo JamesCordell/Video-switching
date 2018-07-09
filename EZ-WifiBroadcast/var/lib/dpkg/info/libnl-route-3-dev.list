@@ -1,0 +1,14 @@
+/.
+/usr
+/usr/share
+/usr/share/doc
+/usr/share/doc/libnl-route-3-dev
+/usr/share/doc/libnl-route-3-dev/copyright
+/usr/share/doc/libnl-route-3-dev/changelog.Debian.gz
+/usr/share/doc/libnl-route-3-dev/changelog.gz
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/pkgconfig
+/usr/lib/arm-linux-gnueabihf/pkgconfig/libnl-route-3.0.pc
+/usr/lib/arm-linux-gnueabihf/libnl-route-3.a
+/usr/lib/arm-linux-gnueabihf/libnl-route-3.so

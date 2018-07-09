@@ -1,0 +1,9 @@
+b07292505eb1a4861a72d2cfb4da7cf8  usr/include/xkbcommon/xkbcommon-compat.h
+9822cefd849a3f421b70505038ef3d96  usr/include/xkbcommon/xkbcommon-keysyms.h
+10fedda2f75a254daf645e9ad4d6fc53  usr/include/xkbcommon/xkbcommon-names.h
+ff2aa866c31f165e0acab4b531e90f31  usr/include/xkbcommon/xkbcommon.h
+c1d73bf00f722f69165f68b842fbccbc  usr/lib/arm-linux-gnueabihf/libxkbcommon.a
+cd51a7fc6d84e5a065b46f9b923e4044  usr/lib/arm-linux-gnueabihf/pkgconfig/xkbcommon.pc
+e90362b59828ca9391bea76b7a0e2330  usr/share/doc/libxkbcommon-dev/changelog.Debian.gz
+b640aa18158c900ea4a1ff385d0e4972  usr/share/doc/libxkbcommon-dev/changelog.gz
+1a56f734d175bd0a9975029e60419b7b  usr/share/doc/libxkbcommon-dev/copyright

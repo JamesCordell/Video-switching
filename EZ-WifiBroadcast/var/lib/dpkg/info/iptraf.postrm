@@ -1,0 +1,21 @@
+#! /bin/sh
+
+set -e
+
+if [ $1 = purge ]; then
+	if [ -e /etc/iptraf.cfg ]; then
+		rm --force /etc/iptraf.cfg
+	fi
+	if [ -d /var/log/iptraf ]; then
+		rm -rf /var/log/iptraf
+	fi
+	if [ -d /var/lib/iptraf ]; then
+		rm -rf /var/lib/iptraf
+	fi
+fi
+
+# Automatically added by dh_installmenu
+if [ -x "`which update-menus 2>/dev/null`" ]; then update-menus ; fi
+# End automatically added section
+
+

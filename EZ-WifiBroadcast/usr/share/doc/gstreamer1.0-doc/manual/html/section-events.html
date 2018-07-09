@@ -1,0 +1,29 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Events</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-data.html" title="Chapter 9. Buffers and Events"><link rel="prev" href="chapter-data.html" title="Chapter 9. Buffers and Events"><link rel="next" href="chapter-helloworld.html" title="Chapter 10. Your first application"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Events</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-data.html">Prev</a> </td><th width="60%" align="center">Chapter 9. Buffers and Events</th><td width="20%" align="right"> <a accesskey="n" href="chapter-helloworld.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-events"></a>Events</h2></div></div></div><p>
+      Events are control particles that are sent both up- and downstream in
+      a pipeline along with buffers. Downstream events notify fellow elements
+      of stream states. Possible events include seeking, flushes,
+      end-of-stream notifications and so on. Upstream events are used both
+      in application-element interaction as well as element-element interaction
+      to request changes in stream state, such as seeks. For applications,
+      only upstream events are important. Downstream events are just
+      explained to get a more complete picture of the data concept.
+    </p><p>
+      Since most applications seek in time units, our example below does so
+      too:
+    </p><pre class="programlisting">
+static void
+seek_to_time (GstElement *element,
+	      guint64     time_ns)
+{
+  GstEvent *event;
+
+  event = gst_event_new_seek (1.0, GST_FORMAT_TIME,
+			      GST_SEEK_FLAG_NONE,
+			      GST_SEEK_METHOD_SET, time_ns,
+			      GST_SEEK_TYPE_NONE, G_GUINT64_CONSTANT (0));
+  gst_element_send_event (element, event);
+}
+    </pre><p>
+      The function <code class="function">gst_element_seek ()</code> is a shortcut
+      for this. This is mostly just to show how it all works.
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-data.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-data.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-helloworld.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 9. Buffers and Events </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 10. Your first application</td></tr></table></div></body></html>

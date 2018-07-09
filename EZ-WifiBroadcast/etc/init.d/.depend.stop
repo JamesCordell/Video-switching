@@ -1,0 +1,5 @@
+TARGETS = ser2net hwclock.sh etc-setserial setserial resize2fs_once fake-hwclock alsa-utils sendsigs umountroot halt reboot
+sendsigs: ser2net etc-setserial alsa-utils setserial
+umountroot: fake-hwclock
+halt: umountroot
+reboot: umountroot

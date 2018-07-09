@@ -1,0 +1,4 @@
+update-alternatives 1970-01-01 01:01:18: run with --remove fakeroot /usr/bin/fakeroot-sysv
+update-alternatives 1970-01-01 01:01:18: link group fakeroot updated to point to /usr/bin/fakeroot-tcp
+update-alternatives 1970-01-01 01:01:18: run with --remove fakeroot /usr/bin/fakeroot-tcp
+update-alternatives 1970-01-01 01:01:18: link group fakeroot fully removed

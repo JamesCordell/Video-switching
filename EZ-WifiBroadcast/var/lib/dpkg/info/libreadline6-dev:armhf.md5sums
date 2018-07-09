@@ -1,0 +1,10 @@
+77767e762cbbad9552b8731b25f5fe94  usr/include/readline/chardefs.h
+ecf35b1fe631a10ea16ea5b64ff77dbf  usr/include/readline/history.h
+f8070ceeffc2364fb6a943f6f68a5e58  usr/include/readline/keymaps.h
+e8fbe6e27e82e43e164fde2e0535ed47  usr/include/readline/readline.h
+72ca71805f89d6b41018f7cfaabc590d  usr/include/readline/rlconf.h
+d9119f3872939a3ea5a26b1a8de6a913  usr/include/readline/rlstdc.h
+e194e93b2d732981066cafa2f0a47b4f  usr/include/readline/rltypedefs.h
+4b810af2c83168d3cd86815a6bbeaaff  usr/include/readline/tilde.h
+a9eb1357c8bf2a17549226ddfc5d53b1  usr/lib/arm-linux-gnueabihf/libhistory.a
+6173700fb92dc415e842f2da246362a2  usr/lib/arm-linux-gnueabihf/libreadline.a

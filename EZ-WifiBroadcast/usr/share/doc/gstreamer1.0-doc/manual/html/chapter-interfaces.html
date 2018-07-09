@@ -1,0 +1,35 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 13. Interfaces</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="part-advanced.html" title="Part III. Advanced GStreamer concepts"><link rel="prev" href="section-tags-write.html" title="Tag writing"><link rel="next" href="section-interfaces-colorbalance.html" title="The Color Balance interface"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 13. Interfaces</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-tags-write.html">Prev</a> </td><th width="60%" align="center">Part III. Advanced <span class="application">GStreamer</span> concepts</th><td width="20%" align="right"> <a accesskey="n" href="section-interfaces-colorbalance.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-interfaces"></a>Chapter 13. Interfaces</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-interfaces.html#section-interfaces-uri">The URI interface</a></span></dt><dt><span class="sect1"><a href="section-interfaces-colorbalance.html">The Color Balance interface</a></span></dt><dt><span class="sect1"><a href="section-interfaces-videooverlay.html">The Video Overlay interface</a></span></dt></dl></div><p>
+    In <a class="xref" href="section-elements-properties.html" title="Using an element as a GObject">the section called “Using an element as a <code class="classname">GObject</code>”</a>, you have learned how
+    to use <code class="classname">GObject</code> properties as a simple way to do
+    interaction between applications and elements. This method suffices for
+    the simple'n'straight settings, but fails for anything more complicated
+    than a getter and setter. For the more complicated use cases, <span class="application">GStreamer</span>
+    uses interfaces based on the GObject <a class="ulink" href="http://library.gnome.org/devel/gobject/stable/gtype-non-instantiable-classed.html" target="_top"><code class="classname">GTypeInterface</code></a>
+    type.
+  </p><p>
+    Most of the interfaces handled here will not contain any example code.
+    See the API references for details. Here, we will just describe the
+    scope and purpose of each interface.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-interfaces-uri"></a>The URI interface</h2></div></div></div><p>
+      In all examples so far, we have only supported local files through the
+      <span class="quote">“<span class="quote">filesrc</span>”</span> element. <span class="application">GStreamer</span>, obviously, supports many
+      more location sources. However, we don't want applications to need to
+      know any particular element implementation details, such as element
+      names for particular network source types and so on. Therefore, there
+      is a URI interface, which can be used to get the source element that
+      supports a particular URI type. There is no strict rule for URI naming,
+      but in general we follow naming conventions that others use, too. For
+      example, assuming you have the correct plugins installed, <span class="application">GStreamer</span>
+      supports <span class="quote">“<span class="quote">file:///&lt;path&gt;/&lt;file&gt;</span>”</span>,
+      <span class="quote">“<span class="quote">http://&lt;host&gt;/&lt;path&gt;/&lt;file&gt;</span>”</span>,
+      <span class="quote">“<span class="quote">mms://&lt;host&gt;/&lt;path&gt;/&lt;file&gt;</span>”</span>, and so on.
+    </p><p>
+      In order to get the source or sink element supporting a particular URI,
+      use <code class="function">gst_element_make_from_uri ()</code>, with the URI
+      type being either <code class="classname">GST_URI_SRC</code> for a source
+      element, or <code class="classname">GST_URI_SINK</code> for a sink element.
+    </p><p>
+      You can convert filenames to and from URIs using GLib's
+      <code class="function">g_filename_to_uri ()</code> and
+      <code class="function">g_uri_to_filename ()</code>.
+    </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-tags-write.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-advanced.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-interfaces-colorbalance.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Tag writing </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> The Color Balance interface</td></tr></table></div></body></html>

@@ -1,0 +1,108 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 5. The chain function</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-building.html" title="Part II. Building a Plugin"><link rel="prev" href="chapter-building-pads.html" title="Chapter 4. Specifying the pads"><link rel="next" href="chapter-building-eventfn.html" title="Chapter 6. The event function"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 5. The chain function</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-building-pads.html">Prev</a> </td><th width="60%" align="center">Part II. Building a Plugin</th><td width="20%" align="right"> <a accesskey="n" href="chapter-building-eventfn.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-building-chainfn"></a>Chapter 5. The chain function</h2></div></div></div><p>
+    The chain function is the function in which all data processing takes
+    place. In the case of a simple filter, <code class="function">_chain ()</code>
+    functions are mostly linear functions - so for each incoming buffer,
+    one buffer will go out, too. Below is a very simple implementation of
+    a chain function:
+  </p><pre class="programlisting">
+
+static GstFlowReturn gst_my_filter_chain (GstPad    *pad,
+                                          GstObject *parent,
+                                          GstBuffer *buf);
+
+[..]
+
+static void
+gst_my_filter_init (GstMyFilter * filter)
+{
+[..]
+  /* configure chain function on the pad before adding
+   * the pad to the element */
+  gst_pad_set_chain_function (filter-&gt;sinkpad,
+      gst_my_filter_chain);
+[..]
+}
+
+static GstFlowReturn
+gst_my_filter_chain (GstPad    *pad,
+                     GstObject *parent,
+		     GstBuffer *buf)
+{
+  GstMyFilter *filter = GST_MY_FILTER (parent);
+
+  if (!filter-&gt;silent)
+    g_print ("Have data of size %" G_GSIZE_FORMAT" bytes!\n",
+        gst_buffer_get_size (buf));
+
+  return gst_pad_push (filter-&gt;srcpad, buf);
+}
+
+</pre><p>
+    Obviously, the above doesn't do much useful. Instead of printing that the
+    data is in, you would normally process the data there. Remember, however,
+    that buffers are not always writeable.
+  </p><p>
+    In more advanced elements (the ones that do event processing), you may want
+    to additionally specify an event handling function, which will be called
+    when stream-events are sent (such as caps, end-of-stream, newsegment, tags, etc.).
+  </p><pre class="programlisting">
+static void
+gst_my_filter_init (GstMyFilter * filter)
+{
+[..]
+  gst_pad_set_event_function (filter-&gt;sinkpad,
+      gst_my_filter_sink_event);
+[..]
+}
+
+
+
+static gboolean
+gst_my_filter_sink_event (GstPad    *pad,
+		          GstObject *parent,
+		          GstEvent  *event)
+{
+  GstMyFilter *filter = GST_MY_FILTER (parent);
+
+  switch (GST_EVENT_TYPE (event)) {
+    case GST_EVENT_CAPS:
+      /* we should handle the format here */
+      break;
+    case GST_EVENT_EOS:
+      /* end-of-stream, we should close down all stream leftovers here */
+      gst_my_filter_stop_processing (filter);
+      break;
+    default:
+      break;
+  }
+
+  return gst_pad_event_default (pad, parent, event);
+}
+
+static GstFlowReturn
+gst_my_filter_chain (GstPad    *pad,
+		     GstObject *parent,
+		     GstBuffer *buf)
+{
+  GstMyFilter *filter = GST_MY_FILTER (parent);
+  GstBuffer *outbuf;
+
+  outbuf = gst_my_filter_process_data (filter, buf);
+  gst_buffer_unref (buf);
+  if (!outbuf) {
+    /* something went wrong - signal an error */
+    GST_ELEMENT_ERROR (GST_ELEMENT (filter), STREAM, FAILED, (NULL), (NULL));
+    return GST_FLOW_ERROR;
+  }
+
+  return gst_pad_push (filter-&gt;srcpad, outbuf);
+}
+
+</pre><p>
+    In some cases, it might be useful for an element to have control over the
+    input data rate, too. In that case, you probably want to write a so-called
+    <span class="emphasis"><em>loop-based</em></span> element. Source elements (with only source
+    pads) can also be <span class="emphasis"><em>get-based</em></span> elements. These concepts
+    will be explained in the advanced section of this guide, and in the section
+    that specifically discusses source pads.
+  </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-building-pads.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-building.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-building-eventfn.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 4. Specifying the pads </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 6. The event function</td></tr></table></div></body></html>

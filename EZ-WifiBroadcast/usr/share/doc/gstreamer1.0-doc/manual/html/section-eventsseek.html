@@ -1,0 +1,62 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Events: seeking (and more)</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-queryevents.html" title="Chapter 11. Position tracking and seeking"><link rel="prev" href="chapter-queryevents.html" title="Chapter 11. Position tracking and seeking"><link rel="next" href="chapter-metadata.html" title="Chapter 12. Metadata"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Events: seeking (and more)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-queryevents.html">Prev</a> </td><th width="60%" align="center">Chapter 11. Position tracking and seeking</th><td width="20%" align="right"> <a accesskey="n" href="chapter-metadata.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-eventsseek"></a>Events: seeking (and more)</h2></div></div></div><p>
+      Events work in a very similar way as queries. Dispatching, for
+      example, works exactly the same for events (and also has the same
+      limitations), and they can similarly be sent to the toplevel pipeline
+      and it will figure out everything for you. Although there are more
+      ways in which applications and elements can interact using events,
+      we will only focus on seeking here. This is done using the seek-event.
+      A seek-event contains a playback rate, a seek offset format (which is
+      the unit of the offsets to follow, e.g. time, audio samples, video
+      frames or bytes), optionally a set of seeking-related flags (e.g.
+      whether internal buffers should be flushed), a seek method (which
+      indicates relative to what the offset was given), and seek offsets.
+      The first offset (cur) is the new position to seek to, while
+      the second offset (stop) is optional and specifies a position where
+      streaming is supposed to stop. Usually it is fine to just specify
+      GST_SEEK_TYPE_NONE and -1 as end_method and end offset. The behaviour
+      of a seek is also wrapped in the <code class="function">gst_element_seek ()</code>.
+    </p><pre class="programlisting">
+static void
+seek_to_time (GstElement *pipeline,
+	      gint64      time_nanoseconds)
+{
+  if (!gst_element_seek (pipeline, 1.0, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH,
+                         GST_SEEK_TYPE_SET, time_nanoseconds,
+                         GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE)) {
+    g_print ("Seek failed!\n");
+  }
+}
+    </pre><p>
+      Seeks with the GST_SEEK_FLAG_FLUSH should be done when the pipeline is
+      in PAUSED or PLAYING state. The pipeline will automatically go to preroll
+      state until the new data after the seek will cause the pipeline to preroll
+      again. After the pipeline is prerolled, it will go back to the state
+      (PAUSED or PLAYING) it was in when the seek was executed. You can wait
+      (blocking) for the seek to complete with
+      <code class="function">gst_element_get_state()</code> or by waiting for the
+      ASYNC_DONE message to appear on the bus.
+    </p><p>
+      Seeks without the GST_SEEK_FLAG_FLUSH should only be done when the
+      pipeline is in the PLAYING state. Executing a non-flushing seek in the
+      PAUSED state might deadlock because the pipeline streaming threads might
+      be blocked in the sinks.
+    </p><p>
+      It is important to realise that seeks will not happen instantly in the
+      sense that they are finished when the function
+      <code class="function">gst_element_seek ()</code> returns. Depending on the
+      specific elements involved, the actual seeking might be done later in
+      another thread (the streaming thread), and it might take a short time
+      until buffers from the new seek position will reach downstream elements
+      such as sinks (if the seek was non-flushing then it might take a bit
+      longer).
+    </p><p>
+      It is possible to do multiple seeks in short time-intervals, such as
+      a direct response to slider movement. After a seek, internally, the
+      pipeline will be paused (if it was playing), the position will be
+      re-set internally, the demuxers and decoders will decode from the new
+      position onwards and this will continue until all sinks have data
+      again. If it was playing originally, it will be set to playing again,
+      too. Since the new position is immediately available in a video output,
+      you will see the new frame, even if your pipeline is not in the playing
+      state.
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-queryevents.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-queryevents.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-metadata.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 11. Position tracking and seeking </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 12. Metadata</td></tr></table></div></body></html>

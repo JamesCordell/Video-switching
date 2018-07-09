@@ -1,0 +1,4 @@
+/etc/bash_completion.d/mercurial
+/etc/mercurial/hgrc
+/etc/mercurial/hgrc.d/cacerts.rc
+/etc/mercurial/hgrc.d/mergetools.rc

@@ -1,0 +1,5 @@
+e4ec24f1bce06aa91d7d9fde952e7f76  usr/lib/arm-linux-gnueabihf/libx264.so.142
+d7043314b38ef24d1a53bd296e3e7c16  usr/lib/arm-linux-gnueabihf/neon/vfp/libx264.so.142
+b391b4326c60bb0b975b328d1d2caf7a  usr/lib/arm-linux-gnueabihf/x264-10bit/libx264.so.142
+e4c80b6987be5d4d709f601abbcdb62e  usr/share/doc/libx264-142/changelog.Debian.gz
+36df89de9661f0b047f65f85c1391ca9  usr/share/doc/libx264-142/copyright

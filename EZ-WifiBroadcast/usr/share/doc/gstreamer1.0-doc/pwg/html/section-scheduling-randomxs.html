@@ -1,0 +1,79 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Providing random access</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-scheduling.html" title="Chapter 13. Different scheduling modes"><link rel="prev" href="section-scheduling-loop.html" title="Pads driving the pipeline"><link rel="next" href="chapter-negotiation.html" title="Chapter 14. Caps negotiation"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Providing random access</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-scheduling-loop.html">Prev</a> </td><th width="60%" align="center">Chapter 13. Different scheduling modes</th><td width="20%" align="right"> <a accesskey="n" href="chapter-negotiation.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-scheduling-randomxs"></a>Providing random access</h2></div></div></div><p>
+      In the previous section, we have talked about how elements (or pads)
+      that are activated to drive the pipeline using their own task, must use
+      pull-mode scheduling on their sinkpads. This means that all pads linked
+      to those pads need to be activated in pull-mode.
+      Source pads activated in pull-mode must implement a
+      <code class="function">_get_range ()</code>-function set using
+      <code class="function">gst_pad_set_getrange_function ()</code>, and
+      that function will be called when the peer pad requests some data with
+      <code class="function">gst_pad_pull_range ()</code>.
+      The element is then responsible for seeking to the right offset and
+      providing the requested data. Several elements can implement random
+      access:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Data sources, such as a file source, that can provide data from any
+          offset with reasonable low latency.
+        </p></li><li class="listitem"><p>
+          Filters that would like to provide a pull-mode scheduling
+          over the whole pipeline. 
+        </p></li><li class="listitem"><p>
+          Parsers who can easily provide this by skipping a small part of
+          their input and are thus essentially "forwarding" getrange
+          requests literally without any own processing involved. Examples
+          include tag readers (e.g. ID3) or single output parsers, such as
+          a WAVE parser.
+        </p></li></ul></div><p>
+      The following example will show how a <code class="function">_get_range
+      ()</code>-function can be implemented in a source element:
+    </p><pre class="programlisting">
+#include "filter.h"
+static GstFlowReturn
+		gst_my_filter_get_range	(GstPad     * pad,
+					 GstObject  * parent,
+					 guint64      offset,
+					 guint        length,
+					 GstBuffer ** buf);
+
+G_DEFINE_TYPE (GstMyFilter, gst_my_filter, GST_TYPE_ELEMENT);
+
+
+
+static void
+gst_my_filter_init (GstMyFilter * filter)
+{
+
+[..]
+
+  gst_pad_set_getrange_function (filter-&gt;srcpad,
+      gst_my_filter_get_range);
+
+[..]
+}
+
+static GstFlowReturn
+gst_my_filter_get_range (GstPad     * pad,
+			 GstObject  * parent,
+			 guint64      offset,
+			 guint        length,
+			 GstBuffer ** buf)
+{
+
+  GstMyFilter *filter = GST_MY_FILTER (parent);
+
+  [.. here, you would fill *buf ..]
+
+  return GST_FLOW_OK;
+}
+
+</pre><p>
+      In practice, many elements that could theoretically do random access,
+      may in practice often be activated in push-mode scheduling anyway,
+      since there is no downstream element able to start its own task.
+      Therefore, in practice, those elements should implement both a
+      <code class="function">_get_range ()</code>-function and a <code class="function">_chain
+      ()</code>-function (for filters and parsers) or a <code class="function">_get_range
+      ()</code>-function and be prepared to start their own task by
+      providing <code class="function">_activate_* ()</code>-functions (for
+      source elements).
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-scheduling-loop.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-scheduling.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-negotiation.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Pads driving the pipeline </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 14. Caps negotiation</td></tr></table></div></body></html>

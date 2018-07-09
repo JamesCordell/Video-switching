@@ -1,0 +1,7 @@
+8c642547d8a20a409b6da6d8978c724b  usr/lib/arm-linux-gnueabihf/libQt5Widgets.so.5.3.2
+6f6fb805f4d4fe5b6e78695767e0e007  usr/lib/arm-linux-gnueabihf/qt5/plugins/accessible/libqtaccessiblewidgets.so
+0145c4d1b6f96a661c2c139dfb268fb6  usr/share/doc/libqt5widgets5/LGPL_EXCEPTION.txt
+7bbebedb6d68e0f674b6da38592b3888  usr/share/doc/libqt5widgets5/changelog.Debian.gz
+e62bb662247d6fa87fba6201a1370523  usr/share/doc/libqt5widgets5/changelog.gz
+fe466f4570522d273f79e7174b83c149  usr/share/doc/libqt5widgets5/copyright
+c07bace88649f9136827fcc9b7351c86  usr/share/lintian/overrides/libqt5widgets5

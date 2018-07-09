@@ -1,0 +1,17 @@
+1dbc53b28b5d64ec1ffec73d326b653a  usr/lib/arm-linux-gnueabihf/libgstbadbase-1.0.so.0.404.0
+5f609d8d9fec49690ade55684739844d  usr/lib/arm-linux-gnueabihf/libgstbadvideo-1.0.so.0.404.0
+8bc9e5cd795a24c98517a2747a9b54de  usr/lib/arm-linux-gnueabihf/libgstbasecamerabinsrc-1.0.so.0.404.0
+d5afff99bd88fe30c1c2150e09b60832  usr/lib/arm-linux-gnueabihf/libgstcodecparsers-1.0.so.0.404.0
+250aaf3e03b09ab3dc91ee2073f80631  usr/lib/arm-linux-gnueabihf/libgstgl-1.0.so.0.404.0
+9fafbe2c50a598863979a01589327d73  usr/lib/arm-linux-gnueabihf/libgstinsertbin-1.0.so.0.404.0
+aeafb3c51f648f1115d33cdacc8082ff  usr/lib/arm-linux-gnueabihf/libgstmpegts-1.0.so.0.404.0
+4b22301fba96e2f84640ab75c624f6db  usr/lib/arm-linux-gnueabihf/libgstphotography-1.0.so.0.404.0
+ab330cb4240a3912bda81576f3d87ba3  usr/lib/arm-linux-gnueabihf/libgsturidownloader-1.0.so.0.404.0
+493ad7a442cc440714b9e26f589c068d  usr/lib/arm-linux-gnueabihf/libgstwayland-1.0.so.0.404.0
+522445a5bc87310646c5e95de9a8ad45  usr/share/doc/libgstreamer-plugins-bad1.0-0/AUTHORS
+898765197f7f635902b6fbdd61e8cb43  usr/share/doc/libgstreamer-plugins-bad1.0-0/NEWS.gz
+305a1bbde50dee0513968459b1d35325  usr/share/doc/libgstreamer-plugins-bad1.0-0/README.Debian
+8044da16abba22528a726f0fa76457a9  usr/share/doc/libgstreamer-plugins-bad1.0-0/README.gz
+7c27fdd1b94ef16096ac9bc2affecce9  usr/share/doc/libgstreamer-plugins-bad1.0-0/changelog.Debian.gz
+66bdc129d65ad8b314cbad1ae20447b7  usr/share/doc/libgstreamer-plugins-bad1.0-0/changelog.gz
+5d80a0c9ddc083712c157b183fc237ed  usr/share/doc/libgstreamer-plugins-bad1.0-0/copyright

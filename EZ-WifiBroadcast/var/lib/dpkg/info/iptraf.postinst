@@ -1,0 +1,67 @@
+#!/bin/sh
+
+set -e
+
+case "$1" in
+    configure)
+	if [ -e /etc/iptraf.cfg ]
+	then
+		# old, incompatible, binary config file - I won't miss you :)
+		rm -f /etc/iptraf.cfg
+	fi
+
+	if [ ! -d /var/lib/iptraf ]; then
+		mkdir /var/lib/iptraf
+	fi
+
+	if [ -e /var/state/iptraf ]; then
+		find /var/state/iptraf -mindepth 1 -maxdepth 1 	\
+					-exec mv \{\} /var/lib/iptraf/ \;
+		rmdir /var/state/iptraf || true
+	fi
+
+	# log files may have sensitive data
+	test -d /var/log/iptraf || mkdir /var/log/iptraf
+	chmod 0700 /var/log/iptraf
+
+	# renaming old logfile rotator since it is marked as conffile and dpkg won't
+	# remove it (reported as Bug#72998 by Josip Rodin <joy@cibalia.gkvk.hr>
+	test -e /etc/cron.daily/iptraf && \
+		mv /etc/cron.daily/iptraf /etc/cron.daily/iptraf.obsolete
+
+	# filters changed in 3.0, move them away (copied from in src/install.sh)
+	WORKDIR=/var/lib/iptraf/
+	if [ -z "$2" ] || dpkg --compare-versions "$2" lt 3.0.0-1 ; then
+		if [ -f $WORKDIR/tcpfilters.dat ]; then
+			mv -f $WORKDIR/tcpfilters.dat $WORKDIR/tcpfilters.dat~
+		fi
+
+		if [ -f $WORKDIR/udpfilters.dat ]; then
+			mv -f $WORKDIR/udpfilters.dat $WORKDIR/udpfilters.dat~
+		fi
+
+		if [ -f $WORKDIR/othipfilters.dat ]; then
+			mv -f $WORKDIR/othipfilters.dat $WORKDIR/othipfilters.dat~
+		fi
+
+		rm -f $WORKDIR/savedfilters.dat
+	fi
+	;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+        ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+
+# Automatically added by dh_installmenu
+if [ "$1" = "configure" ] && [ -x "`which update-menus 2>/dev/null`" ]; then
+	update-menus
+fi
+# End automatically added section
+
+

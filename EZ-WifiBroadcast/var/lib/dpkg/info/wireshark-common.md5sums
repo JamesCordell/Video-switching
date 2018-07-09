@@ -1,0 +1,17 @@
+be5263c543fdea4abffc5f65aa7b73b7  usr/bin/capinfos
+b8e6d0955b3bfdff10641cb8fbc5c498  usr/bin/dumpcap
+0a51ecf00acb14d514a47b17e8cdc8ee  usr/bin/editcap
+4abe44c1e7ea4021e1ff6690a799f3bf  usr/bin/mergecap
+8dda80d74d989b6d76bfe562428a73f0  usr/bin/rawshark
+97ff162336a0965f73adea41ff45eee7  usr/bin/text2pcap
+ff7e49d8018e4b144be943f8abeaa706  usr/share/doc/wireshark-common/README.Debian
+dd369c073051f421774c1ffef45cc5ae  usr/share/doc/wireshark-common/changelog.Debian.gz
+e6726856a50fa04895e6cd74a19a80e9  usr/share/doc/wireshark-common/changelog.gz
+c393f7c1204e120b3e8d9b00130faaef  usr/share/doc/wireshark-common/copyright
+03308f58965a6a7a21e84ace0176b890  usr/share/man/man1/capinfos.1.gz
+f1eb763185f1e6d6fb419914a063f7e1  usr/share/man/man1/dumpcap.1.gz
+c9b03522d5c05cda2655840553aa1b3c  usr/share/man/man1/editcap.1.gz
+e9459648c0b8f992ea3d1830b6514343  usr/share/man/man1/mergecap.1.gz
+c18aa2bc592f80f82a78e7e1b79157c9  usr/share/man/man1/rawshark.1.gz
+fcd5c83fa89c088c4003abdcf42ee5a5  usr/share/man/man1/text2pcap.1.gz
+127fe4c8db8f38558fd4da9237c741f7  usr/share/man/man4/wireshark-filter.4.gz

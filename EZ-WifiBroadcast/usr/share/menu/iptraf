@@ -1,0 +1,4 @@
+?package(iptraf):needs="text" \
+	section="Applications/Network/Monitoring" \
+	title="IPTraf" hints="Monitoring" \
+	command="/usr/bin/su-to-root -c /usr/sbin/iptraf"

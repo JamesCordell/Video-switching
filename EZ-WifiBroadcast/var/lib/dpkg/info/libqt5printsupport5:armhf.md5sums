@@ -1,0 +1,7 @@
+6a38da03c9b282c93835e6d5d7ae260c  usr/lib/arm-linux-gnueabihf/libQt5PrintSupport.so.5.3.2
+ef5e016590d215165a5fd008cc7b7a26  usr/lib/arm-linux-gnueabihf/qt5/plugins/printsupport/libcupsprintersupport.so
+0145c4d1b6f96a661c2c139dfb268fb6  usr/share/doc/libqt5printsupport5/LGPL_EXCEPTION.txt
+7bbebedb6d68e0f674b6da38592b3888  usr/share/doc/libqt5printsupport5/changelog.Debian.gz
+e62bb662247d6fa87fba6201a1370523  usr/share/doc/libqt5printsupport5/changelog.gz
+fe466f4570522d273f79e7174b83c149  usr/share/doc/libqt5printsupport5/copyright
+2cecad4223f16914381a4ef98462a1f5  usr/share/lintian/overrides/libqt5printsupport5

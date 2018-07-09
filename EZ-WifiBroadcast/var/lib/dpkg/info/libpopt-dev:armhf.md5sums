@@ -1,0 +1,9 @@
+c725be8e804fdfb1d8034c4597dfc4c2  usr/include/popt.h
+0c4094944a19f9d693294a883696afe2  usr/lib/arm-linux-gnueabihf/libpopt.a
+53f6dd176252e751f21297f7a8353e07  usr/lib/arm-linux-gnueabihf/libpopt.la
+5c03b9fa43ff785ef9f90039e4e050aa  usr/lib/arm-linux-gnueabihf/pkgconfig/popt.pc
+60d287c690e1527b370c1aa0ca3163e7  usr/share/doc/libpopt-dev/README.Debian
+c4242072905c1fa79b43c0dcda56338b  usr/share/doc/libpopt-dev/changelog.Debian.gz
+b17546718b3319d906e55d8be8c19e0c  usr/share/doc/libpopt-dev/changelog.gz
+84b4691fe303e5e58c72732aeb51b0e4  usr/share/doc/libpopt-dev/copyright
+3b304e61039b287a39eaf9e04d0476dc  usr/share/man/man3/popt.3.gz

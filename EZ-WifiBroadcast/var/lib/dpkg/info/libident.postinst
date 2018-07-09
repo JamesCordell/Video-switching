@@ -1,0 +1,8 @@
+#!/bin/sh -e
+
+if [ "$1" = "configure" ]; then
+        ldconfig
+	if [ -L /usr/doc/libident ]; then
+		rm -f /usr/doc/libident
+	fi
+fi

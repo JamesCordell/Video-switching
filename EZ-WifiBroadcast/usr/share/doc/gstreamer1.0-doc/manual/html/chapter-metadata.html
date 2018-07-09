@@ -1,0 +1,144 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 12. Metadata</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="part-advanced.html" title="Part III. Advanced GStreamer concepts"><link rel="prev" href="section-eventsseek.html" title="Events: seeking (and more)"><link rel="next" href="section-tags-write.html" title="Tag writing"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 12. Metadata</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-eventsseek.html">Prev</a> </td><th width="60%" align="center">Part III. Advanced <span class="application">GStreamer</span> concepts</th><td width="20%" align="right"> <a accesskey="n" href="section-tags-write.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-metadata"></a>Chapter 12. Metadata</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-metadata.html#section-tags-read">Metadata reading</a></span></dt><dt><span class="sect1"><a href="section-tags-write.html">Tag writing</a></span></dt></dl></div><p>
+    <span class="application">GStreamer</span> makes a clear distinction between two types of metadata, and
+    has support for both types. The first is stream tags, which describe the
+    content of a stream in a non-technical way. Examples include the author
+    of a song, the title of that very same song or the album it is a part of.
+    The other type of metadata is stream-info, which is a somewhat technical
+    description of the properties of a stream. This can include video size,
+    audio samplerate, codecs used and so on. Tags are handled using the
+    <span class="application">GStreamer</span> tagging system. Stream-info can be retrieved from a
+    <code class="classname">GstPad</code> by getting the current (negotiated)
+    <code class="classname">GstCaps</code> for that pad.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-tags-read"></a>Metadata reading</h2></div></div></div><p>
+      Stream information can most easily be read by reading it from a
+      <code class="classname">GstPad</code>. This has already been discussed before
+      in <a class="xref" href="section-caps-api.html#section-caps-metadata" title="Using capabilities for metadata">the section called “Using capabilities for metadata”</a>. Therefore, we will skip
+      it here. Note that this requires access to all pads of which you
+      want stream information.
+    </p><p>
+      Tag reading is done through a bus in <span class="application">GStreamer</span>, which has been
+      discussed previously in <a class="xref" href="chapter-bus.html" title="Chapter 7. Bus">Chapter 7, <i>Bus</i></a>. You can
+      listen for <code class="classname">GST_MESSAGE_TAG</code> messages and handle
+      them as you wish.
+    </p><p>
+      Note, however, that the <code class="classname">GST_MESSAGE_TAG</code>
+      message may be fired multiple times in the pipeline. It is the
+      application's responsibility to put all those tags together and
+      display them to the user in a nice, coherent way. Usually, using
+      <code class="function">gst_tag_list_merge ()</code> is a good enough way
+      of doing this; make sure to empty the cache when loading a new song,
+      or after every few minutes when listening to internet radio. Also,
+      make sure you use <code class="classname">GST_TAG_MERGE_PREPEND</code> as
+      merging mode, so that a new title (which came in later) has a
+      preference over the old one for display.
+    </p><p>
+      The following example will extract tags from a file and print them:
+    </p><pre class="programlisting">
+/* compile with:
+ * gcc -o tags tags.c `pkg-config --cflags --libs gstreamer-1.0` */
+#include &lt;gst/gst.h&gt;
+
+static void
+print_one_tag (const GstTagList * list, const gchar * tag, gpointer user_data)
+{
+  int i, num;
+
+  num = gst_tag_list_get_tag_size (list, tag);
+  for (i = 0; i &lt; num; ++i) {
+    const GValue *val;
+
+    /* Note: when looking for specific tags, use the gst_tag_list_get_xyz() API,
+     * we only use the GValue approach here because it is more generic */
+    val = gst_tag_list_get_value_index (list, tag, i);
+    if (G_VALUE_HOLDS_STRING (val)) {
+      g_print ("\t%20s : %s\n", tag, g_value_get_string (val));
+    } else if (G_VALUE_HOLDS_UINT (val)) {
+      g_print ("\t%20s : %u\n", tag, g_value_get_uint (val));
+    } else if (G_VALUE_HOLDS_DOUBLE (val)) {
+      g_print ("\t%20s : %g\n", tag, g_value_get_double (val));
+    } else if (G_VALUE_HOLDS_BOOLEAN (val)) {
+      g_print ("\t%20s : %s\n", tag,
+          (g_value_get_boolean (val)) ? "true" : "false");
+    } else if (GST_VALUE_HOLDS_BUFFER (val)) {
+      GstBuffer *buf = gst_value_get_buffer (val);
+      guint buffer_size = gst_buffer_get_size (buf);
+
+      g_print ("\t%20s : buffer of size %u\n", tag, buffer_size);
+    } else if (GST_VALUE_HOLDS_DATE_TIME (val)) {
+      GstDateTime *dt = g_value_get_boxed (val);
+      gchar *dt_str = gst_date_time_to_iso8601_string (dt);
+
+      g_print ("\t%20s : %s\n", tag, dt_str);
+      g_free (dt_str);
+    } else {
+      g_print ("\t%20s : tag of type '%s'\n", tag, G_VALUE_TYPE_NAME (val));
+    }
+  }
+}
+
+static void
+on_new_pad (GstElement * dec, GstPad * pad, GstElement * fakesink)
+{
+  GstPad *sinkpad;
+
+  sinkpad = gst_element_get_static_pad (fakesink, "sink");
+  if (!gst_pad_is_linked (sinkpad)) {
+    if (gst_pad_link (pad, sinkpad) != GST_PAD_LINK_OK)
+      g_error ("Failed to link pads!");
+  }
+  gst_object_unref (sinkpad);
+}
+
+int
+main (int argc, char ** argv)
+{
+  GstElement *pipe, *dec, *sink;
+  GstMessage *msg;
+
+  gst_init (&amp;argc, &amp;argv);
+
+  if (argc &lt; 2 || !gst_uri_is_valid (argv[1]))
+    g_error ("Usage: %s file:///path/to/file", argv[0]);
+
+  pipe = gst_pipeline_new ("pipeline");
+
+  dec = gst_element_factory_make ("uridecodebin", NULL);
+  g_object_set (dec, "uri", argv[1], NULL);
+  gst_bin_add (GST_BIN (pipe), dec);
+
+  sink = gst_element_factory_make ("fakesink", NULL);
+  gst_bin_add (GST_BIN (pipe), sink);
+
+  g_signal_connect (dec, "pad-added", G_CALLBACK (on_new_pad), sink);
+
+  gst_element_set_state (pipe, GST_STATE_PAUSED);
+
+  while (TRUE) {
+    GstTagList *tags = NULL;
+
+    msg = gst_bus_timed_pop_filtered (GST_ELEMENT_BUS (pipe),
+        GST_CLOCK_TIME_NONE,
+        GST_MESSAGE_ASYNC_DONE | GST_MESSAGE_TAG | GST_MESSAGE_ERROR);
+
+    if (GST_MESSAGE_TYPE (msg) != GST_MESSAGE_TAG) /* error or async_done */
+      break;
+
+    gst_message_parse_tag (msg, &amp;tags);
+
+    g_print ("Got tags from element %s:\n", GST_OBJECT_NAME (msg-&gt;src));
+    gst_tag_list_foreach (tags, print_one_tag, NULL);
+    g_print ("\n");
+    gst_tag_list_unref (tags);
+
+    gst_message_unref (msg);
+  };
+
+  if (GST_MESSAGE_TYPE (msg) == GST_MESSAGE_ERROR)
+    g_error ("Got error");
+
+  gst_message_unref (msg);
+  gst_element_set_state (pipe, GST_STATE_NULL);
+  gst_object_unref (pipe);
+  return 0;
+}
+    </pre></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-eventsseek.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-advanced.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-tags-write.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Events: seeking (and more) </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Tag writing</td></tr></table></div></body></html>

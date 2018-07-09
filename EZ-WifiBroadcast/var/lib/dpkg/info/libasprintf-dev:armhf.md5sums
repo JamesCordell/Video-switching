@@ -1,0 +1,5 @@
+dc776ebfc4d578cdaa8fa3e9d6398e04  usr/share/doc/libasprintf-dev/copyright
+195bb0b9c74a4e0d97319f92abff769b  usr/share/doc/libasprintf-dev/changelog.gz
+50de9c7556b2df5fd954ea746112c5d4  usr/share/doc/libasprintf-dev/changelog.Debian.gz
+6e7a71c8f2b37212fd6a73f1746c0bdf  usr/lib/arm-linux-gnueabihf/libasprintf.a
+b836ed1b3c4dce2244e79a9aaf75306e  usr/include/autosprintf.h

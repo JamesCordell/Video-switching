@@ -1,0 +1,60 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Using the Project Stamp</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-building-boiler.html" title="Chapter 3. Constructing the Boilerplate"><link rel="prev" href="chapter-building-boiler.html" title="Chapter 3. Constructing the Boilerplate"><link rel="next" href="section-boiler-examine.html" title="Examining the Basic Code"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Using the Project Stamp</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-building-boiler.html">Prev</a> </td><th width="60%" align="center">Chapter 3. Constructing the Boilerplate</th><td width="20%" align="right"> <a accesskey="n" href="section-boiler-examine.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-boiler-project-stamp"></a>Using the Project Stamp</h2></div></div></div><p>
+      The first thing to do when making a new element is to specify some basic
+      details about it: what its name is, who wrote it, what version number it
+      is, etc. We also need to define an object to represent the element and to
+      store the data the element needs. These details are collectively known as
+      the <span class="emphasis"><em>boilerplate</em></span>.
+    </p><p>
+      The standard way of defining the boilerplate is simply to write some code,
+      and fill in some structures. As mentioned in the previous section, the
+      easiest way to do this is to copy a template and add functionality
+      according to your needs. To help you do so, there is a tool in the
+      <code class="filename">./gst-plugins/tools/</code> directory.
+      This tool, <code class="filename">make_element</code>, is a command line utility
+      that creates the boilerplate code for you.
+    </p><p>
+      To use <span class="command"><strong>make_element</strong></span>, first open up a terminal window.
+      Change to the <code class="filename">gst-template/gst-plugin/src</code>
+      directory, and then run the <span class="command"><strong>make_element</strong></span> command. The
+      arguments to the <span class="command"><strong>make_element</strong></span> are:
+    </p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>the name of the plugin, and</p></li><li class="listitem"><p>
+          the source file that the tool will use. By default,
+          <code class="filename">gstplugin</code> is used.
+        </p></li></ol></div><p>
+      For example, the following commands create the MyFilter plugin based on
+      the plugin template and put the output files in the
+      <code class="filename">gst-template/gst-plugin/src</code>
+      directory:
+    </p><pre class="screen">
+<code class="prompt">shell $ </code><strong class="userinput"><code>cd gst-template/gst-plugin/src</code></strong>
+<code class="prompt">shell $ </code><strong class="userinput"><code>../tools/make_element MyFilter</code></strong>
+    </pre><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+        Capitalization is important for the name of the plugin. Keep in mind
+        that under some operating systems, capitalization is also important
+        when specifying directory and file names in general.
+      </p></div><p>
+      The last command creates two files:
+      <code class="filename">gstmyfilter.c</code> and
+      <code class="filename">gstmyfilter.h</code>.
+    </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+        It is recommended that you create a copy of the <code class="filename">gst-plugin</code>
+	directory before continuing.
+      </p></div><p>
+      Now one needs to adjust the <code class="filename">Makefile.am</code> to use the
+      new filenames and run <code class="filename">autogen.sh</code> from the parent
+      directory to bootstrap the build environment. After that, the project
+      can be built and installed using the well known
+      <strong class="userinput"><code>make &amp;&amp; sudo make install</code></strong> commands.
+    </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+        Be aware that by default <code class="filename">autogen.sh</code> and 
+        <code class="filename">configure</code> would choose <code class="filename">/usr/local</code>
+        as a default location. One would need to add
+        <code class="filename">/usr/local/lib/gstreamer-1.0</code>
+        to <span class="symbol">GST_PLUGIN_PATH</span> in order to make the new plugin
+        show up in a gstreamer that's been installed from packages.
+      </p></div><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3><p>
+        FIXME: this section is slightly outdated. gst-template is still useful
+        as an example for a minimal plugin build system skeleton. However, for
+        creating elements the tool gst-element-maker from gst-plugins-bad is
+        recommended these days.
+      </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-building-boiler.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-building-boiler.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-boiler-examine.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 3. Constructing the Boilerplate </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Examining the Basic Code</td></tr></table></div></body></html>

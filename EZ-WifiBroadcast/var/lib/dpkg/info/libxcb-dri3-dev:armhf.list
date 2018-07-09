@@ -1,0 +1,16 @@
+/.
+/usr
+/usr/include
+/usr/include/xcb
+/usr/include/xcb/dri3.h
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/pkgconfig
+/usr/lib/arm-linux-gnueabihf/pkgconfig/xcb-dri3.pc
+/usr/lib/arm-linux-gnueabihf/libxcb-dri3.a
+/usr/share
+/usr/share/doc
+/usr/share/doc/libxcb-dri3-dev
+/usr/share/doc/libxcb-dri3-dev/copyright
+/usr/share/doc/libxcb-dri3-dev/changelog.Debian.gz
+/usr/lib/arm-linux-gnueabihf/libxcb-dri3.so

@@ -1,0 +1,82 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Video Overlay Interface</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-advanced-interfaces.html" title="Chapter 21. Interfaces"><link rel="prev" href="section-iface-colorbalance.html" title="Color Balance Interface"><link rel="next" href="section-iface-navigation.html" title="Navigation Interface"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Video Overlay Interface</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-iface-colorbalance.html">Prev</a> </td><th width="60%" align="center">Chapter 21. Interfaces</th><td width="20%" align="right"> <a accesskey="n" href="section-iface-navigation.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-iface-xoverlay"></a>Video Overlay Interface</h2></div></div></div><p>
+      The #GstVideoOverlay interface is used for 2 main purposes :
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+      To get a grab on the Window where the video sink element is going to render.
+      This is achieved by either being informed about the Window identifier that
+      the video sink element generated, or by forcing the video sink element to use
+      a specific Window identifier for rendering.
+          </p></li><li class="listitem"><p>
+      To force a redrawing of the latest video frame the video sink element
+      displayed on the Window. Indeed if the #GstPipeline is in #GST_STATE_PAUSED
+      state, moving the Window around will damage its content. Application
+      developers will want to handle the Expose events themselves and force the
+      video sink element to refresh the Window's content.
+          </p></li></ul></div><p>
+    </p><p>
+      A plugin drawing video output in a video window will need to have that
+      window at one stage or another. Passive mode simply means that no window
+      has been given to the plugin before that stage, so the plugin created the
+      window by itself. In that case the plugin is responsible of destroying
+      that window when it's not needed any more and it has to tell the
+      applications that a window has been created so that the application can
+      use it. This is done using the <code class="classname">have-window-handle</code>
+      message that can be posted from the plugin with the
+      <code class="function">gst_video_overlay_got_window_handle</code> method.
+    </p><p>
+      As you probably guessed already active mode just means sending a video
+      window to the plugin so that video output goes there. This is done using
+      the <code class="function">gst_video_overlay_set_window_handle</code> method.
+    </p><p>
+      It is possible to switch from one mode to another at any moment, so the
+      plugin implementing this interface has to handle all cases. There are only
+      2 methods that plugins writers have to implement and they most probably
+      look like that :
+    </p><pre class="programlisting">
+static void
+gst_my_filter_set_window_handle (GstVideoOverlay *overlay, guintptr handle)
+{
+  GstMyFilter *my_filter = GST_MY_FILTER (overlay);
+
+  if (my_filter-&gt;window)
+    gst_my_filter_destroy_window (my_filter-&gt;window);
+    
+  my_filter-&gt;window = handle;
+}
+
+static void
+gst_my_filter_xoverlay_init (GstVideoOverlayClass *iface)
+{
+  iface-&gt;set_window_handle = gst_my_filter_set_window_handle;
+}
+    </pre><p>
+      You will also need to use the interface methods to post messages when 
+      needed such as when receiving a CAPS event where you will know the video
+      geometry and maybe create the window.
+    </p><pre class="programlisting">
+static MyFilterWindow *
+gst_my_filter_window_create (GstMyFilter *my_filter, gint width, gint height)
+{
+  MyFilterWindow *window = g_new (MyFilterWindow, 1);
+  ...
+  gst_video_overlay_got_window_handle (GST_VIDEO_OVERLAY (my_filter), window-&gt;win);
+}
+
+/* called from the event handler for CAPS events */
+static gboolean
+gst_my_filter_sink_set_caps (GstMyFilter *my_filter, GstCaps *caps)
+{
+  gint width, height;
+  gboolean ret;
+  ...
+  ret = gst_structure_get_int (structure, "width", &amp;width);
+  ret &amp;= gst_structure_get_int (structure, "height", &amp;height);
+  if (!ret) return FALSE;
+
+  gst_video_overlay_prepare_window_handle (GST_VIDEO_OVERLAY (my_filter));
+  
+  if (!my_filter-&gt;window)
+    my_filter-&gt;window = gst_my_filter_create_window (my_filter, width, height);
+
+  ...
+}
+    </pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-iface-colorbalance.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-advanced-interfaces.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-iface-navigation.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Color Balance Interface </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Navigation Interface</td></tr></table></div></body></html>

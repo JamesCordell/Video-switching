@@ -1,0 +1,67 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 11. Position tracking and seeking</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="part-advanced.html" title="Part III. Advanced GStreamer concepts"><link rel="prev" href="part-advanced.html" title="Part III. Advanced GStreamer concepts"><link rel="next" href="section-eventsseek.html" title="Events: seeking (and more)"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 11. Position tracking and seeking</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="part-advanced.html">Prev</a> </td><th width="60%" align="center">Part III. Advanced <span class="application">GStreamer</span> concepts</th><td width="20%" align="right"> <a accesskey="n" href="section-eventsseek.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-queryevents"></a>Chapter 11. Position tracking and seeking</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-queryevents.html#section-querying">Querying: getting the position or length of a stream</a></span></dt><dt><span class="sect1"><a href="section-eventsseek.html">Events: seeking (and more)</a></span></dt></dl></div><p>
+    So far, we've looked at how to create a pipeline to do media processing
+    and how to make it run. Most application developers will be interested
+    in providing feedback to the user on media progress. Media players, for
+    example, will want to show a slider showing the progress in the song,
+    and usually also a label indicating stream length. Transcoding
+    applications will want to show a progress bar on how much percent of
+    the task is done. <span class="application">GStreamer</span> has built-in support for doing all this
+    using a concept known as <span class="emphasis"><em>querying</em></span>. Since seeking
+    is very similar, it will be discussed here as well. Seeking is done
+    using the concept of <span class="emphasis"><em>events</em></span>.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-querying"></a>Querying: getting the position or length of a stream</h2></div></div></div><p>
+      Querying is defined as requesting a specific stream property related
+      to progress tracking. This includes getting the length of a stream (if
+      available) or getting the current position. Those stream properties
+      can be retrieved in various formats such as time, audio samples, video
+      frames or bytes. The function most commonly used for this is
+      <code class="function">gst_element_query ()</code>, although some convenience
+      wrappers are provided as well (such as
+      <code class="function">gst_element_query_position ()</code> and
+      <code class="function">gst_element_query_duration ()</code>). You can generally
+      query the pipeline directly, and it'll figure out the internal details
+      for you, like which element to query.
+    </p><p>
+      Internally, queries will be sent to the sinks, and
+      <span class="quote">“<span class="quote">dispatched</span>”</span> backwards until one element can handle it;
+      that result will be sent back to the function caller. Usually, that
+      is the demuxer, although with live sources (from a webcam), it is the
+      source itself.
+    </p><pre class="programlisting">
+
+#include &lt;gst/gst.h&gt;
+
+
+
+
+static gboolean
+cb_print_position (GstElement *pipeline)
+{
+  gint64 pos, len;
+
+  if (gst_element_query_position (pipeline, GST_FORMAT_TIME, &amp;pos)
+    &amp;&amp; gst_element_query_duration (pipeline, GST_FORMAT_TIME, &amp;len)) {
+    g_print ("Time: %" GST_TIME_FORMAT " / %" GST_TIME_FORMAT "\r",
+	     GST_TIME_ARGS (pos), GST_TIME_ARGS (len));
+  }
+
+  /* call me again */
+  return TRUE;
+}
+
+gint
+main (gint   argc,
+      gchar *argv[])
+{
+  GstElement *pipeline;
+
+[..]
+
+  /* run pipeline */
+  g_timeout_add (200, (GSourceFunc) cb_print_position, pipeline);
+  g_main_loop_run (loop);
+
+[..]
+
+}
+    </pre></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="part-advanced.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-advanced.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-eventsseek.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Part III. Advanced <span class="application">GStreamer</span> concepts </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Events: seeking (and more)</td></tr></table></div></body></html>

@@ -1,0 +1,108 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 25. Porting 0.10 applications to 1.0</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="part-appendices.html" title="Part V. Appendices"><link rel="prev" href="chapter-porting.html" title="Chapter 24. Porting 0.8 applications to 0.10"><link rel="next" href="chapter-intgration.html" title="Chapter 26. Integration"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 25. Porting 0.10 applications to 1.0</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-porting.html">Prev</a> </td><th width="60%" align="center">Part V. Appendices</th><td width="20%" align="right"> <a accesskey="n" href="chapter-intgration.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-porting-1.0"></a>Chapter 25. Porting 0.10 applications to 1.0</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-porting-1.0.html#section-porting-objects-1.0">List of changes</a></span></dt></dl></div><p>This section outlines some of the changes necessary to port
+  applications from <span class="application">GStreamer</span>-0.10 to <span class="application">GStreamer</span>-1.0. For a
+  comprehensive and up-to-date list, see the separate <a class="ulink" href="http://cgit.freedesktop.org/gstreamer/gstreamer/plain/docs/random/porting-to-1.0.txt" target="_top">
+  Porting to 1.0</a> document.
+  </p><p>
+    It should be possible to port simple applications to
+    <span class="application">GStreamer</span>-1.0 in less than a day.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-porting-objects-1.0"></a>List of changes</h2></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          All deprecated methods were removed. Recompile against 0.10 with
+	  GST_DISABLE_DEPRECATED defined (such as by adding
+	  -DGST_DISABLE_DEPRECATED to the compiler flags) and fix issues
+	  before attempting to port to 1.0.
+        </p></li><li class="listitem"><p>
+          "playbin2" has been renamed to "playbin", with similar API
+        </p></li><li class="listitem"><p>
+          "decodebin2" has been renamed to "decodebin", with similar API. Note
+          that there is no longer a "new-decoded-pad" signal, just use GstElement's
+          "pad-added" signal instead (but don't forget to remove the 'gboolean last'
+          argument from your old signal callback functino signature).
+        </p></li><li class="listitem"><p>
+          the names of some "formatted" pad templates has been changed from e.g.
+          "src%d" to "src%u" or "src_%u" or similar, since we don't want to see
+          negative numbers in pad names. This mostly affects applications that
+          create request pads from elements.
+        </p></li><li class="listitem"><p>
+          some elements that used to have a single dynamic source pad have a
+          source pad now. Example: wavparse, id3demux, iceydemux, apedemux.
+          (This does not affect applications using decodebin or playbin).
+        </p></li><li class="listitem"><p>
+          playbin now proxies the GstVideoOverlay (former GstXOverlay) interface,
+          so most applications can just remove the sync bus handler where they
+          would set the window ID, and instead just set the window ID on playbin
+          from the application thread before starting playback.
+        </p><p>
+          playbin also proxies the GstColorBalance and GstNavigation interfaces,
+          so applications that use this don't need to go fishing for elements
+	  that may implement those any more, but can just use on playbin
+	  unconditionally.
+        </p></li><li class="listitem"><p>
+          multifdsink, tcpclientsink, tcpclientsrc, tcpserversrc the protocol property
+          is removed, use gdppay and gdpdepay.
+        </p></li><li class="listitem"><p>
+          XML serialization was removed.
+        </p></li><li class="listitem"><p>
+          Probes and pad blocking was merged into new pad probes.
+        </p></li><li class="listitem"><p>
+          Position, duration and convert functions no longer use an inout parameter
+          for the destination format.
+        </p></li><li class="listitem"><p>
+          Video and audio caps were simplified. audio/x-raw-int and audio/x-raw-float
+          are now all under the audio/x-raw media type. Similarly, video/x-raw-rgb
+          and video/x-raw-yuv are now video/x-raw.
+        </p></li><li class="listitem"><p>
+          ffmpegcolorspace was removed and replaced with videoconvert.
+        </p></li><li class="listitem"><p>
+          GstMixerInterface / GstTunerInterface were removed without replacement.
+        </p></li><li class="listitem"><p>
+          The GstXOverlay interface was renamed to GstVideoOverlay, and now part
+          of the video library in gst-plugins-base, as the interfaces library
+          no longer exists.
+        </p><p>
+          The name of the GstXOverlay "prepare-xwindow-id" message has changed
+          to "prepare-window-handle" (and GstXOverlay has been renamed to
+          GstVideoOverlay). Code that checks for the string directly should be
+          changed to use gst_is_video_overlay_prepare_window_handle_message(message)
+          instead.
+        </p></li><li class="listitem"><p>
+          The GstPropertyProbe interface was removed. the is no replacement yet,
+          but a more featureful replacement for device discovery and feature
+          querying is planned, see https://bugzilla.gnome.org/show_bug.cgi?id=678402
+        </p></li><li class="listitem"><p>
+          gst_uri_handler_get_uri() and the get_uri vfunc now return a copy of
+          the URI string
+        </p><p>
+          gst_uri_handler_set_uri() and the set_uri vfunc now take an additional
+          GError argument so the handler can notify the caller why it didn't
+          accept a particular URI.
+        </p><p>
+          gst_uri_handler_set_uri() now checks if the protocol of the URI passed
+          is one of the protocols advertised by the uri handler, so set_uri vfunc
+          implementations no longer need to check that as well.
+        </p></li><li class="listitem"><p>
+          GstTagList is now an opaque mini object instead of being typedefed to a
+          GstStructure. While it was previously okay (and in some cases required because of
+          missing taglist API) to cast a GstTagList to a GstStructure or use
+          gst_structure_* API on taglists, you can no longer do that. Doing so will
+          cause crashes.
+        </p><p>
+          Also, tag lists are refcounted now, and can therefore not be freely
+          modified any longer. Make sure to call gst_tag_list_make_writable (taglist)
+          before adding, removing or changing tags in the taglist.
+        </p><p>
+          GST_TAG_IMAGE, GST_TAG_PREVIEW_IMAGE, GST_TAG_ATTACHMENT: many tags that
+          used to be of type GstBuffer are now of type GstSample (which is basically
+          a struct containing a buffer alongside caps and some other info).
+        </p></li><li class="listitem"><p>
+          GstController has now been merged into GstObject. It does not exists as an
+          individual object anymore. In addition core contains a GstControlSource base
+          class and the GstControlBinding. The actual control sources are in the controller
+          library as before. The 2nd big change is that control sources generate
+          a sequence of gdouble values and those are mapped to the property type and
+          value range by GstControlBindings.
+        </p><p>
+          The whole gst_controller_* API is gone and now available in simplified form
+          under gst_object_*. ControlSources are now attached via GstControlBinding
+          to properties. There are no GValue arguments used anymore when programming
+          control sources.
+        </p></li></ul></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-porting.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-appendices.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-intgration.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 24. Porting 0.8 applications to 0.10 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 26. Integration</td></tr></table></div></body></html>

@@ -1,0 +1,6 @@
+# This must be Conflicts, not Breaks.
+# Packages dos2unix and tofrodos can never co-exist.
+
+dos2unix binary: conflicts-with-version tofrodos (<< 1.7.8.debian.1)
+
+# End o file

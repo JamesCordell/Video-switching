@@ -1,0 +1,131 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Playsink</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-playback-components.html" title="Chapter 20. Playback Components"><link rel="prev" href="section-components-uridecodebin.html" title="URIDecodebin"><link rel="next" href="part-appendices.html" title="Part V. Appendices"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Playsink</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-components-uridecodebin.html">Prev</a> </td><th width="60%" align="center">Chapter 20. Playback Components</th><td width="20%" align="right"> <a accesskey="n" href="part-appendices.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-components-playsink"></a>Playsink</h2></div></div></div><p>
+      The playsink element is a powerful sink element. It has request pads
+      for raw decoded audio, video and text and it will configure itself to
+      play the media streams. It has the following features:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          It exposes GstStreamVolume, GstVideoOverlay, GstNavigation and
+          GstColorBalance interfaces and automatically plugs software
+          elements to implement the interfaces when needed.
+        </p></li><li class="listitem"><p>
+          It will automatically plug conversion elements.
+        </p></li><li class="listitem"><p>
+          Can optionally render visualizations when there is no video input.
+        </p></li><li class="listitem"><p>
+          Configurable sink elements.
+        </p></li><li class="listitem"><p>
+          Configurable audio/video sync offset to fine-tune synchronization
+          in badly muxed files.
+        </p></li><li class="listitem"><p>
+          Support for taking a snapshot of the last video frame.
+        </p></li></ul></div><p>
+      Below is an example of how you can use playsink. We use a uridecodebin
+      element to decode into raw audio and video streams which we then link
+      to the playsink request pads. We only link the first audio and video
+      pads, you could use an input-selector to link all pads.
+    </p><pre class="programlisting">
+
+
+#include &lt;gst/gst.h&gt;
+
+
+[.. my_bus_callback goes here ..]
+
+
+
+
+
+GstElement *pipeline, *sink;
+
+static void
+cb_pad_added (GstElement *dec,
+	      GstPad     *pad,
+	      gpointer    data)
+{
+  GstCaps *caps;
+  GstStructure *str;
+  const gchar *name;
+  GstPadTemplate *templ;
+  GstElementClass *klass;
+
+  /* check media type */
+  caps = gst_pad_query_caps (pad, NULL);
+  str = gst_caps_get_structure (caps, 0);
+  name = gst_structure_get_name (str);
+
+  klass = GST_ELEMENT_GET_CLASS (sink);
+
+  if (g_str_has_prefix (name, "audio")) {
+    templ = gst_element_class_get_pad_template (klass, "audio_sink");
+  } else if (g_str_has_prefix (name, "video")) {
+    templ = gst_element_class_get_pad_template (klass, "video_sink");
+  } else if (g_str_has_prefix (name, "text")) {
+    templ = gst_element_class_get_pad_template (klass, "text_sink");
+  } else {
+    templ = NULL;
+  }
+
+  if (templ) {
+    GstPad *sinkpad;
+
+    sinkpad = gst_element_request_pad (sink, templ, NULL, NULL);
+
+    if (!gst_pad_is_linked (sinkpad))
+      gst_pad_link (pad, sinkpad);
+
+    gst_object_unref (sinkpad);
+  }
+}
+
+gint
+main (gint   argc,
+      gchar *argv[])
+{
+  GMainLoop *loop;
+  GstElement *dec;
+  GstBus *bus;
+
+  /* init GStreamer */
+  gst_init (&amp;argc, &amp;argv);
+  loop = g_main_loop_new (NULL, FALSE);
+
+  /* make sure we have input */
+  if (argc != 2) {
+    g_print ("Usage: %s &lt;uri&gt;\n", argv[0]);
+    return -1;
+  }
+
+  /* setup */
+  pipeline = gst_pipeline_new ("pipeline");
+
+  bus = gst_pipeline_get_bus (GST_PIPELINE (pipeline));
+  gst_bus_add_watch (bus, my_bus_callback, loop);
+  gst_object_unref (bus);
+
+  dec = gst_element_factory_make ("uridecodebin", "source");
+  g_object_set (G_OBJECT (dec), "uri", argv[1], NULL);
+  g_signal_connect (dec, "pad-added", G_CALLBACK (cb_pad_added), NULL);
+
+  /* create audio output */
+  sink = gst_element_factory_make ("playsink", "sink");
+  gst_util_set_object_arg (G_OBJECT (sink), "flags",  
+      "soft-colorbalance+soft-volume+vis+text+audio+video");
+  gst_bin_add_many (GST_BIN (pipeline), dec, sink, NULL);
+
+  /* run */
+  gst_element_set_state (pipeline, GST_STATE_PLAYING);
+  g_main_loop_run (loop);
+
+  /* cleanup */
+  gst_element_set_state (pipeline, GST_STATE_NULL);
+  gst_object_unref (GST_OBJECT (pipeline));
+
+  return 0;
+}
+
+
+    </pre><p>
+      This example will show audio and video depending on what you
+      give it. Try this example on an audio file and you will see that
+      it shows visualizations. You can change the visualization at runtime by
+      changing the vis-plugin property.
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-components-uridecodebin.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-playback-components.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="part-appendices.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">URIDecodebin </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Part V. Appendices</td></tr></table></div></body></html>

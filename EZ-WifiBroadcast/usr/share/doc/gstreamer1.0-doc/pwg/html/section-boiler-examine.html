@@ -1,0 +1,50 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Examining the Basic Code</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-building-boiler.html" title="Chapter 3. Constructing the Boilerplate"><link rel="prev" href="section-boiler-project-stamp.html" title="Using the Project Stamp"><link rel="next" href="section-boiler-details.html" title="Element metadata"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Examining the Basic Code</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-boiler-project-stamp.html">Prev</a> </td><th width="60%" align="center">Chapter 3. Constructing the Boilerplate</th><td width="20%" align="right"> <a accesskey="n" href="section-boiler-details.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-boiler-examine"></a>Examining the Basic Code</h2></div></div></div><p>
+      First we will examine the code you would be likely to place in a header
+      file (although since the interface to the code is entirely defined by the
+      plugin system, and doesn't depend on reading a header file, this is not
+      crucial.)
+
+      The code here can be found in
+      <code class="filename">examples/pwg/examplefilter/boiler/gstexamplefilter.h</code>.
+    </p><div class="example"><a name="ex-boiler-examine-h"></a><p class="title"><b>Example 3.1. Example Plugin Header File</b></p><div class="example-contents"><pre class="programlisting">
+#include &lt;gst/gst.h&gt;
+
+/* Definition of structure storing data for this element. */
+typedef struct _GstMyFilter {
+  GstElement element;
+
+  GstPad *sinkpad, *srcpad;
+
+  gboolean silent;
+
+
+
+} GstMyFilter;
+
+/* Standard definition defining a class for this element. */
+typedef struct _GstMyFilterClass {
+  GstElementClass parent_class;
+} GstMyFilterClass;
+
+/* Standard macros for defining types for this element.  */
+#define GST_TYPE_MY_FILTER (gst_my_filter_get_type())
+#define GST_MY_FILTER(obj) \
+  (G_TYPE_CHECK_INSTANCE_CAST((obj),GST_TYPE_MY_FILTER,GstMyFilter))
+#define GST_MY_FILTER_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_CAST((klass),GST_TYPE_MY_FILTER,GstMyFilterClass))
+#define GST_IS_MY_FILTER(obj) \
+  (G_TYPE_CHECK_INSTANCE_TYPE((obj),GST_TYPE_MY_FILTER))
+#define GST_IS_MY_FILTER_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_MY_FILTER))
+
+/* Standard function returning type information. */
+GType gst_my_filter_get_type (void);
+      </pre></div></div><br class="example-break"><p>
+      Using this header file, you can use the following macro to setup
+      the <code class="classname">GObject</code> basics in your source file so
+      that all functions will be called appropriately:
+    </p><pre class="programlisting">
+#include "filter.h"
+
+G_DEFINE_TYPE (GstMyFilter, gst_my_filter, GST_TYPE_ELEMENT);
+    </pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-boiler-project-stamp.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-building-boiler.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-boiler-details.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Using the Project Stamp </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Element metadata</td></tr></table></div></body></html>

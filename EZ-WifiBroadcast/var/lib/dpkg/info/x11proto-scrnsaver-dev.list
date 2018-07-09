@@ -1,0 +1,16 @@
+/.
+/usr
+/usr/share
+/usr/share/pkgconfig
+/usr/share/pkgconfig/scrnsaverproto.pc
+/usr/share/doc
+/usr/share/doc/x11proto-scrnsaver-dev
+/usr/share/doc/x11proto-scrnsaver-dev/copyright
+/usr/share/doc/x11proto-scrnsaver-dev/saver.html
+/usr/share/doc/x11proto-scrnsaver-dev/saver.txt.gz
+/usr/share/doc/x11proto-scrnsaver-dev/changelog.Debian.gz
+/usr/include
+/usr/include/X11
+/usr/include/X11/extensions
+/usr/include/X11/extensions/saverproto.h
+/usr/include/X11/extensions/saver.h

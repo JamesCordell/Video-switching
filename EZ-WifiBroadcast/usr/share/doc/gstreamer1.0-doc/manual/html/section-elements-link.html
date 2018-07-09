@@ -1,0 +1,68 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Linking elements</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-elements.html" title="Chapter 5. Elements"><link rel="prev" href="section-elements-factories.html" title="More about element factories"><link rel="next" href="section-elements-states.html" title="Element States"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Linking elements</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-elements-factories.html">Prev</a> </td><th width="60%" align="center">Chapter 5. Elements</th><td width="20%" align="right"> <a accesskey="n" href="section-elements-states.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-elements-link"></a>Linking elements</h2></div></div></div><p>
+      By linking a source element with zero or more filter-like
+      elements and finally a sink element, you set up a media
+      pipeline. Data will flow through the elements. This is the
+      basic concept of media handling in <span class="application">GStreamer</span>.
+    </p><div class="figure-float" style="float: left;"><div class="figure"><a name="section-link"></a><p class="title"><b>Figure 5.5. Visualisation of three linked elements</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/linked-elements.png" width="405" alt="Visualisation of three linked elements"></div></div></div><br class="figure-break"></div><p>
+      By linking these three elements, we have created a very simple
+      chain of elements. The effect of this will be that the output of
+      the source element (<span class="quote">“<span class="quote">element1</span>”</span>) will be used as input
+      for the filter-like element (<span class="quote">“<span class="quote">element2</span>”</span>). The
+      filter-like element will do something with the data and send the
+      result to the final sink element (<span class="quote">“<span class="quote">element3</span>”</span>).
+    </p><p>
+      Imagine the above graph as a simple Ogg/Vorbis audio decoder. The
+      source is a disk source which reads the file from disc. The second
+      element is a Ogg/Vorbis audio decoder. The sink element is your
+      soundcard, playing back the decoded audio data. We will use this
+      simple graph to construct an Ogg/Vorbis player later in this manual.
+    </p><p>
+      In code, the above graph is written like this:
+    </p><pre class="programlisting">
+#include &lt;gst/gst.h&gt;
+
+int
+main (int   argc,
+      char *argv[])
+{
+  GstElement *pipeline;
+  GstElement *source, *filter, *sink;
+
+  /* init */
+  gst_init (&amp;argc, &amp;argv);
+
+  /* create pipeline */
+  pipeline = gst_pipeline_new ("my-pipeline");
+
+  /* create elements */
+  source = gst_element_factory_make ("fakesrc", "source");
+  filter = gst_element_factory_make ("identity", "filter");
+  sink = gst_element_factory_make ("fakesink", "sink");
+
+  /* must add elements to pipeline before linking them */
+  gst_bin_add_many (GST_BIN (pipeline), source, filter, sink, NULL);
+
+  /* link */
+  if (!gst_element_link_many (source, filter, sink, NULL)) {
+    g_warning ("Failed to link elements!");
+  }
+
+[..]
+
+}
+    </pre><p>
+      For more specific behaviour, there are also the functions
+      <code class="function">gst_element_link ()</code> and
+      <code class="function">gst_element_link_pads ()</code>. You can also obtain
+      references to individual pads and link those using various
+      <code class="function">gst_pad_link_* ()</code> functions. See the API
+      references for more details.
+    </p><p>
+      Important: you must add elements to a bin or pipeline
+      <span class="emphasis"><em>before</em></span> linking them, since adding an element to
+      a bin will disconnect any already existing links. Also, you cannot
+      directly link elements that are not in the same bin or pipeline; if
+      you want to link elements or pads at different hierarchy levels, you
+      will need to use ghost pads (more about ghost pads later,
+      see <a class="xref" href="section-pads-ghost.html" title="Ghost pads">the section called “Ghost pads”</a>).
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-elements-factories.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-elements.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-elements-states.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">More about element factories </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Element States</td></tr></table></div></body></html>

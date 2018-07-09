@@ -1,0 +1,28 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 26. Writing a Manager</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-other.html" title="Part IV. Creating special element types"><link rel="prev" href="chapter-other-ntoone.html" title="Chapter 25. Writing a N-to-1 Element or Muxer"><link rel="next" href="part-appendix.html" title="Part V. Appendices"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 26. Writing a Manager</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-other-ntoone.html">Prev</a> </td><th width="60%" align="center">Part IV. Creating special element types</th><td width="20%" align="right"> <a accesskey="n" href="part-appendix.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-other-manager"></a>Chapter 26. Writing a Manager</h2></div></div></div><p>
+    Managers are elements that add a function or unify the function of
+    another (series of) element(s). Managers are generally a
+    <code class="classname">GstBin</code> with one or more ghostpads. Inside them
+    is/are the actual element(s) that matters. There is several cases where
+    this is useful. For example:
+  </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+        To add support for private events with custom event handling to
+        another element.
+      </p></li><li class="listitem"><p>
+        To add support for custom pad <code class="function">_query ()</code>
+        or <code class="function">_convert ()</code> handling to another element.
+      </p></li><li class="listitem"><p>
+        To add custom data handling before or after another element's data
+        handler function (generally its <code class="function">_chain ()</code>
+        function).
+      </p></li><li class="listitem"><p>
+        To embed an element, or a series of elements, into something that
+        looks and works like a simple element to the outside world. This
+        is particular handy for implementing sources and sink elements with
+        multiple pads.
+      </p></li></ul></div><p>
+    Making a manager is about as simple as it gets. You can derive from a
+    <code class="classname">GstBin</code>, and in most cases, you can embed the
+    required elements in the <code class="function">_init ()</code> already, including
+    setup of ghostpads. If you need any custom data handlers, you can connect
+    signals or embed a second element which you control.
+  </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-other-ntoone.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-other.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="part-appendix.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 25. Writing a N-to-1 Element or Muxer </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Part V. Appendices</td></tr></table></div></body></html>

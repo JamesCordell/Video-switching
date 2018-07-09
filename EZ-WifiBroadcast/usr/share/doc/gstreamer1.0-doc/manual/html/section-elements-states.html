@@ -1,0 +1,67 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Element States</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-elements.html" title="Chapter 5. Elements"><link rel="prev" href="section-elements-link.html" title="Linking elements"><link rel="next" href="chapter-bins.html" title="Chapter 6. Bins"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Element States</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-elements-link.html">Prev</a> </td><th width="60%" align="center">Chapter 5. Elements</th><td width="20%" align="right"> <a accesskey="n" href="chapter-bins.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-elements-states"></a>Element States</h2></div></div></div><p>
+      After being created, an element will not actually perform any actions
+      yet. You need to change elements state to make it do something.
+      <span class="application">GStreamer</span> knows four element states, each with a very specific
+      meaning. Those four states are:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          <code class="classname">GST_STATE_NULL</code>: this is the default state.
+          No resources are allocated in this state, so, transitioning to it
+          will free all resources. The element must be in this state when
+          its refcount reaches 0 and it is freed.
+        </p></li><li class="listitem"><p>
+          <code class="classname">GST_STATE_READY</code>: in the ready state, an
+          element has allocated all of its global resources, that is,
+          resources that can be kept within streams. You can think about
+          opening devices, allocating buffers and so on. However, the
+          stream is not opened in this state, so the stream positions is
+          automatically zero. If a stream was previously opened, it should
+          be closed in this state, and position, properties and such should
+          be reset.
+        </p></li><li class="listitem"><p>
+          <code class="classname">GST_STATE_PAUSED</code>: in this state, an
+          element has opened the stream, but is not actively processing
+          it. An element is allowed to modify a stream's position, read
+          and process data and such to prepare for playback as soon as
+          state is changed to PLAYING, but it is <span class="emphasis"><em>not</em></span>
+          allowed to play the data which would make the clock run.
+          In summary, PAUSED is the same as PLAYING but without a running
+          clock.
+         </p><p>
+          Elements going into the PAUSED state should prepare themselves
+          for moving over to the PLAYING state as soon as possible. Video
+          or audio outputs would, for example, wait for data to arrive and
+          queue it so they can play it right after the state change. Also,
+          video sinks can already play the first frame (since this does
+          not affect the clock yet). Autopluggers could use this same
+          state transition to already plug together a pipeline. Most other
+          elements, such as codecs or filters, do not need to explicitly
+          do anything in this state, however.
+        </p></li><li class="listitem"><p>
+          <code class="classname">GST_STATE_PLAYING</code>: in the PLAYING state,
+          an element does exactly the same as in the PAUSED state, except
+          that the clock now runs.
+        </p></li></ul></div><p>
+      You can change the state of an element using the function
+      <code class="function">gst_element_set_state ()</code>. If you set an element
+      to another state, <span class="application">GStreamer</span> will internally traverse all intermediate
+      states. So if you set an element from NULL to PLAYING, <span class="application">GStreamer</span>
+      will internally set the element to READY and PAUSED in between.
+    </p><p>
+      When moved to <code class="classname">GST_STATE_PLAYING</code>, pipelines
+      will process data automatically. They do not need to be iterated in
+      any form. Internally, <span class="application">GStreamer</span> will start threads that take this
+      task on to them. <span class="application">GStreamer</span> will also take care of switching
+      messages from the pipeline's thread into the application's own
+      thread, by using a <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/stable/gstreamer/html/GstBus.html" target="_top"><code class="classname">GstBus</code></a>. See
+      <a class="xref" href="chapter-bus.html" title="Chapter 7. Bus">Chapter 7, <i>Bus</i></a> for details.
+    </p><p>
+      When you set a bin or pipeline to a certain target state, it will usually
+      propagate the state change to all elements within the bin or pipeline
+      automatically, so it's usually only necessary to set the state of the
+      top-level pipeline to start up the pipeline or shut it down. However,
+      when adding elements dynamically to an already-running pipeline, e.g.
+      from within a "pad-added" signal callback, you
+      need to set it to the desired target state yourself using
+      <code class="function">gst_element_set_state ()</code> or
+      <code class="function">gst_element_sync_state_with_parent ()</code>.
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-elements-link.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-elements.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-bins.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Linking elements </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 6. Bins</td></tr></table></div></body></html>

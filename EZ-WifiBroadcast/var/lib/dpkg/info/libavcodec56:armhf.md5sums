@@ -1,0 +1,8 @@
+c50c03308a97505f0d98396e786c47ca  usr/lib/arm-linux-gnueabihf/libavcodec.so.56.1.0
+91b6342a13567d49a7d2d6464617f2c9  usr/lib/arm-linux-gnueabihf/neon/vfp/libavcodec.so.56.1.0
+7906be10ad1a6590b1828dca02678003  usr/share/doc/libavcodec56/NEWS.Debian.gz
+eb421fa8d2ca9e455e705cfcfc4d2dde  usr/share/doc/libavcodec56/changelog.Debian.gz
+6e8bbc3e59f3460fd5fd9ec88e6500d9  usr/share/doc/libavcodec56/changelog.gz
+bd6217c476b2a95f7f773daccbcbbc36  usr/share/doc/libavcodec56/codecs-armhf.txt.gz
+323125fc98bc748defccc624b74fd752  usr/share/doc/libavcodec56/copyright
+954f773f7f877dcc577c99eac4e54808  usr/share/lintian/overrides/libavcodec56

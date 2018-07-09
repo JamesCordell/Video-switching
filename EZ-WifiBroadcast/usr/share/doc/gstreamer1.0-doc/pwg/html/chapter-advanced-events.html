@@ -1,0 +1,70 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 17. Events: Seeking, Navigation and More</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-advanced.html" title="Part III. Advanced Filter Concepts"><link rel="prev" href="section-types-definitions.html" title="List of Defined Types"><link rel="next" href="section-events-upstream.html" title="Upstream events"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 17. Events: Seeking, Navigation and More</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-types-definitions.html">Prev</a> </td><th width="60%" align="center">Part III. Advanced Filter Concepts</th><td width="20%" align="right"> <a accesskey="n" href="section-events-upstream.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-advanced-events"></a>Chapter 17. Events: Seeking, Navigation and More</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-advanced-events.html#section-events-downstream">Downstream events</a></span></dt><dt><span class="sect1"><a href="section-events-upstream.html">Upstream events</a></span></dt><dt><span class="sect1"><a href="section-events-definitions.html">All Events Together</a></span></dt><dd><dl><dt><span class="sect2"><a href="section-events-definitions.html#section-events-stream-start">Stream Start</a></span></dt><dt><span class="sect2"><a href="section-events-definitions.html#section-events-caps">Caps</a></span></dt><dt><span class="sect2"><a href="section-events-definitions.html#section-events-segment">Segment</a></span></dt><dt><span class="sect2"><a href="section-events-definitions.html#section-events-tag">Tag (metadata)</a></span></dt><dt><span class="sect2"><a href="section-events-definitions.html#section-events-eos">End of Stream (EOS)</a></span></dt><dt><span class="sect2"><a href="section-events-definitions.html#section-events-toc">Table Of Contents</a></span></dt><dt><span class="sect2"><a href="section-events-definitions.html#section-events-gap">Gap</a></span></dt><dt><span class="sect2"><a href="section-events-definitions.html#section-events-flush-start">Flush Start</a></span></dt><dt><span class="sect2"><a href="section-events-definitions.html#section-events-flush-stop">Flush Stop</a></span></dt><dt><span class="sect2"><a href="section-events-definitions.html#section-events-qos">Quality Of Service (QOS)</a></span></dt><dt><span class="sect2"><a href="section-events-definitions.html#section-events-seek">Seek Request</a></span></dt><dt><span class="sect2"><a href="section-events-definitions.html#section-events-nav">Navigation</a></span></dt></dl></dd></dl></div><p>
+    There are many different event types but only two ways they can travel in
+    the pipeline: downstream or upstream. It is very important to understand
+    how both of these methods work because if one element in the pipeline is not
+    handling them correctly the whole event system of the pipeline is broken.
+    We will try to explain here how these methods work and how elements are 
+    supposed to implement them.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-events-downstream"></a>Downstream events</h2></div></div></div><p>
+      Downstream events are received through the sink pad's event handler,
+      as set using <code class="function">gst_pad_set_event_function ()</code> when
+      the pad was created.
+    </p><p>
+      Downstream events can travel in two ways: they can be in-band (serialised
+      with the buffer flow) or out-of-band (travelling through the pipeline
+      instantly, possibly not in the same thread as the streaming thread that
+      is processing the buffers, skipping ahead of buffers being processed
+      or queued in the pipeline). The most common downstream events
+      (SEGMENT, CAPS, TAG, EOS) are all serialised with the buffer flow.
+    </p><p>
+      Here is a typical event function:
+    </p><pre class="programlisting">
+static gboolean
+gst_my_filter_sink_event (GstPad  *pad, GstObject * parent, GstEvent * event)
+{
+  GstMyFilter *filter;
+  gboolean ret;
+
+  filter = GST_MY_FILTER (parent);
+  ...
+
+  switch (GST_EVENT_TYPE (event)) {
+    case GST_EVENT_SEGMENT:
+      /* maybe save and/or update the current segment (e.g. for output
+       * clipping) or convert the event into one in a different format
+       * (e.g. BYTES to TIME) or drop it and set a flag to send a segment
+       * event in a different format later */
+      ret = gst_pad_push_event (filter-&gt;src_pad, event);
+      break;
+    case GST_EVENT_EOS:
+      /* end-of-stream, we should close down all stream leftovers here */
+      gst_my_filter_stop_processing (filter);
+      ret = gst_pad_push_event (filter-&gt;src_pad, event);
+      break;
+    case GST_EVENT_FLUSH_STOP:
+      gst_my_filter_clear_temporary_buffers (filter);
+      ret = gst_pad_push_event (filter-&gt;src_pad, event);
+      break;      
+    default:
+      ret = gst_pad_event_default (pad, parent, event);
+      break;
+  }
+
+  ...
+  return ret;
+}
+    </pre><p>
+    If your element is chain-based, you will almost always have to implement
+    a sink event function, since that is how you are notified about
+    segments, caps and the end of the stream.
+  </p><p>
+    If your element is exclusively loop-based, you may or may not want a
+    sink event function (since the element is driving the pipeline it will
+    know the length of the stream in advance or be notified by the flow
+    return value of <code class="function">gst_pad_pull_range()</code>. In some cases
+    even loop-based element may receive events from upstream though (for
+    example audio decoders with an id3demux or apedemux element in front of
+    them, or demuxers that are being fed input from sources that send
+    additional information about the stream in custom events, as DVD sources
+    do).
+  </p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-types-definitions.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-advanced.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-events-upstream.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">List of Defined Types </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Upstream events</td></tr></table></div></body></html>

@@ -1,0 +1,44 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Element metadata</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-building-boiler.html" title="Chapter 3. Constructing the Boilerplate"><link rel="prev" href="section-boiler-examine.html" title="Examining the Basic Code"><link rel="next" href="section-boiler-padtemplates.html" title="GstStaticPadTemplate"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Element metadata</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-boiler-examine.html">Prev</a> </td><th width="60%" align="center">Chapter 3. Constructing the Boilerplate</th><td width="20%" align="right"> <a accesskey="n" href="section-boiler-padtemplates.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-boiler-details"></a>Element metadata</h2></div></div></div><p>
+      The Element metadata provides extra element information. It is configured
+      with <code class="function">gst_element_class_set_metadata</code> or
+      <code class="function">gst_element_class_set_static_metadata</code> which takes the
+      following parameters:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+        A long, English, name for the element.
+      </p></li><li class="listitem"><p>
+        The type of the element, see the docs/design/draft-klass.txt document
+        in the GStreamer core source tree for details and examples.
+      </p></li><li class="listitem"><p>
+        A brief description of the purpose of the element.
+      </p></li><li class="listitem"><p>
+        The name of the author of the element, optionally followed by a contact
+        email address in angle brackets.
+      </p></li></ul></div><p>
+      For example:
+    </p><pre class="programlisting">
+gst_element_class_set_static_metadata (klass,
+  "An example plugin",
+  "Example/FirstExample",
+  "Shows the basic structure of a plugin",
+  "your name &lt;your.name@your.isp&gt;");
+    </pre><p>
+      The element details are registered with the plugin during
+      the <code class="function">_class_init ()</code> function, which is part of
+      the GObject system. The <code class="function">_class_init ()</code> function
+      should be set for this GObject in the function where you register
+      the type with GLib.
+    </p><pre class="programlisting">
+static void
+gst_my_filter_class_init (GstMyFilterClass * klass)
+{
+  GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
+
+[..]
+  gst_element_class_set_static_metadata (element_klass,
+    "An example plugin",
+    "Example/FirstExample",
+    "Shows the basic structure of a plugin",
+    "your name &lt;your.name@your.isp&gt;");
+
+}
+    </pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-boiler-examine.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-building-boiler.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-boiler-padtemplates.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Examining the Basic Code </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> GstStaticPadTemplate</td></tr></table></div></body></html>

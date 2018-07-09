@@ -1,0 +1,129 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Capabilities of a pad</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-pads.html" title="Chapter 8. Pads and capabilities"><link rel="prev" href="chapter-pads.html" title="Chapter 8. Pads and capabilities"><link rel="next" href="section-caps-api.html" title="What capabilities are used for"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Capabilities of a pad</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-pads.html">Prev</a> </td><th width="60%" align="center">Chapter 8. Pads and capabilities</th><td width="20%" align="right"> <a accesskey="n" href="section-caps-api.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-caps"></a>Capabilities of a pad</h2></div></div></div><p> 
+      Since the pads play a very important role in how the element is
+      viewed by the outside world, a mechanism is implemented to describe
+      the data that can flow or currently flows through the pad by using
+      capabilities. Here, we will briefly describe what capabilities are
+      and how to use them, enough to get an understanding of the concept.
+      For an in-depth look into capabilities and a list of all capabilities
+      defined in <span class="application">GStreamer</span>, see the <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/pwg/html/index.html" target="_top">Plugin
+      Writers Guide</a>.
+    </p><p>
+      Capabilities are attached to pad templates and to pads. For pad
+      templates, it will describe the types of media that may stream
+      over a pad created from this template. For pads, it can either
+      be a list of possible caps (usually a copy of the pad template's
+      capabilities), in which case the pad is not yet negotiated, or it
+      is the type of media that currently streams over this pad, in
+      which case the pad has been negotiated already.
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-caps-structure"></a>Dissecting capabilities</h3></div></div></div><p>
+        A pad's capabilities are described in a <code class="classname">GstCaps</code>
+        object. Internally, a <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/stable/gstreamer/html/gstreamer-GstCaps.html" target="_top"><code class="classname">GstCaps</code></a>
+        will contain one or more <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/stable/gstreamer/html/gstreamer-GstStructure.html" target="_top"><code class="classname">GstStructure</code></a>
+        that will describe one media type. A negotiated pad will have
+        capabilities set that contain exactly <span class="emphasis"><em>one</em></span>
+        structure. Also, this structure will contain only
+        <span class="emphasis"><em>fixed</em></span> values. These constraints are not
+        true for unnegotiated pads or pad templates.
+      </p><p>
+        As an example, below is a dump of the capabilities of the
+        <span class="quote">“<span class="quote">vorbisdec</span>”</span> element, which you will get by running
+        <span class="command"><strong>gst-inspect vorbisdec</strong></span>. You will see two pads:
+        a source and a sink pad. Both of these pads are always available,
+        and both have capabilities attached to them. The sink pad will
+        accept vorbis-encoded audio data, with the media type
+        <span class="quote">“<span class="quote">audio/x-vorbis</span>”</span>. The source pad will be used
+        to send raw (decoded) audio samples to the next element, with
+        a raw audio media type (in this case,
+	<span class="quote">“<span class="quote">audio/x-raw</span>”</span>).  The source pad will also
+        contain properties for the audio samplerate and the amount of
+        channels, plus some more that you don't need to worry about
+        for now.
+      </p><pre class="programlisting">
+
+Pad Templates:
+  SRC template: 'src'
+    Availability: Always
+    Capabilities:
+      audio/x-raw
+                 format: F32LE
+                   rate: [ 1, 2147483647 ]
+               channels: [ 1, 256 ]
+
+  SINK template: 'sink'
+    Availability: Always
+    Capabilities:
+      audio/x-vorbis
+      </pre></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-caps-props"></a>Properties and values</h3></div></div></div><p> 
+        Properties are used to describe extra information for 
+        capabilities. A property consists of a key (a string) and
+        a value. There are different possible value types that can be used:
+      </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+            Basic types, this can be pretty much any
+            <code class="classname">GType</code> registered with Glib. Those
+            properties indicate a specific, non-dynamic value for this
+            property. Examples include:
+          </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>
+                An integer value (<code class="classname">G_TYPE_INT</code>):
+                the property has this exact value. 
+              </p></li><li class="listitem"><p>
+    	        A boolean value (<code class="classname">G_TYPE_BOOLEAN</code>):
+                the property is either TRUE or FALSE.
+              </p></li><li class="listitem"><p>
+                A float value (<code class="classname">G_TYPE_FLOAT</code>):
+                the property has this exact floating point value.
+              </p></li><li class="listitem"><p>
+                A string value (<code class="classname">G_TYPE_STRING</code>):
+                the property contains a UTF-8 string.
+              </p></li><li class="listitem"><p>
+                A fraction value (<code class="classname">GST_TYPE_FRACTION</code>):
+                contains a fraction expressed by an integer numerator and
+                denominator.
+              </p></li></ul></div></li><li class="listitem"><p>
+            Range types are <code class="classname">GType</code>s registered by
+            <span class="application">GStreamer</span> to indicate a range of possible values. They are
+            used for indicating allowed audio samplerate values or
+            supported video sizes. The two types defined in <span class="application">GStreamer</span>
+            are:
+          </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p>
+                An integer range value
+                (<code class="classname">GST_TYPE_INT_RANGE</code>): the property
+                denotes a range of possible integers, with a lower and an
+                upper boundary. The <span class="quote">“<span class="quote">vorbisdec</span>”</span> element, for
+                example, has a rate property that can be between 8000 and
+                50000.
+              </p></li><li class="listitem"><p>
+    	        A float range value
+                (<code class="classname">GST_TYPE_FLOAT_RANGE</code>): the property
+                denotes a range of possible floating point values, with a
+                lower and an upper boundary.
+              </p></li><li class="listitem"><p>
+    	        A fraction range value
+                (<code class="classname">GST_TYPE_FRACTION_RANGE</code>): the property
+                denotes a range of possible fraction values, with a
+                lower and an upper boundary.
+              </p></li></ul></div></li><li class="listitem"><p>
+    	    A list value (<code class="classname">GST_TYPE_LIST</code>): the
+            property can take any value from a list of basic values
+            given in this list.
+          </p><p>
+            Example: caps that express that either
+            a sample rate of 44100 Hz and a sample rate of 48000 Hz
+            is supported would use a list of integer values, with
+            one value being 44100 and one value being 48000.
+          </p></li><li class="listitem"><p>
+            An array value (<code class="classname">GST_TYPE_ARRAY</code>): the
+            property is an array of values. Each value in the array is a
+            full value on its own, too. All values in the array should be
+            of the same elementary type. This means that an array can
+            contain any combination of integers, lists of integers, integer
+            ranges together, and the same for floats or strings, but it can
+            not contain both floats and ints at the same time.
+          </p><p>
+            Example: for audio where there are more than two channels involved
+            the channel layout needs to be specified (for one and two channel
+            audio the channel layout is implicit unless stated otherwise in the
+            caps). So the channel layout would be an array of integer enum
+            values where each enum value represents a loudspeaker position.
+            Unlike a <code class="classname">GST_TYPE_LIST</code>, the values in an
+            array will be interpreted as a whole.
+          </p></li></ul></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-pads.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-pads.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-caps-api.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 8. Pads and capabilities </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> What capabilities are used for</td></tr></table></div></body></html>

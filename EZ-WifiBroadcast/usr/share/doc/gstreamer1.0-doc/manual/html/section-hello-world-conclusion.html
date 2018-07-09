@@ -1,0 +1,19 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Conclusion</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-helloworld.html" title="Chapter 10. Your first application"><link rel="prev" href="section-helloworld-compilerun.html" title="Compiling and Running helloworld.c"><link rel="next" href="part-advanced.html" title="Part III. Advanced GStreamer concepts"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Conclusion</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-helloworld-compilerun.html">Prev</a> </td><th width="60%" align="center">Chapter 10. Your first application</th><td width="20%" align="right"> <a accesskey="n" href="part-advanced.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-hello-world-conclusion"></a>Conclusion</h2></div></div></div><p>
+      This concludes our first example. As you see, setting up a pipeline
+      is very low-level but powerful. You will see later in this manual how
+      you can create a more powerful media player with even less effort
+      using higher-level interfaces. We will discuss all that in <a class="xref" href="part-highlevel.html" title="Part IV. Higher-level interfaces for GStreamer applications">Part IV, “Higher-level interfaces for <span class="application">GStreamer</span> applications”</a>. We will first, however, go more in-depth
+      into more advanced <span class="application">GStreamer</span> internals.
+    </p><p>
+      It should be clear from the example that we can very easily replace
+      the <span class="quote">“<span class="quote">filesrc</span>”</span> element with some other element that
+      reads data from a network, or some other data source element that
+      is better integrated with your desktop environment. Also, you can
+      use other decoders and parsers/demuxers to support other media types. You
+      can use another audio sink if you're not running Linux, but Mac OS X,
+      Windows or FreeBSD, or you can instead use a filesink to write audio
+      files to disk instead of playing them back. By using an audio card
+      source, you can even do audio capture instead of playback. All this
+      shows the reusability of <span class="application">GStreamer</span> elements, which is its greatest
+      advantage.
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-helloworld-compilerun.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-helloworld.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="part-advanced.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Compiling and Running helloworld.c </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Part III. Advanced <span class="application">GStreamer</span> concepts</td></tr></table></div></body></html>

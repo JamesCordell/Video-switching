@@ -1,0 +1,9 @@
+bf796d95aeb493b6fb537e2fb56dc4ec  lib/udev/inputattach
+b68e29c448253986862285aad0cbeee7  lib/udev/rules.d/60-inputattach.rules
+a351bd5aaf9c09c155c37135f9a33854  usr/bin/inputattach
+f7b876d8d05c5819e978068d78dbc46b  usr/share/doc/inputattach/NEWS.gz
+0743382f697703145907a92fa73281a7  usr/share/doc/inputattach/README.Debian
+27707399cf3f1eddb7aef25f8dd6b70f  usr/share/doc/inputattach/README.gz
+eeaf34e8e0eafbd66e5cf45ae6339e22  usr/share/doc/inputattach/changelog.Debian.gz
+99402faeff521a5bf9e320254548a19a  usr/share/doc/inputattach/copyright
+3f06d3cd2cbb49a2cf302fd23500b3b8  usr/share/man/man1/inputattach.1.gz

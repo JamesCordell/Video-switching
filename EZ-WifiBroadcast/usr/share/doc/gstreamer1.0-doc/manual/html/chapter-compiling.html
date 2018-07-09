@@ -1,0 +1,64 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 22. Compiling</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="part-appendices.html" title="Part V. Appendices"><link rel="prev" href="section-programs-gst-inspect.html" title="gst-inspect"><link rel="next" href="chapter-checklist-element.html" title="Chapter 23. Things to check when writing an application"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 22. Compiling</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-programs-gst-inspect.html">Prev</a> </td><th width="60%" align="center">Part V. Appendices</th><td width="20%" align="right"> <a accesskey="n" href="chapter-checklist-element.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-compiling"></a>Chapter 22. Compiling</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-compiling.html#section-compiling-embedding">Embedding static elements in your application</a></span></dt></dl></div><p>
+    This section talks about the different things you can do when building
+    and shipping your applications and plugins.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-compiling-embedding"></a>Embedding static elements in your application</h2></div></div></div><p>
+      The <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/pwg/html/index.html" target="_top">Plugin
+      Writer's Guide</a> describes in great detail how to write elements
+      for the <span class="application">GStreamer</span> framework. In this section, we will solely discuss
+      how to embed such elements statically in your application. This can be
+      useful for application-specific elements that have no use elsewhere in
+      <span class="application">GStreamer</span>.
+    </p><p>
+      Dynamically loaded plugins contain a structure that's defined using
+      <code class="function">GST_PLUGIN_DEFINE ()</code>. This structure is loaded
+      when the plugin is loaded by the <span class="application">GStreamer</span> core. The structure
+      contains an initialization function (usually called
+      <code class="function">plugin_init</code>) that will be called right after that.
+      It's purpose is to register the elements provided by the plugin with
+      the <span class="application">GStreamer</span> framework. 
+      If you want to embed elements directly in
+      your application, the only thing you need to do is to replace
+	  <code class="function">GST_PLUGIN_DEFINE ()</code> with a call to
+          <code class="function">gst_plugin_register_static ()</code>. As soon as you
+      call <code class="function">gst_plugin_register_static ()</code>, the elements
+      will from then on be available like any other element, without them
+      having to be dynamically loadable libraries. In the example below, you
+      would be able to call <code class="function">gst_element_factory_make
+      ("my-element-name", "some-name")</code> to create an instance of the
+      element.
+    </p><pre class="programlisting">
+
+/*
+ * Here, you would write the actual plugin code.
+ */
+
+[..]
+
+static gboolean
+register_elements (GstPlugin *plugin)
+{
+  return gst_element_register (plugin, "my-element-name",
+			       GST_RANK_NONE, MY_PLUGIN_TYPE);
+}
+
+static
+my_code_init (void)
+{
+  ...
+
+  gst_plugin_register_static (
+    GST_VERSION_MAJOR,
+    GST_VERSION_MINOR,
+    "my-private-plugins",
+    "Private elements of my application",
+    register_elements,
+    VERSION,
+    "LGPL",
+    "my-application-source",
+    "my-application",
+    "http://www.my-application.net/")
+
+  ...
+}
+
+    </pre></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-programs-gst-inspect.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-appendices.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-checklist-element.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"><span class="command"><strong>gst-inspect</strong></span> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 23. Things to check when writing an application</td></tr></table></div></body></html>

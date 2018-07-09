@@ -1,0 +1,5 @@
+09859f9880f29f9ca2c5778e0bc92151  usr/include/xcb/present.h
+a0566f3bfc81e488b78799306a0ee06d  usr/lib/arm-linux-gnueabihf/libxcb-present.a
+23d3fc5d052cc724ca9696961f7d14b1  usr/lib/arm-linux-gnueabihf/pkgconfig/xcb-present.pc
+6b9a2dbb0f848de8eb0b138ef4066d09  usr/share/doc/libxcb-present-dev/changelog.Debian.gz
+360fadb0d222af6607a189d435e3a9f3  usr/share/doc/libxcb-present-dev/copyright

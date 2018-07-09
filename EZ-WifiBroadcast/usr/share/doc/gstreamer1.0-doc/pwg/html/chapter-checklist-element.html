@@ -1,0 +1,31 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 27. Things to check when writing an element</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-appendix.html" title="Part V. Appendices"><link rel="prev" href="part-appendix.html" title="Part V. Appendices"><link rel="next" href="section-checklist-debug.html" title="Debugging"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 27. Things to check when writing an element</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="part-appendix.html">Prev</a> </td><th width="60%" align="center">Part V. Appendices</th><td width="20%" align="right"> <a accesskey="n" href="section-checklist-debug.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-checklist-element"></a>Chapter 27. Things to check when writing an element</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-checklist-element.html#section-checklist-states">About states</a></span></dt><dt><span class="sect1"><a href="section-checklist-debug.html">Debugging</a></span></dt><dt><span class="sect1"><a href="section-checklist-query.html">Querying, events and the like</a></span></dt><dt><span class="sect1"><a href="section-checklist-testing.html">Testing your element</a></span></dt></dl></div><p>
+    This chapter contains a fairly random selection of things to take care
+    of when writing an element. It's up to you how far you're going to stick
+    to those guidelines. However, keep in mind that when you're writing an
+    element and hope for it to be included in the mainstream <span class="application">GStreamer</span>
+    distribution, it <span class="emphasis"><em>has to</em></span> meet those requirements.
+    As far as possible, we will try to explain why those requirements are
+    set.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-checklist-states"></a>About states</h2></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Make sure the state of an element gets reset when going to
+          <code class="classname">NULL</code>. Ideally, this should set all
+          object properties to their original state. This function
+          should also be called from _init.
+        </p></li><li class="listitem"><p>
+          Make sure an element forgets <span class="emphasis"><em>everything</em></span>
+          about its contained stream when going from
+          <code class="classname">PAUSED</code> to <code class="classname">READY</code>. In
+          <code class="classname">READY</code>, all stream states are reset. An
+          element that goes from <code class="classname">PAUSED</code> to
+          <code class="classname">READY</code> and back to
+          <code class="classname">PAUSED</code> should start reading the
+          stream from the start again.
+        </p></li><li class="listitem"><p>
+          People that use <span class="command"><strong>gst-launch</strong></span> for testing have
+          the tendency to not care about cleaning up. This is
+          <span class="emphasis"><em>wrong</em></span>. An element should be tested using
+          various applications, where testing not only means to <span class="quote">“<span class="quote">make
+          sure it doesn't crash</span>”</span>, but also to test for memory leaks
+          using tools such as <span class="command"><strong>valgrind</strong></span>. Elements have to
+          be reusable in a pipeline after having been reset.
+        </p></li></ul></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="part-appendix.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-appendix.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-checklist-debug.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Part V. Appendices </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Debugging</td></tr></table></div></body></html>

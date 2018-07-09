@@ -1,0 +1,5 @@
+2de17bdeb3054ee1b418c8e721ae85df  usr/include/xcb/xfixes.h
+8ba40c8b39fbb39af2746d6495600654  usr/lib/arm-linux-gnueabihf/libxcb-xfixes.a
+0bdbb08dddf331e0843615119ef22b02  usr/lib/arm-linux-gnueabihf/pkgconfig/xcb-xfixes.pc
+6b9a2dbb0f848de8eb0b138ef4066d09  usr/share/doc/libxcb-xfixes0-dev/changelog.Debian.gz
+360fadb0d222af6607a189d435e3a9f3  usr/share/doc/libxcb-xfixes0-dev/copyright

@@ -1,0 +1,28 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Communication</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-intro-basics.html" title="Chapter 3. Foundations"><link rel="prev" href="section-intro-basics-bins.html" title="Bins and pipelines"><link rel="next" href="part-building.html" title="Part II. Building an Application"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Communication</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-intro-basics-bins.html">Prev</a> </td><th width="60%" align="center">Chapter 3. Foundations</th><td width="20%" align="right"> <a accesskey="n" href="part-building.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-intro-basics-communication"></a>Communication</h2></div></div></div><p>
+      <span class="application">GStreamer</span> provides several mechanisms for communication and data exchange
+      between the <span class="emphasis"><em>application</em></span> and the <span class="emphasis"><em>pipeline</em></span>.
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          <span class="emphasis"><em>buffers</em></span> are objects for passing streaming data
+          between elements in the pipeline. Buffers always travel from sources
+          to sinks (downstream).
+        </p></li><li class="listitem"><p>
+          <span class="emphasis"><em>events</em></span> are objects sent between elements or from
+          the application to elements. Events can travel upstream and downstream.
+          Downstream events can be synchronised to the data flow.
+        </p></li><li class="listitem"><p>
+          <span class="emphasis"><em>messages</em></span> are objects posted by elements on
+          the pipeline's message bus, where they will be held for collection
+          by the application. Messages can be intercepted synchronously from
+          the streaming thread context of the element posting the message, but
+          are usually handled asynchronously by the application from the
+          application's main thread. Messages are used to transmit information
+          such as errors, tags, state changes, buffering state, redirects etc.
+          from elements to the application in a thread-safe way.
+        </p></li><li class="listitem"><p>
+          <span class="emphasis"><em>queries</em></span> allow applications to request information
+          such as duration or current playback position from the pipeline.
+          Queries are always answered synchronously. Elements can also use
+          queries to request information from their peer elements (such as the
+          file size or duration). They can be used both ways within a pipeline,
+          but upstream queries are more common.
+        </p></li></ul></div><div class="figure-float" style="float: left;"><div class="figure"><a name="section-communication-img"></a><p class="title"><b>Figure 3.2. <span class="application">GStreamer</span> pipeline with different communication flows</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/communication.png" width="405" alt="GStreamer pipeline with different communication flows"></div></div></div><br class="figure-break"></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-intro-basics-bins.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-intro-basics.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="part-building.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Bins and pipelines </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Part II. Building an Application</td></tr></table></div></body></html>

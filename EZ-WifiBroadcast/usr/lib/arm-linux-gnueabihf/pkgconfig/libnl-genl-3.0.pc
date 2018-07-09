@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib/arm-linux-gnueabihf
+includedir=${prefix}/include
+
+Name: libnl-genl
+Description: Generic Netlink Library
+Version: 3.2.24
+Requires: libnl-3.0
+Libs: -L${libdir} -lnl-genl-3
+Cflags: -I${includedir}/libnl3

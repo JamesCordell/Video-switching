@@ -1,0 +1,6 @@
+59165148d5da85ff0f0cd057accc212a  usr/include/X11/extensions/Xdamage.h
+2997b9d00c490c75883776760b2a10a2  usr/lib/arm-linux-gnueabihf/libXdamage.a
+ed8a5d06f5806e04b7016f3dfa305888  usr/lib/arm-linux-gnueabihf/pkgconfig/xdamage.pc
+6bd86141c29e03393c6f53bded3c3541  usr/share/doc/libxdamage-dev/changelog.Debian.gz
+bfcfd2ef93c8b9d735e128e85f61d07a  usr/share/doc/libxdamage-dev/changelog.gz
+480d64ae546e636068432c106438dcd9  usr/share/doc/libxdamage-dev/copyright

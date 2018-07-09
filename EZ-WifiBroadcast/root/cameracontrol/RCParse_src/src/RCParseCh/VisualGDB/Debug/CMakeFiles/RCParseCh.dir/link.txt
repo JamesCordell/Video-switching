@@ -1,0 +1,1 @@
+/usr/bin/cc -g  -rdynamic CMakeFiles/RCParseCh.dir/RCParseCh.c.o  -o RCParseCh 

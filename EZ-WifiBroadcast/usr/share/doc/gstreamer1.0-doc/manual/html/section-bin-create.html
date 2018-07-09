@@ -1,0 +1,49 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Creating a bin</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="chapter-bins.html" title="Chapter 6. Bins"><link rel="prev" href="chapter-bins.html" title="Chapter 6. Bins"><link rel="next" href="section-bin-custom.html" title="Custom bins"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Creating a bin</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-bins.html">Prev</a> </td><th width="60%" align="center">Chapter 6. Bins</th><td width="20%" align="right"> <a accesskey="n" href="section-bin-custom.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-bin-create"></a>Creating a bin</h2></div></div></div><p>
+      Bins are created in the same way that other elements are created,
+      i.e. using an element factory. There are also convenience functions
+      available (<code class="function">gst_bin_new ()</code> and 
+      <code class="function">gst_pipeline_new ()</code>).
+      To add elements to a bin or remove elements from a
+      bin, you can use <code class="function">gst_bin_add ()</code> and
+      <code class="function">gst_bin_remove ()</code>. Note that the bin that you
+      add an element to will take ownership of that element. If you
+      destroy the bin, the element will be dereferenced with it. If you
+      remove an element from a bin, it will be dereferenced automatically.
+    </p><pre class="programlisting">
+#include &lt;gst/gst.h&gt;
+
+int
+main (int   argc,
+      char *argv[])
+{
+  GstElement *bin, *pipeline, *source, *sink;
+
+  /* init */
+  gst_init (&amp;argc, &amp;argv);
+
+  /* create */
+  pipeline = gst_pipeline_new ("my_pipeline");
+  bin = gst_bin_new ("my_bin");
+  source = gst_element_factory_make ("fakesrc", "source");
+  sink = gst_element_factory_make ("fakesink", "sink");
+
+  /* First add the elements to the bin */
+  gst_bin_add_many (GST_BIN (bin), source, sink, NULL);
+  /* add the bin to the pipeline */
+  gst_bin_add (GST_BIN (pipeline), bin);
+
+  /* link the elements */
+  gst_element_link (source, sink);
+
+[..]
+
+}
+    </pre><p>
+      There are various functions to lookup elements in a bin. The most
+      commonly used are <code class="function">gst_bin_get_by_name ()</code> and
+      <code class="function">gst_bin_get_by_interface ()</code>. You can also
+      iterate over all elements that a bin contains using the function
+      <code class="function">gst_bin_iterate_elements ()</code>. See the API references
+      of <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/stable/gstreamer/html/GstBin.html" target="_top"><code class="classname">GstBin</code></a>
+      for details.
+    </p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-bins.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-bins.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-bin-custom.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 6. Bins </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Custom bins</td></tr></table></div></body></html>

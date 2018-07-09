@@ -1,0 +1,57 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 5. Elements</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="part-building.html" title="Part II. Building an Application"><link rel="prev" href="ch04s02.html" title="The GOption interface"><link rel="next" href="section-elements-create.html" title="Creating a GstElement"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 5. Elements</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch04s02.html">Prev</a> </td><th width="60%" align="center">Part II. Building an Application</th><td width="20%" align="right"> <a accesskey="n" href="section-elements-create.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-elements"></a>Chapter 5. Elements</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-elements.html#section-elements-design">What are elements?</a></span></dt><dd><dl><dt><span class="sect2"><a href="chapter-elements.html#section-elements-src">Source elements</a></span></dt><dt><span class="sect2"><a href="chapter-elements.html#section-elements-filter">Filters, convertors, demuxers, muxers and codecs</a></span></dt><dt><span class="sect2"><a href="chapter-elements.html#section-elements-sink">Sink elements</a></span></dt></dl></dd><dt><span class="sect1"><a href="section-elements-create.html">Creating a <code class="classname">GstElement</code></a></span></dt><dt><span class="sect1"><a href="section-elements-properties.html">Using an element as a <code class="classname">GObject</code></a></span></dt><dt><span class="sect1"><a href="section-elements-factories.html">More about element factories</a></span></dt><dd><dl><dt><span class="sect2"><a href="section-elements-factories.html#section-elements-factories-details">Getting information about an element using a factory</a></span></dt><dt><span class="sect2"><a href="section-elements-factories.html#section-elements-factories-padtemplates">Finding out what pads an element can contain</a></span></dt></dl></dd><dt><span class="sect1"><a href="section-elements-link.html">Linking elements</a></span></dt><dt><span class="sect1"><a href="section-elements-states.html">Element States</a></span></dt></dl></div><p> 
+    The most important object in <span class="application">GStreamer</span> for the application programmer
+    is the <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/stable/gstreamer/html/GstElement.html" target="_top"><code class="classname">GstElement</code></a>
+    object. An element is the basic building block for a media pipeline. All
+    the different high-level components you will use are derived from
+    <code class="classname">GstElement</code>. Every decoder, encoder, demuxer, video
+    or audio output is in fact a <code class="classname">GstElement</code>
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-elements-design"></a>What are elements?</h2></div></div></div><p>
+      For the application programmer, elements are best visualized as black
+      boxes. On the one end, you might put something in, the element does
+      something with it and something else comes out at the other side. For
+      a decoder element, for example, you'd put in encoded data, and the
+      element would output decoded data. In the next chapter (see <a class="xref" href="chapter-pads.html" title="Chapter 8. Pads and capabilities">Pads and capabilities</a>), you will learn more about data input and
+      output in elements, and how you can set that up in your application.
+    </p><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-elements-src"></a>Source elements</h3></div></div></div><p>
+        Source elements generate data for use by a pipeline, for example
+        reading from disk or from a sound card. <a class="xref" href="chapter-elements.html#section-element-srcimg" title="Figure 5.1. Visualisation of a source element">Figure 5.1, “Visualisation of a source element”</a> shows how we will visualise
+        a source element. We always draw a source pad to the right of
+        the element.
+      </p><div class="figure-float" style="float: left;"><div class="figure"><a name="section-element-srcimg"></a><p class="title"><b>Figure 5.1. Visualisation of a source element</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/src-element.png" width="405" alt="Visualisation of a source element"></div></div></div><br class="figure-break"></div><p>
+        Source elements do not accept data, they only generate data. You can
+        see this in the figure because it only has a source pad (on the
+        right). A source pad can only generate data.
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-elements-filter"></a>Filters, convertors, demuxers, muxers and codecs</h3></div></div></div><p>
+        Filters and filter-like elements have both input and outputs pads.
+        They operate on data that they receive on their input (sink) pads,
+        and will provide data on their output (source) pads. Examples of
+        such elements are a volume element (filter), a video scaler
+        (convertor), an Ogg demuxer or a Vorbis decoder.
+      </p><p>
+        Filter-like elements can have any number of source or sink pads. A
+        video demuxer, for example, would have one sink pad and several
+        (1-N) source pads, one for each elementary stream contained in the
+        container format. Decoders, on the other hand, will only have one
+        source and sink pads.
+      </p><div class="figure-float" style="float: left;"><div class="figure"><a name="section-element-filterimg"></a><p class="title"><b>Figure 5.2. Visualisation of a filter element</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/filter-element.png" width="405" alt="Visualisation of a filter element"></div></div></div><br class="figure-break"></div><p>
+        <a class="xref" href="chapter-elements.html#section-element-filterimg" title="Figure 5.2. Visualisation of a filter element">Figure 5.2, “Visualisation of a filter element”</a> shows how we will
+        visualise a filter-like element. This specific element has one source
+        and one sink element. Sink pads, receiving input data, are depicted
+        at the left of the element; source pads are still on the right.
+      </p><div class="figure-float" style="float: left;"><div class="figure"><a name="section-element-multifilterimg"></a><p class="title"><b>Figure 5.3. Visualisation of a filter element with
+	  more than one output pad</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/filter-element-multi.png" width="405" alt="Visualisation of a filter element with more than one output pad"></div></div></div><br class="figure-break"></div><p>
+        <a class="xref" href="chapter-elements.html#section-element-multifilterimg" title="Figure 5.3. Visualisation of a filter element with more than one output pad">Figure 5.3, “Visualisation of a filter element with
+	  more than one output pad”</a> shows another
+        filter-like element, this one having more than one output (source)
+        pad. An example of one such element could, for example, be an Ogg
+        demuxer for an Ogg stream containing both audio and video. One
+        source pad will contain the elementary video stream, another will
+        contain the elementary audio stream. Demuxers will generally fire
+        signals when a new pad is created. The application programmer can
+        then handle the new elementary stream in the signal handler.
+      </p></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="section-elements-sink"></a>Sink elements</h3></div></div></div><p>
+        Sink elements are end points in a media pipeline. They accept 
+        data but do not produce anything. Disk writing, soundcard playback, 
+        and video output would all be implemented by sink elements.
+        <a class="xref" href="chapter-elements.html#section-element-sinkimg" title="Figure 5.4. Visualisation of a sink element">Figure 5.4, “Visualisation of a sink element”</a> shows a sink element.
+      </p><div class="figure-float" style="float: left;"><div class="figure"><a name="section-element-sinkimg"></a><p class="title"><b>Figure 5.4. Visualisation of a sink element</b></p><div class="figure-contents"><div class="mediaobject"><img src="images/sink-element.png" width="405" alt="Visualisation of a sink element"></div></div></div><br class="figure-break"></div></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch04s02.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-building.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-elements-create.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">The GOption interface </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Creating a <code class="classname">GstElement</code></td></tr></table></div></body></html>

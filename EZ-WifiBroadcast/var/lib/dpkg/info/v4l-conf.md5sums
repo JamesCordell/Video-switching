@@ -1,0 +1,9 @@
+dacc8b791c1a87b3d9679d762ab941d9  usr/bin/v4l-conf
+1709e3d880eae754357769f48298e19c  usr/bin/v4l-info
+31deb51b0bed183ff0de7136f57651ca  usr/share/doc/v4l-conf/changelog.Debian.gz
+a5ae4f8e592bc07c05c327c40a919f2c  usr/share/doc/v4l-conf/changelog.gz
+935f3ab5b2d690c5e115376b80de8987  usr/share/doc/v4l-conf/copyright
+f6c229a8f48a253c6b547aa28d351617  usr/share/lintian/overrides/v4l-conf
+dd201d9360e0c456d31a7669e71b5d15  usr/share/man/es/man8/v4l-conf.8.gz
+b39a107602ae168aec1a43bc8ab9d2f9  usr/share/man/man1/v4l-info.1.gz
+917ef00bef8c0f68978cd7ef52e224c6  usr/share/man/man8/v4l-conf.8.gz

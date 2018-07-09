@@ -1,0 +1,62 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 4. Initializing GStreamer</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Application Development Manual (1.4.4)"><link rel="up" href="part-building.html" title="Part II. Building an Application"><link rel="prev" href="part-building.html" title="Part II. Building an Application"><link rel="next" href="ch04s02.html" title="The GOption interface"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 4. Initializing <span class="application">GStreamer</span></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="part-building.html">Prev</a> </td><th width="60%" align="center">Part II. Building an Application</th><td width="20%" align="right"> <a accesskey="n" href="ch04s02.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-init"></a>Chapter 4. Initializing <span class="application">GStreamer</span></h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-init.html#section-init-c">Simple initialization</a></span></dt><dt><span class="sect1"><a href="ch04s02.html">The GOption interface</a></span></dt></dl></div><p> 
+    When writing a <span class="application">GStreamer</span> application, you can simply include
+    <code class="filename">gst/gst.h</code> to get access to the library
+    functions. Besides that, you will also need to initialize the
+    <span class="application">GStreamer</span> library.
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-init-c"></a>Simple initialization</h2></div></div></div><p>
+      Before the <span class="application">GStreamer</span> libraries can be used,
+      <code class="function">gst_init</code> has to be called from the main
+      application. This call will perform the necessary initialization
+      of the library as well as parse the <span class="application">GStreamer</span>-specific command
+      line options.
+    </p><p> 
+      A typical program 
+<a href="#ftn.idp69768784" class="footnote" name="idp69768784"><sup class="footnote">[1]</sup></a>
+ would have code to initialize
+      <span class="application">GStreamer</span> that looks like this:
+    </p><div class="example"><a name="ex-init-c"></a><p class="title"><b>Example 4.1. Initializing GStreamer</b></p><div class="example-contents"><pre class="programlisting">
+
+#include &lt;stdio.h&gt;
+#include &lt;gst/gst.h&gt;
+
+int
+main (int   argc,
+      char *argv[])
+{
+  const gchar *nano_str;
+  guint major, minor, micro, nano;
+
+  gst_init (&amp;argc, &amp;argv);
+
+  gst_version (&amp;major, &amp;minor, &amp;micro, &amp;nano);
+
+  if (nano == 1)
+    nano_str = "(CVS)";
+  else if (nano == 2)
+    nano_str = "(Prerelease)";
+  else
+    nano_str = "";
+
+  printf ("This program is linked against GStreamer %d.%d.%d %s\n",
+          major, minor, micro, nano_str);
+
+  return 0;
+}
+
+      </pre></div></div><br class="example-break"><p>
+      Use the <span class="symbol">GST_VERSION_MAJOR</span>,
+      <span class="symbol">GST_VERSION_MINOR</span> and <span class="symbol">GST_VERSION_MICRO</span>
+      macros to get the <span class="application">GStreamer</span> version you are building against, or
+      use the function <code class="function">gst_version</code> to get the version
+      your application is linked against. <span class="application">GStreamer</span> currently uses a
+      scheme where versions with the same major and minor versions are
+      API-/ and ABI-compatible.
+    </p><p>
+      It is also possible to call the <code class="function">gst_init</code> function
+      with two <span class="symbol">NULL</span> arguments, in which case no command line
+      options will be parsed by <span class="application">GStreamer</span>.
+    </p></div><div class="footnotes"><br><hr style="width:100; text-align:left;margin-left: 0"><div id="ftn.idp69768784" class="footnote"><p><a href="#idp69768784" class="para"><sup class="para">[1] </sup></a>
+    The code for this example is automatically extracted from
+    the documentation and built under <code class="filename">tests/examples/manual</code>
+    in the GStreamer tarball.
+  </p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="part-building.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-building.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch04s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Part II. Building an Application </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> The GOption interface</td></tr></table></div></body></html>

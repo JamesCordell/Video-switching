@@ -1,0 +1,209 @@
+#!/bin/sh 
+
+set -e
+
+# determine architecture
+ARCH=`dpkg --print-architecture`
+package="setserial"
+autoconfig="/var/lib/setserial/autoserial.conf"
+
+#DEBCONF_DEBUG=1
+#export DEBCONF_DEBUG
+
+# Here are the one-off conversion routines for /var/lib/setserial usage.
+# reentry is prevented via touching etc.serial.conf.bkp
+# Do not delete that file...
+#
+if [ ! -f /var/lib/setserial/etc.serial.conf.bkp ]; then
+  if [ -f /etc/serial.conf ]; then
+    echo Updating your /etc/serial.conf to /var/lib/setserial/etc.serial.conf.bkp.
+    cp /etc/serial.conf /var/lib/setserial/etc.serial.conf.bkp
+    chead="`sed 1q /etc/serial.conf`X"
+    if [  "$chead" = "###PORT STATE GENERATED USING AUTOSAVE-ONCE###X"  ]; then
+      rm -f /etc/serial.conf
+    elif [ "$chead" = "#KERNELX" ]; then
+      rm -f /etc/serial.conf
+    elif [ "$chead" = "###AUTOSAVE###X" ]; then
+      rm -f /etc/serial.conf
+    elif [ "$chead" = "###AUTOSAVE-ONCE###X" ]; then
+      rm -f /etc/serial.conf
+    fi
+  else
+    touch /var/lib/setserial/etc.serial.conf.bkp
+  fi
+  echo removing the old setserial entry in the rcn.d directories
+  # It MUST be moved to the new priority to work - hope noone minds. I
+  # could just delete it and then create a new name, but that seems
+  # pointless
+  update-rc.d -f setserial remove >/dev/null
+  echo Update complete.
+fi
+
+if [ ! -f $autoconfig ]; then
+  if [ "$ARCH" = "sparc" ]; then
+    cat > $autoconfig <<ZZZ
+#
+# This is an empty conf file. You should refer to the setserial documentation
+# to find out what can be done with this file for your architecture.
+#
+ZZZ
+  else
+    cat > $autoconfig <<ZZZ
+###AUTOSAVE-ONCE###
+###AUTOSAVE###
+#
+# If you want to configure this file by hand, use 
+# dpkg-reconfigure setserial
+# and change the configuration mode of the file to MANUAL. If you do not do this, this file may be overwritten automatically the next time you upgrade the
+# package.
+#
+ZZZ
+  fi
+fi
+
+
+if [ "$1" = "configure" ]; then
+
+if [ -r /etc/init.d/etc-setserial ] ; then
+    update-rc.d etc-setserial start 30 S . stop 30 0 1 6 . >/dev/null
+fi
+update-rc.d setserial start 46 S . stop 19 0 1 6 . >/dev/null
+
+if [ -f /usr/share/debconf/confmodule ]; then # debconf exists
+
+# source debconf library
+. /usr/share/debconf/confmodule
+
+if [ -r /etc/rc.boot/0setserial ] ; then
+  if [ "$ARCH" != "m68k" ]; then
+    # inform about the renaming of rc.boot file
+    db_get setserial/rc-boot-file-renamed
+    mv /etc/rc.boot/0setserial /etc/rc.boot/0setserial.pre-2.15
+  else
+    # inform about the removal of rc.boot file
+    db_get setserial/rc-boot-file-removed
+    rm -f /etc/rc.boot/0setserial
+  fi
+fi
+
+if [ "$ARCH" != "m68k" ]; then
+  if [ ! -e $autoconfig ]; then
+    touch $autoconfig
+  fi
+  chead="`sed 1q $autoconfig`X"
+  db_get setserial/autosave-types
+  case "$RET" in 
+    ( "AUTOSAVE ONCE" | "autosave once" ) 
+       if [  "$chead" != "###PORT STATE GENERATED USING AUTOSAVE-ONCE###X"  ]; then
+          mv $autoconfig ${autoconfig}.tmp
+          echo "###AUTOSAVE-ONCE###" > $autoconfig
+          cat ${autoconfig}.tmp >> $autoconfig
+          rm ${autoconfig}.tmp
+          /etc/init.d/setserial stop >&2
+       fi
+       ;;
+    ( "MANUAL" | "manual" ) 
+       if [ "$chead" != "#X" ]; then
+          mv $autoconfig ${autoconfig}.tmp
+          echo "#" > $autoconfig
+          cat ${autoconfig}.tmp >> ${autoconfig}
+          rm ${autoconfig}.tmp
+       fi
+       ;;
+    ( "KERNEL" | "kernel" ) 
+       if [ "$chead" != "#KERNELX" ]; then
+          rm ${autoconfig}
+          echo "#KERNEL" > $autoconfig
+       fi
+       ;;
+    ( "AUTOSAVE ALWAYS" | "autosave always" ) 
+       if [ "$chead" != "###AUTOSAVE###X" ]; then
+          mv ${autoconfig} ${autoconfig}.tmp
+          echo "###AUTOSAVE###" > ${autoconfig}
+          cat ${autoconfig}.tmp >> ${autoconfig}
+          rm ${autoconfig}.tmp
+          /etc/init.d/setserial stop >&2
+       fi
+       ;;
+  esac
+# HHH update-modules removed
+#  if [ -x /sbin/update-modules ]; then
+#    #db_get setserial/usemodup
+#    #if [ "$RET" = "true" ]; then
+#     if ! /sbin/update-modules ; then
+#      WHOCARES=0;
+#     fi
+#    #fi
+#  fi
+fi
+
+else # debconf doesn't exist, revert to old type of questions
+
+# This never happens, as debconf is now a required package.
+exit 1
+
+# See if the user has an old-style 0setserial entry
+
+if [ -r /etc/rc.boot/0setserial ] ; then
+  if [ "$ARCH" != "m68k" ]; then
+	echo "You have an old-style 0setserial entry. The configuration"
+	echo "mechanism has changed completely from 2.14."
+	echo "Renaming your old /etc/rc.boot/0setserial to 0setserial.pre-2.15"
+	mv /etc/rc.boot/0setserial /etc/rc.boot/0setserial.pre-2.15
+	echo ""
+	echo "This release uses serial.conf in /etc/ to configure the ports"
+	echo "When you shutdown or halt your machine, your current settings should"
+	echo "be automatically stored, providing you do not have either"
+	echo "a multiport or a hayes device (edit /etc/serial.conf by hand)."
+	echo "Attention PCMCIA users - pcmcia has its own configuration for"
+	echo "pcmcia serial-type devices, which is not compatible with setserial."
+	echo "I have attempted to compensate for this, but if you have problems"
+	echo "read /usr/share/doc/setserial/README.Debian.gz"
+	echo "Note that if you edit serial.conf, remember to remove completely"
+	echo "the AUTOSAVE line from the file."
+	echo ""
+	echo -n "Do you want the automatic serial port configuration (recommended) (YES/no):"
+	read ANSWER
+	if [ "$ANSWER" = "no" ] || [ "$ANSWER" = "NO" ] || [ "$answer" = "n" ] || [ "$ANSWER" = "N" ]
+	then
+		echo "Okay, not touching your configuration. Edit your /etc/serial.conf yourself."
+	else
+		echo "Configuring setserial automatically"
+		cp /etc/serial.conf /etc/serial.conf.orig
+		invoke-rc.d setserial stop
+		echo "setserial thought the following about your system..."
+		# grep -v "^#" /etc/serial.conf
+                if ! grep "^[^#]" /etc/serial.conf >&2 ; then
+                  echo "   no information..."
+                fi
+	fi
+  else
+	echo "You have an old-style 0setserial entry. The new standard makes"
+	echo "use of /etc/init.d rather than /etc/rc.boot, and your old"
+        echo "/etc/rc.boot/0setserial file from version 2.14 will be removed."
+	rm -f /etc/rc.boot/0setserial
+  fi
+fi
+
+# HHH update-modules removed
+#if [ "$ARCH" != "m68k" ] && [ -x /sbin/update-modules ]; then
+#  if ! /sbin/update-modules ; then
+#    cat <<END >&2
+# WARNING: setserial tried to install the module management code to support
+# the serial.o module being loaded and unloaded dynamically by kerneld (or
+# its equivalent). However, update-modules failed to allow its installation.
+#
+# There may be something non-standard about your module configuration.
+# You should try running /sbin/update-modules on your own.
+#
+# Please press <enter> to continue...
+#END
+#    read KEYPRESS
+#  fi
+#fi
+
+fi # debconf or not
+
+fi # $1 = configure
+
+

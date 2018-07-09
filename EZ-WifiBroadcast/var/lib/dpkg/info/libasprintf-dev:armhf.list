@@ -1,0 +1,14 @@
+/.
+/usr
+/usr/share
+/usr/share/doc
+/usr/share/doc/libasprintf-dev
+/usr/share/doc/libasprintf-dev/copyright
+/usr/share/doc/libasprintf-dev/changelog.gz
+/usr/share/doc/libasprintf-dev/changelog.Debian.gz
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/libasprintf.a
+/usr/include
+/usr/include/autosprintf.h
+/usr/lib/arm-linux-gnueabihf/libasprintf.so

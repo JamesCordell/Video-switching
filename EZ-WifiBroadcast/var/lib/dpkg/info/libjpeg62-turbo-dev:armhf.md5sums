@@ -1,0 +1,10 @@
+6f8fd52c0a1fc4a27536ab4cb6d5aab2  usr/include/arm-linux-gnueabihf/jconfig.h
+d98ec1fe249d099804a98005be9762b9  usr/include/jerror.h
+81dc7157babc73fa0506c459f45393a8  usr/include/jmorecfg.h
+fd82e5ccc74d1fa9064d6d298785ea46  usr/include/jpegint.h
+086361a918ea001e27c96cb187904425  usr/include/jpeglib.h
+6c9d1422eeeb1d919ffac8aa2974d53e  usr/lib/arm-linux-gnueabihf/libjpeg.a
+954d13b669f950921805a216c0c33e90  usr/lib/arm-linux-gnueabihf/pkgconfig/libjpeg.pc
+8dc1c0a8a026fd14f9a9451bdd6d0e3d  usr/share/doc/libjpeg62-turbo-dev/changelog.Debian.gz
+6dbca6213731b789087d97e5bee97dea  usr/share/doc/libjpeg62-turbo-dev/changelog.gz
+19d3de9a3563049635d2a1d1d0bac891  usr/share/doc/libjpeg62-turbo-dev/copyright

@@ -1,0 +1,13 @@
+/.
+/usr
+/usr/bin
+/usr/share
+/usr/share/man
+/usr/share/man/man1
+/usr/share/doc
+/usr/share/doc/libpython-dev
+/usr/share/doc/libpython-dev/README.Debian
+/usr/share/doc/libpython-dev/copyright
+/usr/share/doc/libpython-dev/changelog.Debian.gz
+/usr/bin/arm-linux-gnueabihf-python-config
+/usr/share/man/man1/arm-linux-gnueabihf-python-config.1.gz

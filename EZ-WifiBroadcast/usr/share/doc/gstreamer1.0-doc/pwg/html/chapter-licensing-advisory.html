@@ -1,0 +1,29 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 30. GStreamer licensing</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-appendix.html" title="Part V. Appendices"><link rel="prev" href="chapter-porting-1_0.html" title="Chapter 29. Porting 0.10 plug-ins to 1.0"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 30. GStreamer licensing</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-porting-1_0.html">Prev</a> </td><th width="60%" align="center">Part V. Appendices</th><td width="20%" align="right"> </td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-licensing-advisory"></a>Chapter 30. GStreamer licensing</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-licensing-advisory.html#section-application-licensing">How to license the code you write for <span class="application">GStreamer</span></a></span></dt></dl></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-application-licensing"></a>How to license the code you write for <span class="application">GStreamer</span></h2></div></div></div><p>
+GStreamer is a plugin-based framework licensed under the LGPL. The reason 
+for this choice in licensing is to ensure that everyone can use GStreamer 
+to build applications using licenses of their choice.
+</p><p>
+To keep this policy viable, the GStreamer community has made a few 
+licensing rules for code to be included in GStreamer's core or GStreamer's 
+official modules, like our plugin packages. We require that all code going 
+into our core package is LGPL. For the plugin code, we require the use of 
+the LGPL for all plugins written from scratch or linking to external 
+libraries. The only exception to this is when plugins contain older code 
+under more liberal licenses (like the MPL or BSD). They can use those 
+licenses instead and will still be considered for inclusion. We do not 
+accept GPL code to be added to our plugins module, but we do accept 
+LGPL-licensed plugins using an external GPL library. The reason for 
+demanding plugins be licensed under the LGPL, even when using a GPL 
+library, is that other developers might want to use the plugin code as a 
+template for plugins linking to non-GPL libraries.
+</p><p>
+We also plan on splitting out the plugins using GPL libraries into a 
+separate package eventually and implement a system which makes sure an 
+application will not be able to access these plugins unless it uses some 
+special code to do so. The point of this is not to block GPL-licensed 
+plugins from being used and developed, but to make sure people are not 
+unintentionally violating the GPL license of said plugins. 
+</p><p>
+This advisory is part of a bigger advisory with a FAQ which you can find
+on the <a class="ulink" href="http://gstreamer.freedesktop.org/documentation/licensing.html" target="_top">GStreamer website</a>
+</p></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-porting-1_0.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-appendix.html">Up</a></td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top">Chapter 29. Porting 0.10 plug-ins to 1.0 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

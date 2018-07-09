@@ -1,0 +1,2 @@
+mercurial 	 /etc/mercurial/hgrc.d/hgext.rc
+sysstat 	 /etc/default/sysstat

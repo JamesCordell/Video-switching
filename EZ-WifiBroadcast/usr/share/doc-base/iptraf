@@ -1,0 +1,11 @@
+Document: iptraf
+Title: IPTraf User's Manual
+Author: Gerard Paul Java
+Abstract: This document is the User's Manual for IPTraf 2.7.0.
+ Documented here are the features of the program and instructions on its use.
+Section: Network/Monitoring
+
+Format: HTML
+Index: /usr/share/doc/iptraf/html/manual.html
+Files: /usr/share/doc/iptraf/html/manual.html
+

@@ -1,0 +1,5 @@
+TARGETS = killprocs ssh sysstat single rc.local rmnologin
+INTERACTIVE =
+single: killprocs
+rc.local: ssh sysstat
+rmnologin: ssh sysstat

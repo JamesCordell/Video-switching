@@ -1,0 +1,696 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN""http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Basic Newt Functions</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="Writing Programs Using newt"
+HREF="t1.html"><LINK
+REL="PREVIOUS"
+TITLE="Writing Programs Using newt"
+HREF="t1.html"><LINK
+REL="NEXT"
+TITLE="Windows"
+HREF="x197.html"></HEAD
+><BODY
+CLASS="SECT1"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Writing Programs Using <TT
+CLASS="LITERAL"
+>newt</TT
+></TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="t1.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="x197.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="AEN100"
+>Basic <TT
+CLASS="LITERAL"
+>Newt</TT
+> Functions</A
+></H1
+><P
+>While most <TT
+CLASS="LITERAL"
+>newt</TT
+> functions are concerned with widgets or groups
+of widgets (called grids and forms), some parts of the <TT
+CLASS="LITERAL"
+>newt</TT
+> API
+deal with more global issues, such as initializing <TT
+CLASS="LITERAL"
+>newt</TT
+> or writing
+to the root window.</P
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN107"
+>Starting and Ending <TT
+CLASS="LITERAL"
+>newt</TT
+> Services</A
+></H2
+><P
+>There are three functions which nearly every <TT
+CLASS="LITERAL"
+>newt</TT
+> application use. The
+first two are used to initialize the system.
+
+
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="SCREEN"
+>int newtInit(void);
+void newtCls(void);</PRE
+></TD
+></TR
+></TABLE
+>
+
+
+<TT
+CLASS="LITERAL"
+>newtInit()</TT
+> should be the first function called by every <TT
+CLASS="LITERAL"
+>newt</TT
+>
+program. It initializes internal data structures and places the terminal
+in raw mode. Most applications invoke <TT
+CLASS="LITERAL"
+>newtCls()</TT
+> immediately after
+<TT
+CLASS="LITERAL"
+>newtInit()</TT
+>, which causes the screen to be cleared. It's not
+necessary to call <TT
+CLASS="LITERAL"
+>newtCls()</TT
+> to use any of <TT
+CLASS="LITERAL"
+>newt</TT
+>'s features, but
+doing so will normally give a much neater appearance.
+
+When a <TT
+CLASS="LITERAL"
+>newt</TT
+> program is ready to exit, it should call <TT
+CLASS="LITERAL"
+>newtFinished()</TT
+>.
+
+
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="SCREEN"
+>int newtFinished(void);</PRE
+></TD
+></TR
+></TABLE
+>
+
+
+<TT
+CLASS="LITERAL"
+>newtFinished()</TT
+> restores the terminal to its appearance when
+<TT
+CLASS="LITERAL"
+>newtInit()</TT
+> was called (if possible -- on some terminals the cursor will
+be moved to the bottom, but it won't be possible to remember the original
+terminal contents) and places the terminal in its original input state.
+If this function isn't called, the terminal will probably need to be
+reset with the <TT
+CLASS="LITERAL"
+>reset</TT
+> command before it can be used easily.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN125"
+>Handling Keyboard Input</A
+></H2
+><P
+>Normally, <TT
+CLASS="LITERAL"
+>newt</TT
+> programs don't read input directly from the
+user. Instead, they let <TT
+CLASS="LITERAL"
+>newt</TT
+> read the input and hand it to the
+program in a semi-digested form. <TT
+CLASS="LITERAL"
+>Newt</TT
+> does provide a couple of simple
+functions which give programs (a bit of) control over the terminal.
+
+
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="SCREEN"
+>void newtWaitForKey(void);
+void newtClearKeyBuffer(void);</PRE
+></TD
+></TR
+></TABLE
+></P
+><P
+>The first of these, <TT
+CLASS="LITERAL"
+>newtWaitForKey()</TT
+>, doesn't return until a key
+has been pressed. The keystroke is then ignored. If a key is already in
+the terminal's buffer, <TT
+CLASS="LITERAL"
+>newtWaitForKey()</TT
+> discards a keystroke and
+returns immediately.
+
+<TT
+CLASS="LITERAL"
+>newtClearKeyBuffer()</TT
+> discards the contents of the terminal's input
+buffer without waiting for additional input.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN136"
+>Drawing on the Root Window</A
+></H2
+><P
+>The background of the terminal's display (the part without any windows 
+covering it) is known as the <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>root window</I
+></SPAN
+> (it's the parent of all
+windows, just like the system's root directory is the parent of all 
+subdirectories). Normally, applications don't use the root window, instead
+drawing all of their text inside of windows (<TT
+CLASS="LITERAL"
+>newt</TT
+> doesn't require
+this though -- widgets may be placed directly on the root window without
+difficulty). It is often desirable to display some text, such as a
+program's name or copyright information, on the root window, however.
+<TT
+CLASS="LITERAL"
+>Newt</TT
+> provides two ways of displaying text on the root window. These
+functions may be called at any time. They are the only <TT
+CLASS="LITERAL"
+>newt</TT
+> functions
+which are meant to write outside of the current window.
+
+
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="SCREEN"
+>void newtDrawRootText(int left, int top, const char * text);</PRE
+></TD
+></TR
+></TABLE
+></P
+><P
+>This function is straightforward. It displays the string <TT
+CLASS="LITERAL"
+>text</TT
+> at
+the position indicated. If either the <TT
+CLASS="LITERAL"
+>left</TT
+> or <TT
+CLASS="LITERAL"
+>top</TT
+> is
+negative, the position is measured from the opposite side of the
+screen. The final measurement will seem to be off by one though. For
+example, a <TT
+CLASS="LITERAL"
+>top</TT
+> of -1 indicates the last line on the screen, and
+one of -2 is the line above that.
+
+As it's common to use the last line on the screen to display help information,
+<TT
+CLASS="LITERAL"
+>newt</TT
+> includes special support for doing exactly that. The last
+line on the display is known as the <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>help line</I
+></SPAN
+>, and is treated as a
+stack. As the value of the help line normally relates to the window
+currently displayed, using the same structure for window order and the
+help line is very natural. Two functions are provided to manipulate the
+help line.
+
+
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="SCREEN"
+>void newtPushHelpLine(const char * text);
+void newtPopHelpLine(void);</PRE
+></TD
+></TR
+></TABLE
+>
+
+
+The first function, <TT
+CLASS="LITERAL"
+>newtPushHelpLine()</TT
+>, saves the current help line
+on a stack (which is independent of the window stack) and displays the
+new line. If <TT
+CLASS="LITERAL"
+>text</TT
+> is <TT
+CLASS="LITERAL"
+>NULL</TT
+>, <TT
+CLASS="LITERAL"
+>newt</TT
+>'s default help line is
+displayed (which provides basic instructions on using <TT
+CLASS="LITERAL"
+>newt</TT
+>). If
+<TT
+CLASS="LITERAL"
+>text</TT
+> is a string of length 0, the help line is cleared. For all
+other values of <TT
+CLASS="LITERAL"
+>text</TT
+>, the passed string is displayed at the bottom,
+left-hand corner of the display. The space between the end of the displayed
+string the the right-hand edge of the terminal is cleared.
+
+<TT
+CLASS="LITERAL"
+>newtPopHelpLine()</TT
+> replaces the current help line with the one it
+replaced. It's important not to call tt/newtPopHelpLine()/ more then
+<TT
+CLASS="LITERAL"
+>newtPushHelpLine()</TT
+>!
+
+<TT
+CLASS="LITERAL"
+>Suspending Newt Applications</TT
+>
+
+By default, <TT
+CLASS="LITERAL"
+>newt</TT
+> programs cannot be suspended by the user (compare
+this to most Unix programs which can be suspended by pressing the suspend
+key (normally <TT
+CLASS="LITERAL"
+>^Z</TT
+>).  Instead, programs can specify a <SPAN
+CLASS="emphasis"
+><I
+CLASS="EMPHASIS"
+>callback</I
+></SPAN
+>
+function which gets invoked when the user presses the suspend key. 
+
+
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="SCREEN"
+>typedef void (*newtSuspendCallback)(void);
+
+void newtSetSuspendCallback(newtSuspendCallback cb);</PRE
+></TD
+></TR
+></TABLE
+>
+
+
+The suspend function neither expects nor returns any value, and can
+do whatever it likes to when it is invoked. If no suspend callback
+is registered, the suspend keystroke is ignored.
+
+If the application should suspend and continue like most user applications,
+the suspend callback needs two other <TT
+CLASS="LITERAL"
+>newt</TT
+> functions.
+
+
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="SCREEN"
+>void newtSuspend(void);
+void newtResume(void);</PRE
+></TD
+></TR
+></TABLE
+>
+
+
+<TT
+CLASS="LITERAL"
+>newtSuspend()</TT
+> tells <TT
+CLASS="LITERAL"
+>newt</TT
+> to return the terminal to its initial
+state. Once this is done, the application can suspend itself (by
+sending itself a <TT
+CLASS="LITERAL"
+>SIGTSTP</TT
+>, fork a child program, or do whatever
+else it likes. When it wants to resume using the <TT
+CLASS="LITERAL"
+>newt</TT
+> interface,
+it must call <TT
+CLASS="LITERAL"
+>newtResume</TT
+> before doing so. 
+
+Note that suspend callbacks are not signal handlers. When <TT
+CLASS="LITERAL"
+>newtInit()</TT
+>
+takes over the terminal, it disables the part of the terminal interface
+which sends the suspend signal. Instead, if <TT
+CLASS="LITERAL"
+>newt</TT
+> sees the suspend
+keystroke during normal input processing, it immediately calls the suspend
+callback if one has been set. This means that suspending newt applications
+is not asynchronous.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN175"
+>Refreshing the Screen</A
+></H2
+><P
+>To increase performance, S-Lang only updates the display when it needs
+to, not when the program tells S-Lang to write to the terminal. ``When it
+needs to'' is implemented as ``right before the we wait for the user to
+press a key''. While this allows for optimized screen displays most of
+the time, this optimization makes things difficult for programs which
+want to display progress messages without forcing the user to input 
+characters. Applications can force S-Lang to immediately update modified
+portions of the screen by calling <TT
+CLASS="LITERAL"
+>newtRefresh</TT
+>.
+
+
+<P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>The program wants to display a progress message, without forcing
+for the user to enter any characters.</P
+></LI
+><LI
+><P
+>A misfeature of the program causes part of the screen to be
+corrupted. Ideally, the program would be fixed, but that may not 
+always be practical.</P
+></LI
+></OL
+></P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN184"
+>Other Miscellaneous Functions</A
+></H2
+><P
+>As always, some function defy characterization. Two of <TT
+CLASS="LITERAL"
+>newt</TT
+>'s general
+function fit this oddball category.
+
+
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="SCREEN"
+>void newtBell(void);
+void newtGetScreenSize(int * cols, int * rows);</PRE
+></TD
+></TR
+></TABLE
+>
+
+
+The first sends a beep to the terminal. Depending on the terminal's
+settings, this been may or may not be audible. The second function,
+<TT
+CLASS="LITERAL"
+>newtGetScreenSize()</TT
+>, fills in the passed pointers with the
+current size of the terminal.</P
+></DIV
+><DIV
+CLASS="SECT2"
+><H2
+CLASS="SECT2"
+><A
+NAME="AEN190"
+>Basic <TT
+CLASS="LITERAL"
+>newt</TT
+> Example</A
+></H2
+><P
+>To help illustrate the functions presented in this section here is a short
+sample <TT
+CLASS="LITERAL"
+>newt</TT
+> program which uses many of them. While it doesn't do
+anything interesting, it does show the basic structure of <TT
+CLASS="LITERAL"
+>newt</TT
+> programs.
+
+
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="SCREEN"
+>#include &#60;newt.h&#62;
+#include &#60;stdlib.h&#62;
+
+int main(void) {
+    newtInit();
+    newtCls();
+
+    newtDrawRootText(0, 0, "Some root text");
+    newtDrawRootText(-25, -2, "Root text in the other corner");
+
+    newtPushHelpLine(NULL);
+    newtRefresh();
+    sleep(1);
+
+    newtPushHelpLine("A help line");
+    newtRefresh();
+    sleep(1);
+
+    newtPopHelpLine();
+    newtRefresh();
+    sleep(1);
+
+    newtFinished();
+}</PRE
+></TD
+></TR
+></TABLE
+></P
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="t1.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="t1.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="x197.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Writing Programs Using <TT
+CLASS="LITERAL"
+>newt</TT
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Windows</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

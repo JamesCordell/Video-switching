@@ -1,0 +1,45 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Upstream caps (re)negotiation</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="chapter-negotiation.html" title="Chapter 14. Caps negotiation"><link rel="prev" href="section-nego-usecases.html" title="Caps negotiation use cases"><link rel="next" href="section-nego-getcaps.html" title="Implementing a CAPS query function"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Upstream caps (re)negotiation</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-nego-usecases.html">Prev</a> </td><th width="60%" align="center">Chapter 14. Caps negotiation</th><td width="20%" align="right"> <a accesskey="n" href="section-nego-getcaps.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-nego-upstream"></a>Upstream caps (re)negotiation</h2></div></div></div><p>
+      Upstream negotiation's primary use is to renegotiate (part of) an
+      already-negotiated pipeline to a new format. Some practical examples
+      include to select a different video size because the size of the video
+      window changed, and the video output itself is not capable of rescaling,
+      or because the audio channel configuration changed.
+    </p><p>
+      Upstream caps renegotiation is requested by sending a GST_EVENT_RECONFIGURE
+      event upstream. The idea is that it will instruct the upstream element
+      to reconfigure its caps by doing a new query for the allowed caps and then
+      choosing a new caps. The element that sends out the RECONFIGURE event
+      would influence the selection of the new caps by returning the new
+      preferred caps from its GST_QUERY_CAPS query function. The RECONFIGURE
+      event will set the GST_PAD_FLAG_NEED_RECONFIGURE on all pads that it
+      travels over.
+    </p><p>
+      It is important to note here that different elements actually have
+      different responsibilities here:
+    </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>
+          Elements that want to propose a new format upstream need to first
+          check if the new caps are acceptable upstream with an ACCEPT_CAPS
+          query. Then they would send a RECONFIGURE event and be prepared to
+          answer the CAPS query with the new preferred format. It should be
+          noted that when there is no upstream element that can (or wants)
+          to renegotiate, the element needs to deal with the currently
+          configured format.
+        </p></li><li class="listitem"><p>
+          Elements that operate in transform negotiation according to
+          <a class="xref" href="section-nego-usecases.html#section-nego-transform" title="Transform negotiation">the section called “Transform negotiation”</a> pass the RECONFIGURE
+          event upstream. Because these elements simply do a fixed transform
+          based on the upstream caps, they need to send the event upstream
+          so that it can select a new format.
+        </p></li><li class="listitem"><p>
+          Elements that operate in fixed negotiation 
+          (<a class="xref" href="section-nego-usecases.html#section-nego-fixed" title="Fixed negotiation">the section called “Fixed negotiation”</a>) drop the RECONFIGURE event.
+          These elements can't reconfigure and their output caps don't depend
+          on the upstream caps so the event can be dropped.
+        </p></li><li class="listitem"><p>
+          Elements that can be reconfigured on the source pad (source pads
+          implementing dynamic negotiation in
+          <a class="xref" href="section-nego-usecases.html#section-nego-dynamic" title="Dynamic negotiation">the section called “Dynamic negotiation”</a>) should check its
+          NEED_RECONFIGURE flag with
+          <code class="function">gst_pad_check_reconfigure ()</code> and it should
+          start renegotiation when the function returns TRUE.
+        </p></li></ul></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-nego-usecases.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="chapter-negotiation.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-nego-getcaps.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Caps negotiation use cases </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Implementing a CAPS query function</td></tr></table></div></body></html>

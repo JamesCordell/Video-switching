@@ -1,0 +1,7 @@
+f2d6d2222bd82d3bddb27bd8209bdfa1  usr/include/X11/Xdmcp.h
+2e10f4e4e5214fd261e17192e934328b  usr/lib/arm-linux-gnueabihf/libXdmcp.a
+f57043aa3d4c2f280e62bef3aeaeb182  usr/lib/arm-linux-gnueabihf/pkgconfig/xdmcp.pc
+04913e11f2a5654d04e7fea7f08d5fb2  usr/share/doc/libxdmcp-dev/changelog.Debian.gz
+a5b533f6b035734484fb378be3fd0cfd  usr/share/doc/libxdmcp-dev/changelog.gz
+35343781bdf52fb6ccc51e0985418707  usr/share/doc/libxdmcp-dev/copyright
+5ba8b60afb632a93d075a9cc2fe994b3  usr/share/doc/libxdmcp-dev/xdmcp.txt.gz

@@ -1,0 +1,9 @@
+d6588a28a594e393d5e9c93853dcf83e  usr/sbin/ser2net
+a4ef4c84c56031ca779642f23e4d0d2e  usr/share/doc/ser2net/AUTHORS
+74c3fd1129cc44f08a21ae23decb86f8  usr/share/doc/ser2net/NEWS.gz
+8b0ea5bcbc273861b2034ab9ca05f1f4  usr/share/doc/ser2net/README
+382d4531b3f759c26a8cd657507d1726  usr/share/doc/ser2net/changelog.Debian.gz
+29098dbb6d6039c56e640d2cc93d8916  usr/share/doc/ser2net/changelog.gz
+de95d038bceccb5327de0c0f83513387  usr/share/doc/ser2net/copyright
+3d0e924df5481f2f8f90b3259b7107b8  usr/share/doc/ser2net/examples/ser2net.conf.gz
+818fdceb774a42e19a9afb85fc684800  usr/share/man/man8/ser2net.8.gz

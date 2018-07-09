@@ -1,0 +1,17 @@
+/.
+/usr
+/usr/bin
+/usr/share
+/usr/share/man
+/usr/share/man/man1
+/usr/share/doc
+/usr/lib
+/usr/lib/arm-linux-gnueabihf
+/usr/lib/arm-linux-gnueabihf/pkgconfig
+/usr/bin/python-config
+/usr/bin/python2-config
+/usr/share/man/man1/python-config.1.gz
+/usr/share/man/man1/python2-config.1.gz
+/usr/share/doc/python-dev
+/usr/lib/arm-linux-gnueabihf/pkgconfig/python.pc
+/usr/lib/arm-linux-gnueabihf/pkgconfig/python2.pc

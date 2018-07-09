@@ -1,0 +1,48 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 4. Specifying the pads</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-building.html" title="Part II. Building a Plugin"><link rel="prev" href="section-boiler-plugininit.html" title="The plugin_init function"><link rel="next" href="chapter-building-chainfn.html" title="Chapter 5. The chain function"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 4. Specifying the pads</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="section-boiler-plugininit.html">Prev</a> </td><th width="60%" align="center">Part II. Building a Plugin</th><td width="20%" align="right"> <a accesskey="n" href="chapter-building-chainfn.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-building-pads"></a>Chapter 4. Specifying the pads</h2></div></div></div><p>
+    As explained before, pads are the port through which data goes in and out
+    of your element, and that makes them a very important item in the process
+    of element creation. In the boilerplate code, we have seen how static pad
+    templates take care of registering pad templates with the element class.
+    Here, we will see how to create actual elements, use an <code class="function">_event
+    ()</code>-function to configure for a particular format and how to
+    register functions to let data flow through the element.
+  </p><p>
+    In the element <code class="function">_init ()</code> function, you create the pad
+    from the pad template that has been registered with the element class in
+    the <code class="function">_class_init ()</code> function. After creating the pad,
+    you have to set a <code class="function">_chain ()</code> function pointer that will
+    receive and process the input data on the sinkpad.
+    You can optionally also set an <code class="function">_event ()</code> function
+    pointer and a <code class="function">_query ()</code> function pointer.
+    Alternatively, pads can also operate in looping mode, which means that they
+    can pull data themselves. More on this topic later. After that, you have
+    to register the pad with the element. This happens like this:
+  </p><pre class="programlisting">
+
+
+
+static void
+gst_my_filter_init (GstMyFilter *filter)
+{
+  /* pad through which data comes in to the element */
+  filter-&gt;sinkpad = gst_pad_new_from_static_template (
+	&amp;sink_template, "sink");
+  /* pads are configured here with gst_pad_set_*_function () */
+
+
+
+  gst_element_add_pad (GST_ELEMENT (filter), filter-&gt;sinkpad);
+
+  /* pad through which data goes out of the element */
+  filter-&gt;srcpad = gst_pad_new_from_static_template (
+	&amp;src_template, "src");
+  /* pads are configured here with gst_pad_set_*_function () */
+
+
+
+  gst_element_add_pad (GST_ELEMENT (filter), filter-&gt;srcpad);
+
+  /* properties initial value */
+  filter-&gt;silent = FALSE;
+}
+  </pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="section-boiler-plugininit.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-building.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="chapter-building-chainfn.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">The plugin_init function </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 5. The chain function</td></tr></table></div></body></html>

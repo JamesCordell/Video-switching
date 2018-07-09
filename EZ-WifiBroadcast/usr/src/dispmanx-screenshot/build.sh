@@ -1,0 +1,1 @@
+gcc dispmanx-screenshot.c -o dismanx-screenshot -I /opt/vc/include -I /opt/vc/include/interface/vcos/pthreads -L/opt/vc/lib/ -lbcm_host

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if [ -x /sbin/udevadm ]; then
+    for device in /dev/input/js*; do
+	/sbin/udevadm info -a -n $device >&3
+    done
+fi

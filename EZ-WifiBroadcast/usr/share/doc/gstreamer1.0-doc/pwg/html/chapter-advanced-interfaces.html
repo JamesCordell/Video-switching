@@ -1,0 +1,102 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Chapter 21. Interfaces</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="GStreamer Plugin Writer's Guide (1.4.4)"><link rel="up" href="part-advanced.html" title="Part III. Advanced Filter Concepts"><link rel="prev" href="chapter-dparam-loop.html" title="The Data Processing Loop"><link rel="next" href="section-iface-uri.html" title="URI interface"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 21. Interfaces</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="chapter-dparam-loop.html">Prev</a> </td><th width="60%" align="center">Part III. Advanced Filter Concepts</th><td width="20%" align="right"> <a accesskey="n" href="section-iface-uri.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="chapter-advanced-interfaces"></a>Chapter 21. Interfaces</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl class="toc"><dt><span class="sect1"><a href="chapter-advanced-interfaces.html#section-iface-general">How to Implement Interfaces</a></span></dt><dt><span class="sect1"><a href="section-iface-uri.html">URI interface</a></span></dt><dt><span class="sect1"><a href="section-iface-colorbalance.html">Color Balance Interface</a></span></dt><dt><span class="sect1"><a href="section-iface-xoverlay.html">Video Overlay Interface</a></span></dt><dt><span class="sect1"><a href="section-iface-navigation.html">Navigation Interface</a></span></dt></dl></div><p>
+    Previously, in the chapter <a class="xref" href="chapter-building-args.html" title="Chapter 9. Adding Properties">Adding Properties</a>, we have
+    introduced the concept of GObject properties of controlling an element's
+    behaviour. This is very powerful, but it has two big disadvantages:
+    first of all, it is too generic, and second, it isn't dynamic.
+  </p><p>
+    The first disadvantage is related to the customizability of the end-user
+    interface that will be built to control the element. Some properties are
+    more important than others. Some integer properties are better shown in a
+    spin-button widget, whereas others would be better represented by a slider
+    widget. Such things are not possible because the UI has no actual meaning
+    in the application. A UI widget that represents a bitrate property is the
+    same as a UI widget that represents the size of a video, as long as both
+    are of the same <code class="classname">GParamSpec</code> type. Another problem,
+    is that things like parameter grouping, function grouping, or parameter
+    coupling are not
+    really possible.
+  </p><p>
+    The second problem with parameters are that they are not dynamic. In
+    many cases, the allowed values for a property are not fixed, but depend
+    on things that can only be detected at runtime. The names of inputs for
+    a TV card in a video4linux source element, for example, can only be
+    retrieved from the kernel driver when we've opened the device; this only
+    happens when the element goes into the READY state. This means that we
+    cannot create an enum property type to show this to the user.
+  </p><p>
+    The solution to those problems is to create very specialized types of
+    controls for certain often-used controls. We use the concept of interfaces
+    to achieve this. The basis of this all is the glib
+    <code class="classname">GTypeInterface</code> type. For each case where we think
+    it's useful, we've created interfaces which can be implemented by elements
+    at their own will. 
+  </p><p>
+    One important note: interfaces do <span class="emphasis"><em>not</em></span> replace
+    properties. Rather, interfaces should be built <span class="emphasis"><em>next to</em></span>
+    properties. There are two important reasons for this. First of all, 
+    properties can be more easily introspected. Second, properties can be
+    specified on the commandline (<code class="filename">gst-launch</code>).
+  </p><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="section-iface-general"></a>How to Implement Interfaces</h2></div></div></div><p>
+      Implementing interfaces is initiated in the <code class="function">_get_type ()</code>
+      of your element. You can register one or more interfaces after having
+      registered the type itself. Some interfaces have dependencies on other
+      interfaces or can only be registered by certain types of elements. You
+      will be notified of doing that wrongly when using the element: it will
+      quit with failed assertions, which will explain what went wrong.
+      If it does, you need to register support for <span class="emphasis"><em>that</em></span>
+      interface before registering support for the interface that you're
+      wanting to support. The example below explains how to add support for a
+      simple interface with no further dependencies.
+    </p><pre class="programlisting">
+static void	gst_my_filter_some_interface_init	(GstSomeInterface *iface);
+
+GType
+gst_my_filter_get_type (void)
+{
+  static GType my_filter_type = 0;
+                                                                                
+  if (!my_filter_type) {
+    static const GTypeInfo my_filter_info = {
+      sizeof (GstMyFilterClass),
+      NULL,
+      NULL,
+      (GClassInitFunc) gst_my_filter_class_init,
+      NULL,
+      NULL,
+      sizeof (GstMyFilter),
+      0,
+      (GInstanceInitFunc) gst_my_filter_init
+    };
+    static const GInterfaceInfo some_interface_info = {
+      (GInterfaceInitFunc) gst_my_filter_some_interface_init,
+      NULL,
+      NULL
+    };
+
+    my_filter_type =
+	g_type_register_static (GST_TYPE_ELEMENT,
+				"GstMyFilter",
+				&amp;my_filter_info, 0);
+    g_type_add_interface_static (my_filter_type,
+				 GST_TYPE_SOME_INTERFACE,
+                                 &amp;some_interface_info);
+  }
+
+  return my_filter_type;
+}
+
+static void
+gst_my_filter_some_interface_init (GstSomeInterface *iface)
+{
+  /* here, you would set virtual function pointers in the interface */
+}
+    </pre><p>
+      Or more conveniently:
+    </p><pre class="programlisting">
+static void	gst_my_filter_some_interface_init	(GstSomeInterface *iface);
+
+G_DEFINE_TYPE_WITH_CODE (GstMyFilter, gst_my_filter,GST_TYPE_ELEMENT,
+     G_IMPLEMENT_INTERFACE (GST_TYPE_SOME_INTERFACE,
+            gst_my_filter_some_interface_init));
+
+    </pre></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="chapter-dparam-loop.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="part-advanced.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="section-iface-uri.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">The Data Processing Loop </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> URI interface</td></tr></table></div></body></html>

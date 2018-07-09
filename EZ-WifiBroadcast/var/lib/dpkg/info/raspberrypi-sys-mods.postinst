@@ -1,0 +1,81 @@
+set -e
+
+check_audio () {
+  # audio dtparam mentioned in config.txt (enabled, disabled or commented out)
+  AM_PAT="^[[:space:]]*#?[[:space:]]*(device_tree_param|dtparam)[[:space:]]*=[[:space:]]*([^,]*,)*audio[[:space:]]*=.*$"
+  # snd_bcm2835 module enabled pattern
+  SND_PAT="^[[:space:]]*snd(_|-)bcm2835[[:space:]]*$"
+
+  if grep -q -E "$AM_PAT" /boot/config.txt; then
+    return 0;
+  fi
+
+  if grep -q -E "$SND_PAT" /etc/modules; then
+    echo "Enabling audio in config.txt and removing from /etc/modules..."
+    echo "\n# Enable audio (added by raspberrypi-sys-mods)" >> /boot/config.txt
+    echo "dtparam=audio=on" >> /boot/config.txt
+    MODBAK=/etc/modules.ui-mods.bak
+    grep -v -E "$SND_PAT" /etc/modules > ${MODBAK}
+    mv ${MODBAK} /etc/modules
+  else
+    echo "Disabling audio in config.txt..."
+    echo "\n# Disable audio (added by raspberrypi-sys-mods)" >> /boot/config.txt
+    echo "dtparam=audio=no" >> /boot/config.txt
+  fi
+}
+
+case "${1}" in
+  configure)
+    if dpkg --compare-versions "${2}" lt "20160112"; then
+      check_audio
+    fi
+    if dpkg --compare-versions "${2}" lt-nl "20160321+1"; then
+      echo "Fixing file capabilities..."
+      setcap cap_net_raw+ep /bin/ping6 || true
+      setcap cap_net_raw+ep /bin/ping || true
+      setcap cap_dac_override,cap_sys_ptrace+ep /usr/bin/systemd-detect-virt || true
+    fi
+    if dpkg --compare-versions "${2}" lt-nl "20160321"; then
+      echo "Adjusting cmdline.txt..."
+      sed -e "s|=ttyAMA0|=serial0|;s|=ttyS0|=serial1|;" -i /boot/cmdline.txt || echo "Failed"
+    fi
+    ;;
+
+  abort-upgrade|abort-remove|abort-deconfigure)
+
+    ;;
+
+  *)
+    echo "postinst called with unknown argument \`${1}'" >&2
+    exit 1
+    ;;
+esac
+
+# Automatically added by dh_systemd_enable
+# This will only remove masks created by d-s-h on package removal.
+deb-systemd-helper unmask rpi-display-backlight.service >/dev/null || true
+
+# was-enabled defaults to true, so new installations run enable.
+if deb-systemd-helper --quiet was-enabled rpi-display-backlight.service; then
+	# Enables the unit on first installation, creates new
+	# symlinks on upgrades if the unit file has changed.
+	deb-systemd-helper enable rpi-display-backlight.service >/dev/null || true
+else
+	# Update the statefile to add new symlinks (if any), which need to be
+	# cleaned up on purge. Also remove old symlinks.
+	deb-systemd-helper update-state rpi-display-backlight.service >/dev/null || true
+fi
+# End automatically added section
+# Automatically added by dh_installinit
+if [ -x "/etc/init.d/rpi-display-backlight" ]; then
+	update-rc.d rpi-display-backlight defaults >/dev/null
+	invoke-rc.d rpi-display-backlight start || exit $?
+fi
+# End automatically added section
+# Automatically added by dh_systemd_start
+if [ -d /run/systemd/system ]; then
+	systemctl --system daemon-reload >/dev/null || true
+	deb-systemd-invoke start rpi-display-backlight.service >/dev/null || true
+fi
+# End automatically added section
+

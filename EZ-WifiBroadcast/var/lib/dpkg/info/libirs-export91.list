@@ -1,0 +1,11 @@
+/.
+/usr
+/usr/share
+/usr/share/doc
+/usr/share/doc/libirs-export91
+/usr/share/doc/libirs-export91/copyright
+/usr/share/doc/libirs-export91/changelog.Debian.gz
+/lib
+/lib/arm-linux-gnueabihf
+/lib/arm-linux-gnueabihf/libirs-export.so.91.0.0
+/lib/arm-linux-gnueabihf/libirs-export.so.91
